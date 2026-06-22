@@ -34,6 +34,8 @@ import app.cash.redwood.protocol.guest.ProtocolWidgetSystemFactory
 import app.cash.redwood.widget.WidgetSystem
 import app.cash.zipline.asDynamicFunction
 import app.cash.zipline.sourceType
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
@@ -71,10 +73,14 @@ internal class FastGuestProtocolAdapter(
   override val root: ProtocolWidgetChildren =
     ProtocolWidgetChildren(Id.Root, ChildrenTag.Root, this)
 
+  @OptIn(ExperimentalTime::class)
   override fun sendEvent(event: Event) {
     val node = widgets[event.id.value]
     if (node != null) {
       node.sendEvent(event)
+      if (node.tag.value != 1000013 && node.tag.value != 1000007) {
+        println("Benchmark::: ${Clock.System.now().toEpochMilliseconds()} event sent")
+      }
     } else {
       mismatchHandler.onUnknownEventNode(event.id, event.tag)
     }
@@ -229,6 +235,7 @@ internal class FastGuestProtocolAdapter(
     changes.push(js("""["remove",{"id":id,"tag":tag,"index":index,"count":1}]"""))
   }
 
+  @OptIn(ExperimentalTime::class)
   override fun emitChanges() {
     if (changes.length > 0) {
       removed.forEach { id ->

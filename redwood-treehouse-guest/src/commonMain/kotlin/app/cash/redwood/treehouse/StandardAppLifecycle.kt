@@ -27,6 +27,8 @@ import app.cash.redwood.protocol.guest.guestRedwoodVersion
 import app.cash.redwood.treehouse.AppLifecycle.Host
 import app.cash.zipline.ZiplineApiMismatchException
 import kotlin.coroutines.CoroutineContext
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.serialization.json.Json
@@ -51,6 +53,7 @@ public class StandardAppLifecycle(
     }
   }
 
+  @OptIn(ExperimentalTime::class)
   private val broadcastFrameClock = BroadcastFrameClock {
     if (started) {
       host.requestFrame()
@@ -87,7 +90,9 @@ public class StandardAppLifecycle(
     prepareEnvironment(coroutineExceptionHandler)
   }
 
+  @OptIn(ExperimentalTime::class)
   override fun sendFrame(timeNanos: Long) {
+    println("Benchmark::: ${Clock.System.now().toEpochMilliseconds()} frame received")
     broadcastFrameClock.sendFrame(timeNanos)
     for (frameListener in frameListeners) {
       frameListener.onFrame(timeNanos)

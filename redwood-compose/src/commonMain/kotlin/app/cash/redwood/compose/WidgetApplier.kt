@@ -24,6 +24,8 @@ import app.cash.redwood.widget.Widget
 import app.cash.redwood.widget.WidgetSystem
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 /**
  * An [Applier] for Redwood's tree of nodes.
@@ -73,6 +75,7 @@ internal class NodeApplier<W : Any>(
     onChanges.invoke()
   }
 
+  @OptIn(ExperimentalTime::class)
   override fun onEndChanges() {
     // When the composition is disposed, onEndChanges() is called after onClear().
     check(!closed || changedWidgets.size == 0)
@@ -83,6 +86,8 @@ internal class NodeApplier<W : Any>(
       }
       changedWidgets.clear()
     }
+
+    println("Benchmark::: ${Clock.System.now().toEpochMilliseconds()} changes applied")
   }
 
   override fun insertTopDown(index: Int, instance: Node<W>) {

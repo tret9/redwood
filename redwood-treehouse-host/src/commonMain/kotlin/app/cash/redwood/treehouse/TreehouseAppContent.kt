@@ -31,6 +31,7 @@ import app.cash.redwood.ui.OnBackPressedDispatcher
 import app.cash.redwood.ui.UiConfiguration
 import app.cash.redwood.ui.core.api.FocusRequester
 import app.cash.zipline.ZiplineScope
+import java.util.concurrent.atomic.AtomicReference
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
@@ -42,6 +43,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
+import app.cash.redwood.protocol.host.UiChildrenChange
+import app.cash.redwood.protocol.host.UiCreate
+import app.cash.redwood.protocol.host.UiModifierChange
+import app.cash.redwood.protocol.host.UiPropertyChange
+import app.cash.redwood.RedwoodCodegenApi
 
 private class InternalState<A : AppService>(
   val viewState: ViewState,
@@ -383,6 +389,9 @@ private class ViewContentCodeBinding<A : AppService>(
   /** Only accessed on [TreehouseDispatchers.ui]. */
   private var canceled = false
 
+  /** Used to compare RDMA and JSON change paths. First call applies, second compares. */
+  private val pendingComparison = AtomicReference<List<UiChange>?>(null)
+
   private var initViewCalled: Boolean = false
 
   /** The state to restore. Initialized in [start]. */
@@ -428,10 +437,25 @@ private class ViewContentCodeBinding<A : AppService>(
       )
     }
 
-    // Receive UI updates on the UI dispatcher.
-    bindingScope.launch(dispatchers.ui) {
-      receiveChangesOnUiDispatcher(uiChanges)
-    }
+//    val previous = pendingComparison.getAndSet(uiChanges)
+//    if (previous == null) {
+      // First batch for this frame — apply to UI
+      bindingScope.launch(dispatchers.ui) {
+        receiveChangesOnUiDispatcher(uiChanges)
+      }
+//    } else {
+//      // Second batch for this frame — compare and discard
+//      if (previous.size != uiChanges.size) {
+//        println("RDMA MISMATCH: count ${previous.size} vs ${uiChanges.size}")
+//      } else {
+//        for (i in previous.indices) {
+//          if (!uiChangesEqual(previous[i], uiChanges[i])) {
+//            println("RDMA MISMATCH[$i]: ${previous[i]} != ${uiChanges[i]}")
+//          }
+//        }
+//      }
+//      pendingComparison.set(null)
+//    }
   }
 
   private fun receiveChangesOnUiDispatcher(changes: List<UiChange>) {
@@ -498,8 +522,27 @@ private class ViewContentCodeBinding<A : AppService>(
     externalStateFlow.value = nextCodeState.asState()
   }
 
+  @OptIn(RedwoodCodegenApi::class)
+  private fun uiChangesEqual(a: UiChange, b: UiChange): Boolean {
+    if (a::class != b::class) return false
+    if (a.id != b.id) return false
+    return when {
+      a is UiCreate && b is UiCreate ->
+        a.tag == b.tag
+      a is UiPropertyChange && b is UiPropertyChange ->
+        a.tag == b.tag && a.value == b.value
+      a is UiModifierChange && b is UiModifierChange ->
+        a.reuse == b.reuse && a.modifier.toString() == b.modifier.toString()
+      a is UiChildrenChange && b is UiChildrenChange ->
+        a.change.toString() == b.change.toString()
+      else -> false
+    }
+  }
+
   fun start() {
     bindingScope.launch(dispatchers.zipline) {
+      RdmaBridge.callsink = this@ViewContentCodeBinding
+
       val scopedAppService = serviceScope.apply(codeSession.appService)
       val treehouseUi = contentSource!!.get(scopedAppService)
       treehouseUiOrNull = treehouseUi
@@ -575,6 +618,9 @@ private class ViewContentCodeBinding<A : AppService>(
 
     if (canceled) return
     canceled = true
+
+    pendingComparison.set(null)
+    RdmaBridge.callsink = null
 
     hostAdapterOrNull?.close()
     hostAdapterOrNull = null

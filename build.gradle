@@ -12,6 +12,7 @@ buildscript {
     classpath 'app.cash.redwood:redwood-gradle-plugin'
   }
   repositories {
+    mavenLocal()
     mavenCentral()
     google()
     gradlePluginPortal()

@@ -8,6 +8,7 @@ buildscript {
     classpath libs.buildConfigPlugin
   }
   repositories {
+    mavenLocal()
     mavenCentral()
     gradlePluginPortal()
     google()
@@ -16,6 +17,7 @@ buildscript {
 
 allprojects {
   repositories {
+    mavenLocal()
     mavenCentral()
     google()
   }
