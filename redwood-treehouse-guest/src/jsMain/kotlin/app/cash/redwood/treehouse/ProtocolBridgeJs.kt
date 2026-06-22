@@ -239,7 +239,14 @@ internal class FastGuestProtocolAdapter(
       }
       removed.clear()
 
-      sendChanges(changesSinkService, arrayOf(changes))
+      // RDMA path: direct JNI object creation, bypasses JSON serialization.
+      val rdmaObj: dynamic = js("globalThis.app_cash_redwood_rdmaSendChanges")
+      if (rdmaObj != undefined) {
+        rdmaObj.sendChanges(changes)
+      } else {
+        throw AssertionError("RDMA changes channel not registered")
+      }
+
       changes.clear()
     }
   }
