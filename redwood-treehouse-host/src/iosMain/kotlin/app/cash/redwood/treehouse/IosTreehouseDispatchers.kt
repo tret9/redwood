@@ -30,7 +30,7 @@ import platform.Foundation.NSThread
 internal class IosTreehouseDispatchers(applicationName: String) : TreehouseDispatchers {
   /**
    * On Apple platforms we need to explicitly set the stack size for background threads; otherwise
-   * we get the default of 512 KiB which isn't sufficient for our QuickJS programs.
+   * we get the default of 512 KiB which isn't sufficient for our JS engine programs.
    */
   private val ziplineSingleThreadDispatcher = SingleThreadDispatcher(
     name = "Treehouse $applicationName",

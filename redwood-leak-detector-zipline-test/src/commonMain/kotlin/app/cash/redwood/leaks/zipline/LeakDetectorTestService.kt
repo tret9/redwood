@@ -20,7 +20,7 @@ import app.cash.zipline.ZiplineService
 interface LeakDetectorTestService : ZiplineService {
   suspend fun leakDetectorDisabled()
 
-  // TODO Once QuickJS supports WeakRef, enable regular tests:
+  // TODO Once the JS engine supports WeakRef, enable regular tests:
   //  suspend fun detectImmediateCollection()
   //  suspend fun detectDelayedCollection()
   //  suspend fun detectLeak()

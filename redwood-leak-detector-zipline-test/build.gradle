@@ -41,7 +41,7 @@ kotlin {
   }
 }
 
-// Compile JS tests into a Zipline application so we can test inside QuickJS VM in the JVM tests.
+// Compile JS tests into a Zipline application so we can test inside the JS engine VM in the JVM tests.
 def ziplineAppName = 'leaks'
 def ziplineCompile = tasks.named('compileDevelopmentExecutableKotlinGuestZipline')
 def ziplineEmbed = tasks.register('ziplineEmbed', ZiplineAppEmbedTask) {

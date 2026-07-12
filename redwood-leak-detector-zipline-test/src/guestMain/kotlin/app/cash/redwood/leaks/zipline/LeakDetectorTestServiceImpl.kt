@@ -31,8 +31,9 @@ class LeakDetectorTestServiceImpl : LeakDetectorTestService {
       callback = { _, _ -> throw AssertionError() },
     )
 
-    // QuickJS does not support WeakRef which is required for the leak detection to work correctly.
-    // Once WeakRef is supported and this test starts failing, enable bridging of the real tests.
+    // The JS engine (Hermes currently) does not support WeakRef, which is required
+    // for the leak detection to work correctly. Once WeakRef is supported and this
+    // test starts failing, enable bridging of the real tests.
     leakDetector.watchReference(this@LeakDetectorTestServiceImpl, "")
 
     leakDetector.awaitClose()

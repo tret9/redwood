@@ -219,7 +219,7 @@ public open class EventListener {
   }
 
   /**
-   * Invoked when a module load starts. This is the process of loading code into QuickJS.
+   * Invoked when a module load starts. This is the process of loading code into the JS engine.
    *
    * @return any object. This value will be passed back to [moduleLoadEnd] when the call is
    *   completed. The base function always returns null.

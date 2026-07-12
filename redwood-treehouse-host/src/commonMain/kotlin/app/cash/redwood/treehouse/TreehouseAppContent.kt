@@ -501,7 +501,7 @@ private class ViewContentCodeBinding<A : AppService>(
   fun start() {
     bindingScope.launch(dispatchers.zipline) {
       RdmaBridge.callsink = this@ViewContentCodeBinding
-      (codeSession as? ZiplineCodeSession)?.zipline?.quickJs?.rdmaChangeSink =
+      (codeSession as? ZiplineCodeSession)?.zipline?.jsEngine?.rdmaChangeSink =
         RdmaBridge.asRdmaChangeSink()
 
       val scopedAppService = serviceScope.apply(codeSession.appService)
@@ -581,7 +581,7 @@ private class ViewContentCodeBinding<A : AppService>(
     canceled = true
 
     RdmaBridge.callsink = null
-    (codeSession as? ZiplineCodeSession)?.zipline?.quickJs?.rdmaChangeSink = null
+    (codeSession as? ZiplineCodeSession)?.zipline?.jsEngine?.rdmaChangeSink = null
 
     hostAdapterOrNull?.close()
     hostAdapterOrNull = null

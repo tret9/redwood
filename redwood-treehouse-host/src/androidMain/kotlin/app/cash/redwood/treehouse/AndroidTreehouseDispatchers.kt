@@ -28,7 +28,7 @@ import kotlinx.coroutines.asCoroutineDispatcher
 internal class AndroidTreehouseDispatchers(applicationName: String) : TreehouseDispatchers {
   private var ziplineThread: Thread? = null
 
-  /** The single thread that runs all JavaScript. We only have one QuickJS instance at a time. */
+  /** The single thread that runs all JavaScript. We only have one JS engine instance at a time. */
   private val executorService = Executors.newSingleThreadExecutor { runnable ->
     Thread(null, runnable, "Treehouse $applicationName", ZIPLINE_THREAD_STACK_SIZE.toLong())
       .also { ziplineThread = it }
