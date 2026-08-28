@@ -42,6 +42,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.concurrent.Volatile
 
 private class InternalState<A : AppService>(
   val viewState: ViewState,
@@ -374,6 +375,13 @@ private class ViewContentCodeBinding<A : AppService>(
   /** Note that this is necessary to break the retain cycle between host and guest. */
   private val eventBridge = EventBridge(dispatchers.zipline, bindingScope)
 
+  /**
+   * The [RdmaBridge] attached to this binding's zipline session, resolved on the zipline
+   * dispatcher when the binding starts. Null before [start] and after [cancel].
+   */
+  @Volatile
+  private var rdmaBridgeOrNull: RdmaBridge? = null
+
   /** Only accessed on [TreehouseDispatchers.ui]. Empty after [initView]. */
   private val changesAwaitingInitView = ArrayDeque<List<UiChange>>()
 
@@ -498,9 +506,26 @@ private class ViewContentCodeBinding<A : AppService>(
     externalStateFlow.value = nextCodeState.asState()
   }
 
+  /**
+   * The [RdmaBridge] attached to this binding's zipline session.
+   *
+   * The session's QuickJS runtime routes its change stream into this same instance (the app
+   * wires [app.cash.zipline.QuickJs.rdmaChangeSink] from the instance it attached at
+   * session creation), so the per-session [callsink] set here reaches the changes emitted by
+   * the guest. Each zipline session gets exactly one bridge; closing and recreating a screen
+   * creates a fresh session with a fresh bridge, and concurrent sessions never cross-wire.
+   */
+  private fun sessionRdmaBridge(): RdmaBridge {
+    val zipline = (codeSession as? ZiplineCodeSession)?.zipline
+      ?: error("RDMA bridge requires a zipline code session")
+    return zipline.getOrPutAttachment(RdmaBridge::class) { RdmaBridge() }
+  }
+
   fun start() {
     bindingScope.launch(dispatchers.zipline) {
-      RdmaBridge.callsink = this@ViewContentCodeBinding
+      val rdmaBridge = sessionRdmaBridge()
+      rdmaBridgeOrNull = rdmaBridge
+      rdmaBridge.callsink = this@ViewContentCodeBinding
       val scopedAppService = serviceScope.apply(codeSession.appService)
       val treehouseUi = contentSource!!.get(scopedAppService)
       treehouseUiOrNull = treehouseUi
@@ -577,7 +602,8 @@ private class ViewContentCodeBinding<A : AppService>(
     if (canceled) return
     canceled = true
 
-    RdmaBridge.callsink = null
+    rdmaBridgeOrNull?.callsink = null
+    rdmaBridgeOrNull = null
     (codeSession as? ZiplineCodeSession)?.zipline?.quickJs?.rdmaChangeSink = null
 
     hostAdapterOrNull?.close()
