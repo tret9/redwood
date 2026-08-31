@@ -75,6 +75,9 @@ internal fun generateComposable(
       FunSpec.builder(flatName)
         .addModifiers(if (widget.internalComposable) INTERNAL else PUBLIC)
         .addAnnotation(ComposeRuntime.Composable)
+        // Widget composables only delegate to RedwoodComposeNode; a restart scope
+        // per call site is pure overhead (one RecomposeScopeImpl per instance).
+        .addAnnotation(ComposeRuntime.NonRestartableComposable)
         .optIn(Redwood.RedwoodCodegenApi)
         .maybeAddKDoc(widget.documentation)
         .maybeAddDeprecation(widget.deprecation)
