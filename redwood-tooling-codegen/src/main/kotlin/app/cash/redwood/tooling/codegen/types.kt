@@ -108,6 +108,7 @@ internal object ComposeRuntime {
   val getValue = MemberName("androidx.compose.runtime", "getValue")
   val setValue = MemberName("androidx.compose.runtime", "setValue")
   val Composable = ClassName("androidx.compose.runtime", "Composable")
+  val NonRestartableComposable = ClassName("androidx.compose.runtime", "NonRestartableComposable")
   val MutableState = ClassName("androidx.compose.runtime", "MutableState")
   val Stable = ClassName("androidx.compose.runtime", "Stable")
 }
