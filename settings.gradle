@@ -2,7 +2,6 @@ pluginManagement {
   includeBuild('build-support/redwood-settings')
 
   repositories {
-    mavenLocal()
     mavenCentral()
     google()
     gradlePluginPortal()
@@ -16,7 +15,6 @@ plugins {
 
 dependencyResolutionManagement {
   repositories {
-    mavenLocal()
     mavenCentral()
     google()
   }
