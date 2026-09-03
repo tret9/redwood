@@ -98,6 +98,7 @@ public abstract class RedwoodGeneratorPlugin(
       RedwoodGeneratorExtension::class.java,
     )
     extension.bridgeJvmPackage.convention("")
+    extension.directEventsOnly.convention(false)
 
     val toolingConfiguration = project.configurations.register("redwoodToolingCodegen") {
       it.isCanBeConsumed = false
@@ -118,6 +119,7 @@ public abstract class RedwoodGeneratorPlugin(
       it.generatorFlag.set(strategy.generatorFlag)
       it.schemaType.set(extension.type)
       it.bridgeJvmPackage.set(extension.bridgeJvmPackage)
+      it.directEventsOnly.set(extension.directEventsOnly)
       it.classpath.from(project.files(schemaConfiguration))
     }
 

@@ -163,6 +163,18 @@ internal class FastGuestProtocolAdapter(
     changes.push(js("""["property",{"id":id,"widget":widget,"tag":tag,"value":value}]"""))
   }
 
+  override fun appendBridgedPropertyChange(
+    id: Id,
+    widgetTag: WidgetTag,
+    propertyTag: PropertyTag,
+    value: Any?,
+  ) {
+    throw IllegalStateException(
+      "appendBridgedPropertyChange requires the direct (bridge) guest adapter — " +
+        "JSON property encoding is disabled in direct-only builds",
+    )
+  }
+
   override fun appendModifierChange(id: Id, value: Modifier) {
     val elements = js("[]")
 
@@ -266,4 +278,8 @@ internal class FastGuestProtocolAdapter(
         }
       }
     }
+
+  init {
+    bindDirectEventSink(widgets = { widgets[it] }, mismatchHandler = mismatchHandler)
+  }
 }
