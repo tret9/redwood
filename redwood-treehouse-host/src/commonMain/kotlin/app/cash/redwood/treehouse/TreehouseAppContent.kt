@@ -697,10 +697,12 @@ private class EventBridge(
         if (quickJs != null && hasSink) {
           // JSON-free delivery: args are converted host->JS by callGuestFunction (bridgeAnyToJs /
           // anyToJs on the guest class prototypes) and dispatched to the widget's sendDirectEvent.
+          // The guest sink signature is (id, tag, argsArray): the raw event args travel as ONE
+          // JS array so each element binds to one sendDirectEvent parameter. (Flattening them
+          // made the guest bind `args` to the first event argument instead.)
           quickJs.callGuestFunction(
             DIRECT_EVENT_SINK_NAME,
-            listOf(uiEvent.id.value, uiEvent.tag.value) +
-              (uiEvent.args?.toList() ?: emptyList()),
+            listOf(uiEvent.id.value, uiEvent.tag.value, uiEvent.args ?: emptyArray<Any?>()),
           )
           return@launch
         }
