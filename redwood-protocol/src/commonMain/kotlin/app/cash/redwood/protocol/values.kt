@@ -15,12 +15,14 @@
  */
 package app.cash.redwood.protocol
 
+import app.cash.zipline.bridge.support.WithJS2HostBridge
 import kotlin.jvm.JvmInline
 import kotlinx.serialization.Serializable
 
 /** Identifies a widget instance. */
 @JvmInline
 @Serializable
+@WithJS2HostBridge
 public value class Id(public val value: Int) {
   public companion object {
     public val Root: Id = Id(0)
@@ -29,22 +31,27 @@ public value class Id(public val value: Int) {
 
 @JvmInline
 @Serializable
+@WithJS2HostBridge
 public value class EventTag(public val value: Int)
 
 @JvmInline
 @Serializable
+@WithJS2HostBridge
 public value class ModifierTag(public val value: Int)
 
 @JvmInline
 @Serializable
+@WithJS2HostBridge
 public value class WidgetTag(public val value: Int)
 
 @JvmInline
 @Serializable
+@WithJS2HostBridge
 public value class PropertyTag(public val value: Int)
 
 @JvmInline
 @Serializable
+@WithJS2HostBridge
 public value class ChildrenTag(public val value: Int) {
   public companion object {
     public val Root: ChildrenTag = ChildrenTag(1)

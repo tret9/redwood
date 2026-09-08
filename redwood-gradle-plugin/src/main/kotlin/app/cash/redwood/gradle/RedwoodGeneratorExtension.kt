@@ -27,4 +27,11 @@ public abstract class RedwoodGeneratorExtension {
 
   /** The fully-qualified name of the `@Schema`-annotated interface. */
   public abstract val type: Property<String>
+
+  /**
+   * When set, the compose codegen adds `@WithJS2HostBridge(targetFqn = ...)` to modifier Impls,
+   * mapping each JS-side Impl to the JVM class in this package. The JVM side must have
+   * corresponding bridge C code (via the zipline bridge plugin on the protocol-host module).
+   */
+  public abstract val bridgeJvmPackage: Property<String>
 }

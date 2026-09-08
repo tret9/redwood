@@ -25,3 +25,7 @@ redwood-layout-view/out/failures
 # DOM testing
 redwood-dom-testing/snapshots
 generated-redwood-snapshot-testing.js
+
+# Android CMake build artifacts
+.cxx/
+redwood-treehouse-host/src/iosMain/kotlin/generated/

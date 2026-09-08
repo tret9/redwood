@@ -16,7 +16,6 @@
 package app.cash.redwood.widget
 
 import app.cash.redwood.Modifier
-import kotlin.native.ObjCName
 
 /**
  * The target of a composable function's values. Usually binds to an associated native UI toolkit
@@ -25,7 +24,6 @@ import kotlin.native.ObjCName
  *
  * @see ChangeListener
  */
-@ObjCName("Widget", exact = true)
 public interface Widget<W : Any> {
   /**
    * The underlying platform-specific representation of this widget. This value will be supplied to

@@ -19,9 +19,11 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import dev.drewhamilton.poko.Poko
 import kotlinx.serialization.Serializable
+import app.cash.zipline.bridge.support.WithJS2HostBridge
 
 @[Immutable Serializable]
 @Poko
+@WithJS2HostBridge
 public class Margin(
   public val start: Dp = 0.dp,
   public val end: Dp = 0.dp,

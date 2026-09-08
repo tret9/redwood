@@ -466,12 +466,35 @@ internal fun generateProtocolNode(
                 for (trait in properties) {
                   when (trait) {
                     is ProtocolProperty -> {
-                      addStatement(
-                        "%L -> widget.%N(change.value as %T)",
-                        trait.tag,
-                        trait.name,
-                        trait.type.asTypeName(),
-                      )
+                      val typeName = trait.type.asTypeName()
+                      // Bridge-transmitted Any? values are boxed as Number (Double);
+                      // JSON-deserialized values are already the correct type.
+                      // Both implement Number, so use a Number intermediary cast
+                      // to avoid ClassCastException (e.g. Integer → Float).
+                      val numericMethod = when (typeName.toString()) {
+                        "kotlin.Int" -> "toInt"
+                        "kotlin.Long" -> "toLong"
+                        "kotlin.Float" -> "toFloat"
+                        "kotlin.Double" -> "toDouble"
+                        "kotlin.Short" -> "toShort"
+                        "kotlin.Byte" -> "toByte"
+                        else -> null
+                      }
+                      if (numericMethod != null) {
+                        addStatement(
+                          "%L -> widget.%N((change.value as Number).%N())",
+                          trait.tag,
+                          trait.name,
+                          MemberName("kotlin", numericMethod),
+                        )
+                      } else {
+                        addStatement(
+                          "%L -> widget.%N(change.value as %T)",
+                          trait.tag,
+                          trait.name,
+                          typeName,
+                        )
+                      }
                     }
 
                     is ProtocolEvent -> {
@@ -757,6 +780,7 @@ internal fun generateProtocolModifierImpls(
       }
       addType(
         typeBuilder
+          .addAnnotation(ClassName("app.cash.zipline.bridge.support", "WithJS2HostBridge"))
           .addModifiers(INTERNAL)
           .addSuperinterface(modifierSchema.modifierType(modifier))
           .addFunction(modifierEquals(modifierSchema, modifier))

@@ -138,6 +138,12 @@ public abstract class GuestProtocolAdapter(
   )
 
   @RedwoodCodegenApi
+  public abstract fun appendBridgeChange(
+    id: Id,
+    wrapped: Any?,
+  )
+
+  @RedwoodCodegenApi
   public abstract fun appendRemove(
     id: Id,
     tag: ChildrenTag,

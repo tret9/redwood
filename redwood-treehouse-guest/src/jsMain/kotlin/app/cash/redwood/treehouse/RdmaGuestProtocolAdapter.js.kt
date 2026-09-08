@@ -2,6 +2,7 @@ package app.cash.redwood.treehouse
 
 import app.cash.redwood.Modifier
 import app.cash.redwood.RedwoodCodegenApi
+import app.cash.redwood.protocol.BridgeChange
 import app.cash.redwood.protocol.ChangesSink
 import app.cash.redwood.protocol.ChildrenTag
 import app.cash.redwood.protocol.Event
@@ -197,6 +198,10 @@ internal class RdmaGuestProtocolAdapterImpl(
     val rdmaIndex = rdmaObj.changesLength()
     child.removeIndex = rdmaIndex
     rdmaObj.appendRemove(id.value, tag.value, index)
+  }
+
+  override fun appendBridgeChange(id: Id, wrapped: Any?) {
+    throw AssertionError("RdmaGuestProtocolAdapterImpl.appendBridgeChange should never be called")  // should be unreachable
   }
 
   override fun emitChanges() {

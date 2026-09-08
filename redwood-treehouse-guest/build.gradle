@@ -18,6 +18,7 @@ kotlin {
         api libs.zipline
         api projects.redwoodProtocol
         api projects.redwoodProtocolGuest
+        api projects.redwoodProtocolHost
         api projects.redwoodTreehouse
         api projects.redwoodTreehouseGuestCompose
         api projects.redwoodUiCoreApi

@@ -25,6 +25,9 @@ import okio.Path.Companion.toOkioPath
 internal class AndroidTreehousePlatform(
   private val context: Context,
 ) : TreehousePlatform {
+  init {
+    BridgeLibraryLoader.ensureLoaded()
+  }
   /**
    * Note that we don't put the ZiplineCache in Android's cacheDir.
    *

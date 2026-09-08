@@ -1,0 +1,14 @@
+package = bridge_init
+
+---
+
+// Eager bridge module initialization via C constructor.
+// Calls the @CName-exported Kotlin function at module load time.
+#ifdef __APPLE__
+extern void _BridgeRetainAll_UiCreate_init(void);
+
+__attribute__((constructor))
+static void _bridge_constructor() {
+    _BridgeRetainAll_UiCreate_init();
+}
+#endif

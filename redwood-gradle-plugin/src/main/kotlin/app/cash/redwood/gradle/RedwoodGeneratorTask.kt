@@ -24,6 +24,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecOperations
@@ -47,6 +48,10 @@ internal abstract class RedwoodGeneratorTask @Inject constructor(
   @get:Input
   abstract val schemaType: Property<String>
 
+  @get:Optional
+  @get:Input
+  abstract val bridgeJvmPackage: Property<String>
+
   @get:OutputDirectory
   abstract val outputDir: DirectoryProperty
 
@@ -58,6 +63,7 @@ internal abstract class RedwoodGeneratorTask @Inject constructor(
       it.generatorFlag.set(generatorFlag)
       it.classpath.setFrom(classpath)
       it.schemaType.set(schemaType)
+      it.bridgeJvmPackage.set(bridgeJvmPackage)
       it.outputDir.set(outputDir)
     }
   }
@@ -68,6 +74,7 @@ private interface RedwoodGeneratorParameters : WorkParameters {
   val generatorFlag: Property<String>
   val classpath: ConfigurableFileCollection
   val schemaType: Property<String>
+  val bridgeJvmPackage: Property<String>
   val outputDir: DirectoryProperty
 }
 
@@ -81,15 +88,21 @@ private abstract class RedwoodGeneratorWorker @Inject constructor(
       exec.classpath = parameters.toolClasspath
       exec.mainClass.set("app.cash.redwood.tooling.codegen.Main")
 
-      exec.args = listOf(
+      val args = mutableListOf(
         "generate",
         parameters.generatorFlag.get(),
         "--out",
         parameters.outputDir.get().asFile.absolutePath,
         "--class-path",
         parameters.classpath.files.joinToString(File.pathSeparator),
-        parameters.schemaType.get(),
       )
+      val bridgePkg = parameters.bridgeJvmPackage.get()
+      if (bridgePkg.isNotEmpty()) {
+        args.add("--bridge-jvm-package")
+        args.add(bridgePkg)
+      }
+      args.add(parameters.schemaType.get())
+      exec.args = args
     }
   }
 }

@@ -30,6 +30,7 @@ public class RedwoodSchemaPlugin : Plugin<Project> {
       RedwoodSchemaExtension::class.java,
     ).apply {
       apiTracking.convention(true)
+      bridgeJvmPackage.convention("")
     }
 
     var applied = false

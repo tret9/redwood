@@ -1,5 +1,6 @@
 package app.cash.redwood.treehouse
 
+import app.cash.redwood.protocol.BridgeChange
 import app.cash.redwood.protocol.ChangesSink
 import app.cash.redwood.protocol.ChildrenChange
 import app.cash.redwood.protocol.ChildrenTag
@@ -22,7 +23,12 @@ import kotlinx.serialization.json.buildJsonArray
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 
-public actual object RdmaBridge : ChangesSink {
+/**
+ * Per-session RDMA bridge for the Kotlin/Native (iOS) runtime. One instance per zipline session;
+ * all state ([callsink], [batchAccumulator]) is instance-scoped so concurrent sessions never
+ * route changes into each other's UI.
+ */
+public actual class RdmaBridge : ChangesSink {
 
   internal actual var callsink: ChangesSink? = null
 
@@ -40,50 +46,11 @@ public actual object RdmaBridge : ChangesSink {
     acc.addAll(changes)
   }
 
-  public actual fun createCreate(id: Int, tag: Int): Create = Create(Id(id), WidgetTag(tag))
+  public actual fun asRdmaChangeSink(): RdmaChangeSink = RdmaChangeSinkAdapter(this)
 
-  public actual fun createAdd(id: Int, tag: Int, childId: Int, index: Int): ChildrenChange =
-    ChildrenChange.Add(Id(id), ChildrenTag(tag), Id(childId), index)
-
-  public actual fun createRemove(id: Int, tag: Int, index: Int, detach: Boolean): ChildrenChange =
-    ChildrenChange.Remove(Id(id), ChildrenTag(tag), index, detach)
-
-  public actual fun createMove(id: Int, tag: Int, fromIndex: Int, toIndex: Int, count: Int): ChildrenChange =
-    ChildrenChange.Move(Id(id), ChildrenTag(tag), fromIndex, toIndex, count)
-
-  public actual fun createPropertyChange(id: Int, widgetTag: Int, propertyTag: Int, value: JsonElement): PropertyChange =
-    PropertyChange(Id(id), WidgetTag(widgetTag), PropertyTag(propertyTag), value)
-
-  public actual fun createModifierChange(id: Int, elements: List<ModifierElement>): ModifierChange =
-    ModifierChange(Id(id), elements)
-
-  public actual fun createModifierElement(tag: Int, value: JsonElement): ModifierElement =
-    ModifierElement(ModifierTag(tag), value)
-
-  public actual fun jsonPrimitiveString(value: String): JsonPrimitive = JsonPrimitive(value)
-
-  public actual fun jsonPrimitiveInt(value: Int): JsonPrimitive = JsonPrimitive(value)
-
-  public actual fun jsonPrimitiveLong(value: Long): JsonPrimitive = JsonPrimitive(value)
-
-  public actual fun jsonPrimitiveDouble(value: Double): JsonPrimitive = JsonPrimitive(value)
-
-  public actual fun jsonPrimitiveBoolean(value: Boolean): JsonPrimitive = JsonPrimitive(value)
-
-  public actual fun jsonNull(): JsonNull = JsonNull
-
-  public actual fun createJsonArray(elements: List<JsonElement>): JsonArray =
-    buildJsonArray { elements.forEach { add(it) } }
-
-  public actual fun createJsonObject(keys: List<String>, values: List<JsonElement>): JsonObject =
-    buildJsonObject { keys.zip(values).forEach { (k, v) -> put(k, v) } }
-
-  public actual fun setRemoveDetach(index: Int) {
-  }
-
-  public actual fun asRdmaChangeSink(): RdmaChangeSink = RdmaChangeSinkAdapter()
-
-  private class RdmaChangeSinkAdapter : RdmaChangeSink {
+  private class RdmaChangeSinkAdapter(
+    private val bridge: RdmaBridge,
+  ) : RdmaChangeSink {
     private var accumulator: MutableList<Change> = mutableListOf()
 
     override fun createCreate(id: Int, tag: Int) {
@@ -110,6 +77,10 @@ public actual object RdmaBridge : ChangesSink {
       accumulator.add(ChildrenChange.Move(Id(id), ChildrenTag(childrenTag), fromIndex, toIndex, count))
     }
 
+    override fun createBridgeChange(id: Int, wrapped: Any?) {
+      accumulator.add(BridgeChange(Id(id), wrapped))
+    }
+
     override fun createRemove(id: Int, childrenTag: Int, index: Int, detach: Boolean) {
       accumulator.add(ChildrenChange.Remove(Id(id), ChildrenTag(childrenTag), index, detach))
     }
@@ -132,7 +103,7 @@ public actual object RdmaBridge : ChangesSink {
       val batch = accumulator
       accumulator = mutableListOf()
       if (batch.isNotEmpty()) {
-        RdmaBridge.sendBatch(batch)
+        bridge.sendBatch(batch)
       }
     }
 
@@ -140,8 +111,51 @@ public actual object RdmaBridge : ChangesSink {
       val batch = accumulator
       accumulator = mutableListOf()
       if (batch.isNotEmpty()) {
-        RdmaBridge.sendChanges(batch)
+        bridge.sendChanges(batch)
       }
     }
+  }
+
+  public actual companion object {
+    public actual fun createCreate(id: Int, tag: Int): Create = Create(Id(id), WidgetTag(tag))
+
+    public actual fun createAdd(id: Int, tag: Int, childId: Int, index: Int): ChildrenChange =
+      ChildrenChange.Add(Id(id), ChildrenTag(tag), Id(childId), index)
+
+    public actual fun createRemove(id: Int, tag: Int, index: Int, detach: Boolean): ChildrenChange =
+      ChildrenChange.Remove(Id(id), ChildrenTag(tag), index, detach)
+
+    public actual fun createMove(id: Int, tag: Int, fromIndex: Int, toIndex: Int, count: Int): ChildrenChange =
+      ChildrenChange.Move(Id(id), ChildrenTag(tag), fromIndex, toIndex, count)
+
+    public actual fun createPropertyChange(id: Int, widgetTag: Int, propertyTag: Int, value: JsonElement): PropertyChange =
+      PropertyChange(Id(id), WidgetTag(widgetTag), PropertyTag(propertyTag), value)
+
+    public actual fun createModifierChange(id: Int, elements: List<ModifierElement>): ModifierChange =
+      ModifierChange(Id(id), elements)
+
+    public actual fun createModifierElement(tag: Int, value: JsonElement): ModifierElement =
+      ModifierElement(ModifierTag(tag), value)
+
+    public actual fun createBridgeChange(id: Int, wrapped: Any?): BridgeChange =
+      BridgeChange(Id(id), wrapped)
+
+    public actual fun jsonPrimitiveString(value: String): JsonPrimitive = JsonPrimitive(value)
+
+    public actual fun jsonPrimitiveInt(value: Int): JsonPrimitive = JsonPrimitive(value)
+
+    public actual fun jsonPrimitiveLong(value: Long): JsonPrimitive = JsonPrimitive(value)
+
+    public actual fun jsonPrimitiveDouble(value: Double): JsonPrimitive = JsonPrimitive(value)
+
+    public actual fun jsonPrimitiveBoolean(value: Boolean): JsonPrimitive = JsonPrimitive(value)
+
+    public actual fun jsonNull(): JsonNull = JsonNull
+
+    public actual fun createJsonArray(elements: List<JsonElement>): JsonArray =
+      buildJsonArray { elements.forEach { add(it) } }
+
+    public actual fun createJsonObject(keys: List<String>, values: List<JsonElement>): JsonObject =
+      buildJsonObject { keys.zip(values).forEach { (k, v) -> put(k, v) } }
   }
 }

@@ -14,6 +14,9 @@ kotlin {
       dependencies {
         api libs.kotlinx.serialization.core
         api libs.kotlinx.serialization.json
+        implementation projects.redwoodRuntime
+        compileOnly libs.zipline.bridge.annotations
+        api libs.zipline.bridge.annotations
       }
     }
     commonTest {
@@ -24,3 +27,39 @@ kotlin {
     }
   }
 }
+
+dependencies {
+  kotlinCompilerPluginClasspath libs.zipline.bridge.kotlin.plugin
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile).configureEach {
+  compilerOptions.freeCompilerArgs.addAll(
+    '-P', "plugin:app.cash.zipline.bridge.kotlin:cOutputDir=${buildDir}/generated/bridge/c",
+    '-P', "plugin:app.cash.zipline.bridge.kotlin:nativeOutputDir=${buildDir}/generated/bridge/native"
+  )
+}
+tasks.named('compileKotlinJvm').configure {
+  def buildDirPath = buildDir
+  outputs.dir("${buildDirPath}/generated/bridge/c")
+  outputs.dir("${buildDirPath}/generated/bridge/native")
+  def exportsFile = file("${buildDirPath}/generated/bridge/native/_bridge_exports.txt")
+  outputs.upToDateWhen { exportsFile.exists() }
+}
+tasks.matching { it.name == "compileNativeMainKotlinMetadata" }.configureEach {
+  dependsOn(tasks.named("compileKotlinJvm"))
+}
+
+kotlin.sourceSets.nativeMain {
+  kotlin.srcDir("${buildDir}/generated/bridge/native")
+  dependencies {
+    implementation libs.zipline
+  }
+}
+tasks.matching { it.name.startsWith("compileKotlinIos") || it.name.contains("ourcesJar") || it.name.contains("NativeMain") }.configureEach {
+  dependsOn(tasks.named("compileKotlinJvm"))
+}
+
+kotlin.sourceSets.jsMain {
+  kotlin.srcDir("${buildDir}/generated/bridge/c")
+}
+tasks.named('compileKotlinJs').configure { dependsOn('compileKotlinJvm') }

@@ -17,6 +17,7 @@ kotlin {
         api projects.redwoodWidget
         api projects.redwoodLeakDetector
         implementation libs.androidx.collection
+        compileOnly libs.zipline.bridge.annotations
       }
     }
     commonTest {
@@ -29,6 +30,22 @@ kotlin {
       }
     }
   }
+}
+
+kotlin.sourceSets.nativeMain {
+  kotlin.srcDir("${buildDir}/generated/bridge/native")
+  dependencies {
+    implementation libs.zipline
+  }
+}
+
+// Ensure JVM compilation (which generates native bridge sources) runs first
+tasks.matching { it.name.startsWith("compileKotlinIos") || it.name.contains("ourcesJar") || it.name.contains("NativeMain") }.configureEach {
+  dependsOn(tasks.named("compileKotlinJvm"))
+}
+
+dependencies {
+  kotlinCompilerPluginClasspath libs.zipline.bridge.kotlin.plugin
 }
 
 buildConfig {
@@ -44,3 +61,17 @@ buildConfig {
     "RedwoodVersion(\"${project.version}\")",
   )
 }
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile).configureEach {
+  compilerOptions.freeCompilerArgs.addAll(
+    '-P', "plugin:app.cash.zipline.bridge.kotlin:cOutputDir=${buildDir}/generated/bridge/c",
+    '-P', "plugin:app.cash.zipline.bridge.kotlin:nativeOutputDir=${buildDir}/generated/bridge/native"
+  )
+}
+// Only the JVM target's compilation generates bridge C files (the Android
+// compilation tasks are also KotlinJvmCompile but don't have the plugin).
+tasks.named('compileKotlinJvm').configure {
+  outputs.dir("${buildDir}/generated/bridge/c")
+  outputs.dir("${buildDir}/generated/bridge/native")
+}
+

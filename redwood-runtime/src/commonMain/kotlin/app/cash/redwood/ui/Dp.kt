@@ -19,12 +19,14 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import kotlin.jvm.JvmInline
 import kotlinx.serialization.Serializable
+import app.cash.zipline.bridge.support.WithJS2HostBridge
 
 /**
  * Represents a density-independent pixel value. Values will be scaled and
  * converted into standard pixel values according to the device's density.
  */
 @[Immutable JvmInline Serializable]
+@WithJS2HostBridge
 public value class Dp(
   public val value: Double,
 ) {

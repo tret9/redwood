@@ -24,6 +24,7 @@ import app.cash.redwood.tooling.schema.Widget.Children
 import app.cash.redwood.tooling.schema.Widget.Event
 import app.cash.redwood.tooling.schema.Widget.Property
 import com.squareup.kotlinpoet.ANY
+import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FileSpec
@@ -248,17 +249,18 @@ internal class SomethingImpl(...): Something {
   public override fun toString(): String = ...
 }
 */
-internal fun generateModifierImpls(schema: Schema): FileSpec? {
+internal fun generateModifierImpls(schema: Schema, bridgeJvmPackage: String? = null): FileSpec? {
   if (schema.modifiers.isEmpty()) return null
 
   return buildFileSpec(schema.composePackage(), "modifier") {
     addAnnotation(suppressDeprecations)
 
     for (modifier in schema.modifiers) {
-      addType(generateModifierImpl(schema, modifier))
+      addType(generateModifierImpl(schema, modifier, bridgeJvmPackage))
     }
   }
 }
+
 
 private fun generateModifierFunction(
   schema: Schema,
@@ -296,6 +298,7 @@ private fun generateModifierFunction(
 private fun generateModifierImpl(
   schema: Schema,
   modifier: Modifier,
+  bridgeJvmPackage: String? = null,
 ): TypeSpec {
   val typeName = schema.modifierImpl(modifier)
   val typeBuilder = if (modifier.properties.isEmpty()) {
@@ -318,7 +321,17 @@ private fun generateModifierImpl(
       }
   }
 
+  // Build @WithJS2HostBridge annotation, optionally with targetFqn for cross-package JS→JVM mapping.
+  val bridgeAnnotation = AnnotationSpec.builder(
+    ClassName("app.cash.zipline.bridge.support", "WithJS2HostBridge")
+  )
+  if (!bridgeJvmPackage.isNullOrEmpty()) {
+    val targetFqn = "$bridgeJvmPackage.${modifier.type.flatName}Impl"
+    bridgeAnnotation.addMember("targetFqn = %S", targetFqn)
+  }
+
   return typeBuilder
+    .addAnnotation(bridgeAnnotation.build())
     .addModifiers(INTERNAL)
     .addSuperinterface(schema.modifierType(modifier))
     .addFunction(modifierEquals(schema, modifier))

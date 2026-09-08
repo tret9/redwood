@@ -44,12 +44,23 @@ internal actual fun GuestProtocolAdapter(
   hostVersion: RedwoodVersion,
   widgetSystemFactory: ProtocolWidgetSystemFactory,
   mismatchHandler: ProtocolMismatchHandler,
-): GuestProtocolAdapter = FastGuestProtocolAdapter(
-  json = json,
-  hostVersion = hostVersion,
-  widgetSystemFactory = widgetSystemFactory,
-  mismatchHandler = mismatchHandler,
-)
+): GuestProtocolAdapter {
+  val rdmaObj: dynamic = js("globalThis.app_cash_redwood_rdmaSendChanges")
+  if (rdmaObj != undefined && rdmaObj.appendBridgeChange != undefined) {
+    return BridgeGuestProtocolAdapter(
+      json = json,
+      hostVersion = hostVersion,
+      widgetSystemFactory = widgetSystemFactory,
+      mismatchHandler = mismatchHandler,
+    )
+  }
+  return FastGuestProtocolAdapter(
+    json = json,
+    hostVersion = hostVersion,
+    widgetSystemFactory = widgetSystemFactory,
+    mismatchHandler = mismatchHandler,
+  )
+}
 
 @OptIn(ExperimentalSerializationApi::class, RedwoodCodegenApi::class)
 internal class FastGuestProtocolAdapter(
@@ -111,6 +122,14 @@ internal class FastGuestProtocolAdapter(
     val id = id
     val tag = tag
     changes.push(js("""["create",{"id":id,"tag":tag}]"""))
+  }
+
+  override fun appendBridgeChange(
+    id: Id,
+    wrapped: Any?,
+  ) {
+    val rdmaObj: dynamic = js("globalThis.app_cash_redwood_rdmaSendChanges")
+    rdmaObj.appendBridgeChange(id.value, wrapped)
   }
 
   override fun <T> appendPropertyChange(

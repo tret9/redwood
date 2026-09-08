@@ -97,6 +97,7 @@ public abstract class RedwoodGeneratorPlugin(
       "redwoodSchema",
       RedwoodGeneratorExtension::class.java,
     )
+    extension.bridgeJvmPackage.convention("")
 
     val toolingConfiguration = project.configurations.register("redwoodToolingCodegen") {
       it.isCanBeConsumed = false
@@ -116,6 +117,7 @@ public abstract class RedwoodGeneratorPlugin(
       it.outputDir.set(project.redwoodGeneratedDir("sources"))
       it.generatorFlag.set(strategy.generatorFlag)
       it.schemaType.set(extension.type)
+      it.bridgeJvmPackage.set(extension.bridgeJvmPackage)
       it.classpath.from(project.files(schemaConfiguration))
     }
 

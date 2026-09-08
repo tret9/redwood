@@ -29,6 +29,7 @@ import kotlinx.serialization.json.JsonEncoder
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonArray
+import app.cash.zipline.bridge.support.WithJS2HostBridge
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonPrimitive
 
@@ -85,6 +86,34 @@ public class Create private constructor(
       id: Id,
       tag: WidgetTag,
     ): Create = Create(id.value, tag.value)
+  }
+}
+
+/**
+ * A [Change] that wraps a pre-deserialized host-side value directly, bypassing JSON
+ * serialisation. The wrapped value is set by the bridge (JNI or other direct transport)
+ * and extracted by [app.cash.redwood.protocol.host.UiChange.fromProtocol].
+ *
+ * This class is marked [Serializable] solely to satisfy the sealed hierarchy contract;
+ * serialization should never be used in practice — [wrapped] is [Transient].
+ */
+@Serializable
+@SerialName("bridge")
+@Poko
+public class BridgeChange private constructor(
+  @SerialName("id")
+  private val _id: Int,
+) : Change {
+  override val id: Id get() = Id(_id)
+
+  @kotlinx.serialization.Transient
+  public var wrapped: Any? = null
+
+  public companion object {
+    public operator fun invoke(
+      id: Id,
+      wrapped: Any? = null,
+    ): BridgeChange = BridgeChange(id.value).apply { this.wrapped = wrapped }
   }
 }
 
@@ -188,6 +217,7 @@ public sealed interface ChildrenChange : Change {
 
   @Serializable
   @SerialName("add")
+  @WithJS2HostBridge
   @Poko
   public class Add private constructor(
     @SerialName("id")
@@ -214,6 +244,7 @@ public sealed interface ChildrenChange : Change {
 
   @Serializable
   @SerialName("move")
+  @WithJS2HostBridge
   @Poko
   public class Move private constructor(
     @SerialName("id")
@@ -240,6 +271,7 @@ public sealed interface ChildrenChange : Change {
 
   @Serializable
   @SerialName("remove")
+  @WithJS2HostBridge
   @Poko
   public class Remove private constructor(
     @SerialName("id")

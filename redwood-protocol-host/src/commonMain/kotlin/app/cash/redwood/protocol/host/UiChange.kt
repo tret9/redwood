@@ -17,6 +17,7 @@ package app.cash.redwood.protocol.host
 
 import app.cash.redwood.Modifier
 import app.cash.redwood.RedwoodCodegenApi
+import app.cash.redwood.protocol.BridgeChange
 import app.cash.redwood.protocol.Change
 import app.cash.redwood.protocol.ChangesSink
 import app.cash.redwood.protocol.ChildrenChange
@@ -26,11 +27,13 @@ import app.cash.redwood.protocol.ModifierChange
 import app.cash.redwood.protocol.PropertyChange
 import app.cash.redwood.protocol.PropertyTag
 import app.cash.redwood.protocol.WidgetTag
+import app.cash.zipline.bridge.support.WithJS2HostBridge
 
 /**
  * A version of [Change] whose contents have already been deserialized from JSON and is thus
  * cheap to apply on the UI thread.
  */
+@WithJS2HostBridge
 public sealed interface UiChange {
   public val id: Id
 
@@ -73,6 +76,9 @@ public sealed interface UiChange {
           }
           UiModifierChange(change.id, reuse, modifier)
         }
+        is BridgeChange -> {
+          change.wrapped as? UiChange
+        }
       }
     }
   }
@@ -85,6 +91,7 @@ public fun interface UiChangesSink {
 
 /** @suppress */
 @RedwoodCodegenApi
+@WithJS2HostBridge
 public class UiCreate(
   override val id: Id,
   public val tag: WidgetTag,
@@ -92,6 +99,7 @@ public class UiCreate(
 
 /** @suppress */
 @RedwoodCodegenApi
+@WithJS2HostBridge
 public class UiPropertyChange(
   override val id: Id,
   public val tag: PropertyTag,
@@ -100,6 +108,7 @@ public class UiPropertyChange(
 
 /** @suppress */
 @RedwoodCodegenApi
+@WithJS2HostBridge
 public class UiModifierChange(
   override val id: Id,
   public val reuse: Boolean,
@@ -108,6 +117,7 @@ public class UiModifierChange(
 
 /** @suppress */
 @RedwoodCodegenApi
+@WithJS2HostBridge
 public class UiChildrenChange(
   public val change: ChildrenChange,
 ) : UiChange {

@@ -26,7 +26,7 @@ public enum class ProtocolCodegenType {
   Host,
 }
 
-public fun ProtocolSchemaSet.generate(type: ProtocolCodegenType, destination: Path) {
+public fun ProtocolSchemaSet.generate(type: ProtocolCodegenType, destination: Path, bridgeJvmPackage: String? = null) {
   for (fileSpec in generateFileSpecs(type)) {
     fileSpec.writeTo(destination)
   }

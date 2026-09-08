@@ -53,6 +53,9 @@ internal class GenerateCommand : CliktCommand(name = "generate") {
     .split(File.pathSeparator)
     .required()
 
+  private val bridgeJvmPackage by option("--bridge-jvm-package")
+    .help("JVM package for bridge targetFqn in generated modifier Impls")
+
   private val schemaType by argument("schema")
     .help("Fully-qualified class name for the @Schema-annotated interface")
     .convert { FqType.bestGuess(it) }
@@ -63,7 +66,7 @@ internal class GenerateCommand : CliktCommand(name = "generate") {
     when (val type = type) {
       is CodegenType -> {
         val schemaSet = ProtocolSchemaSet.load(schemaType, classLoader)
-        schemaSet.generate(type, out)
+        schemaSet.generate(type, out, bridgeJvmPackage)
       }
 
       is ProtocolCodegenType -> {

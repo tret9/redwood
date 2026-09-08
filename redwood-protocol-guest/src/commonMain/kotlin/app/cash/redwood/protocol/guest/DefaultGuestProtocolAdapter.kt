@@ -17,6 +17,7 @@ package app.cash.redwood.protocol.guest
 
 import app.cash.redwood.Modifier
 import app.cash.redwood.RedwoodCodegenApi
+import app.cash.redwood.protocol.BridgeChange
 import app.cash.redwood.protocol.Change
 import app.cash.redwood.protocol.ChangesSink
 import app.cash.redwood.protocol.ChildrenChange
@@ -84,6 +85,13 @@ public class DefaultGuestProtocolAdapter(
     val id = id
     val tag = tag
     changes.add(Create(id, tag))
+  }
+
+  public override fun appendBridgeChange(
+    id: Id,
+    wrapped: Any?,
+  ) {
+    changes.add(BridgeChange(id, wrapped))
   }
 
   public override fun <T> appendPropertyChange(

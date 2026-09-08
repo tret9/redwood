@@ -7,8 +7,50 @@ redwoodBuild {
   publishing()
 }
 
+// Ensure clean removes all CMake and native lib build artifacts
+tasks.named('clean') {
+  doLast {
+    delete('.cxx')
+    delete("${buildDir}/intermediates/cxx")
+    delete("${buildDir}/intermediates/library_and_local_jars_jni")
+    delete("${buildDir}/intermediates/merged_native_libs")
+    delete("${buildDir}/intermediates/stripped_native_libs")
+  }
+}
+
+afterEvaluate {
+  publishing.publications.matching { it.name == 'kotlinMultiplatform' }.configureEach {
+    artifact(tasks.named('bundleReleaseAar'))
+  }
+}
+
 apply plugin: 'org.jetbrains.kotlin.plugin.serialization'
 apply plugin: 'io.github.tret9.zipline'
+
+// Resolve libhermesvmlean.so from zipline-android AAR via Maven.
+configurations.create('hermesAar') {
+  canBeConsumed = false
+  transitive = false
+}
+dependencies {
+  hermesAar("io.github.tret9:zipline-android:1.27.0-composelive-0.13-SNAPSHOT")
+}
+def hermesAarFile = configurations.hermesAar.elements.map { it.first().asFile }
+
+tasks.register('extractHermesJni') {
+  notCompatibleWithConfigurationCache('Uses project.copy in doLast')
+  def outDir = layout.buildDirectory.dir('hermes-jni')
+  inputs.files(hermesAarFile).withPropertyName('hermesAar')
+  outputs.dir(outDir)
+  doLast {
+    copy {
+      from(zipTree(hermesAarFile.get()))
+      include('jni/**')
+      eachFile { it.path = it.path.replaceFirst('jni/', '') }
+      into(outDir.get().asFile)
+    }
+  }
+}
 
 kotlin {
   sourceSets {
@@ -96,7 +138,70 @@ android {
 
   defaultConfig {
     testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+
+    externalNativeBuild {
+      cmake {
+        arguments "-DHERMES_JNI_DIR=${layout.buildDirectory.dir('hermes-jni').get().asFile.absolutePath}"
+      }
+    }
   }
+
+  externalNativeBuild {
+    cmake {
+      path = file('src/androidMain/cpp/CMakeLists.txt')
+    }
+  }
+  packaging {
+    jniLibs {
+      excludes += ['**/libhermesvmlean.so']
+    }
+  }
+
+  // Ensure bridge source files are generated before CMake configure.
+  afterEvaluate {
+    tasks.matching { it.name.startsWith('buildCMake') || it.name.contains('ConfigureCMake') }.configureEach {
+      dependsOn(extractHermesJni,
+                ':redwood-protocol-host:compileKotlinJvm',
+                ':redwood-protocol:compileKotlinJvm',
+                ':redwood-runtime:compileKotlinJvm')
+    }
+  }
+
+
+  tasks.matching { it.name == "compileKotlinIosSimulatorArm64" }.configureEach {
+    dependsOn(':redwood-protocol-host:compileKotlinJvm')
+  }
+
+  // Bridges self-register via @EagerInitialization in each per-class bridge file.
+  // No genAllBridges task needed.
+
+  externalNativeBuild {
+    cmake {
+      path = file('src/androidMain/cpp/CMakeLists.txt')
+    }
+  }
+  packaging {
+    jniLibs {
+      excludes += ['**/libquickjs.so']
+    }
+  }
+
+  // Ensure bridge source files are generated before CMake configure.
+  afterEvaluate {
+    tasks.matching { it.name.startsWith('buildCMake') || it.name.contains('ConfigureCMake') }.configureEach {
+      dependsOn(extractHermesJni,
+                ':redwood-protocol-host:compileKotlinJvm',
+                ':redwood-protocol:compileKotlinJvm',
+                ':redwood-runtime:compileKotlinJvm')
+    }
+  }
+
+
+  tasks.matching { it.name == "compileKotlinIosSimulatorArm64" }.configureEach {
+    dependsOn(':redwood-protocol-host:compileKotlinJvm')
+  }
+
+  // Bridges self-register via @EagerInitialization in each per-class bridge file.
 
   // Needed for unit tests which use ViewCompat whose static fields reference `R.id`s.
   androidResources.enable = true
