@@ -258,6 +258,7 @@ internal data class ApiWidget(
   val tag: Int,
   val type: String,
   val traits: List<ApiWidgetTrait> = emptyList(),
+  val annotations: List<ApiAnnotation> = emptyList(),
 ) {
   constructor(widget: ProtocolWidget) : this(
     type = widget.type.toString(),
@@ -271,6 +272,7 @@ internal data class ApiWidget(
         }
       }
       .sortedWith(ApiWidgetTrait.comparator),
+    annotations = widget.annotations.map { ApiAnnotation(it) },
   )
 }
 
@@ -335,11 +337,13 @@ internal data class ApiModifier(
   val tag: Int,
   val type: String,
   val properties: List<ApiModifierProperty> = emptyList(),
+  val annotations: List<ApiAnnotation> = emptyList()
 ) {
   constructor(modifier: ProtocolModifier) : this(
     tag = modifier.tag,
     type = modifier.type.toString(),
     properties = modifier.properties.map(::ApiModifierProperty).sortedBy(ApiModifierProperty::name),
+    annotations = modifier.annotations.map { ApiAnnotation(it) }
   )
 }
 
@@ -352,5 +356,17 @@ internal data class ApiModifierProperty(
   constructor(property: Modifier.Property) : this(
     name = property.name,
     type = property.type.toString(),
+  )
+}
+
+@Serializable
+@SerialName("annotation")
+internal data class ApiAnnotation(
+  val type: String,
+  val arguments: Map<String, String> = emptyMap(),
+) {
+  constructor(annotation: Annotated) : this(
+    type = annotation.type.toString(),
+    arguments = annotation.arguments,
   )
 }
