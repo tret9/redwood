@@ -75,7 +75,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 private const val REDWOOD_GROUP_ID = "io.github.tret9"
 
 // HEY! If you change the major version update release.yaml doc folder.
-private const val REDWOOD_VERSION = "0.20.0-composelive-0.20"
+private const val REDWOOD_VERSION = "0.20.0-composelive-0.19"
 
 private val isCiEnvironment = System.getenv("CI") == "true"
 
