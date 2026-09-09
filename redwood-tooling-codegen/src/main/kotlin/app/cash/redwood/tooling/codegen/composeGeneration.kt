@@ -76,6 +76,7 @@ internal fun generateComposable(
         .addModifiers(if (widget.internalComposable) INTERNAL else PUBLIC)
         .addAnnotation(ComposeRuntime.Composable)
         .optIn(Redwood.RedwoodCodegenApi)
+        .maybeAddExtraAnnotations(widget.annotations)
         .maybeAddKDoc(widget.documentation)
         .maybeAddDeprecation(widget.deprecation)
         .apply {
@@ -269,6 +270,7 @@ private fun generateModifierFunction(
   val simpleName = modifier.type.flatName
   return FunSpec.builder(simpleName.replaceFirstChar(Char::lowercaseChar))
     .addAnnotation(ComposeRuntime.Stable)
+    .maybeAddExtraAnnotations(modifier.annotations)
     .receiver(Redwood.Modifier)
     .returns(Redwood.Modifier)
     .maybeAddKDoc(modifier.documentation)

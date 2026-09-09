@@ -119,6 +119,7 @@ internal data class ParsedProtocolWidget(
   override val documentation: String? = null,
   override val traits: List<ProtocolTrait> = emptyList(),
   override val internalComposable: Boolean = false,
+  override val annotations: List<ParsedAnnotation> = emptyList(),
 ) : ProtocolWidget
 
 @Serializable
@@ -169,6 +170,7 @@ internal data class ParsedProtocolModifier(
   override val deprecation: ParsedDeprecation? = null,
   override val documentation: String? = null,
   override val properties: List<ParsedProtocolModifierProperty> = emptyList(),
+  override val annotations: List<ParsedAnnotation> = emptyList(),
 ) : ProtocolModifier
 
 @Serializable
@@ -180,3 +182,9 @@ internal data class ParsedProtocolModifierProperty(
   override val deprecation: ParsedDeprecation? = null,
   override val documentation: String? = null,
 ) : Property
+
+@Serializable
+internal data class ParsedAnnotation(
+  override val type: FqType,
+  override val arguments: Map<String, String>
+) : Annotated
