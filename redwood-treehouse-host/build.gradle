@@ -33,7 +33,7 @@ configurations.create('hermesAar') {
   transitive = false
 }
 dependencies {
-  hermesAar("io.github.tret9:zipline-android:1.27.0-composelive-0.13-SNAPSHOT")
+  hermesAar("io.github.tret9:zipline-android:${libs.versions.zipline.get()}")
 }
 def hermesAarFile = configurations.hermesAar.elements.map { it.first().asFile }
 
