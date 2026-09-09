@@ -22,15 +22,10 @@ file(GLOB bridge_sources CONFIGURE_DEPENDS
     "${BRIDGE_RUNTIME}/app_cash_redwood_*.cpp"
 )
 
-set(BRIDGE_JNI "${CMAKE_CURRENT_SOURCE_DIR}/../../../../redwood-protocol-host/src/bridge/c/bridge_jni.cpp")
-
 add_library(redwood-bridge SHARED
     ${bridge_sources}
-    ${BRIDGE_JNI}
 )
 
-# Prevent gc-sections from stripping the constructor that registers bridges
-target_link_options(redwood-bridge PRIVATE "-Wl,--undefined=bridge_init_register")
 # Prevent llvm-strip --strip-unneeded from removing the constructor function
 target_link_options(redwood-bridge PRIVATE "-Wl,--export-dynamic")
 
