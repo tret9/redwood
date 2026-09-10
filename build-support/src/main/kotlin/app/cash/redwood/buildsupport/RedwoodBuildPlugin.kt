@@ -493,7 +493,7 @@ private class RedwoodBuildExtensionImpl(private val project: Project) : RedwoodB
       // Disable Javadoc jars. They're basically useless relics, but enabling this will also cause
       // AGP to use an old version of Dokka which fails to run on the latest Java versions.
       @Suppress("UnstableApiUsage")
-      configureBasedOnAppliedPlugins(javadocJar = true)
+      configureBasedOnAppliedPlugins(javadocJar = false)
 
       publishToMavenCentral(automaticRelease = true)
       if (project.providers.systemProperty("RELEASE_SIGNING_ENABLED").getOrElse("true").toBoolean()) {
