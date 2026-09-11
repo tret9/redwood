@@ -2,13 +2,10 @@
 cmake_minimum_required(VERSION 3.12)
 set(CMAKE_CXX_STANDARD 17)
 
-# Header paths: Zipline native sources (sibling repo)
-set(ZIPLINE_NATIVE "${CMAKE_CURRENT_SOURCE_DIR}/../../../../../zipline/zipline/native")
+# Header paths: extracted from zipline-android AAR during extractHermesJni
 include_directories(
     ${ZIPLINE_NATIVE}
-    ${ZIPLINE_NATIVE}/hermes/API
     ${ZIPLINE_NATIVE}/hermes/API/jsi
-    ${ZIPLINE_NATIVE}/hermes/public
 )
 
 # Generated bridge C files
