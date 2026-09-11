@@ -49,6 +49,12 @@ tasks.register('extractHermesJni') {
       eachFile { it.path = it.path.replaceFirst('jni/', '') }
       into(outDir.get().asFile)
     }
+    copy {
+      from(zipTree(hermesAarFile.get()))
+      include('assets/**/*.h')
+      eachFile { it.path = it.path.replaceFirst('assets/', 'headers/') }
+      into(outDir.get().asFile)
+    }
   }
 }
 
@@ -141,7 +147,8 @@ android {
 
     externalNativeBuild {
       cmake {
-        arguments "-DHERMES_JNI_DIR=${layout.buildDirectory.dir('hermes-jni').get().asFile.absolutePath}"
+        arguments "-DHERMES_JNI_DIR=${layout.buildDirectory.dir('hermes-jni').get().asFile.absolutePath}",
+                  "-DZIPLINE_NATIVE=${layout.buildDirectory.dir('hermes-jni/headers').get().asFile.absolutePath}"
       }
     }
   }
