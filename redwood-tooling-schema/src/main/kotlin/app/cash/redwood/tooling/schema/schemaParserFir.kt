@@ -61,11 +61,15 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.declaredProperties
+import org.jetbrains.kotlin.fir.declarations.evaluateAs
 import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
+import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.FirCall
 import org.jetbrains.kotlin.fir.expressions.FirCollectionLiteral
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
@@ -76,6 +80,7 @@ import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.resolve.fqName
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
@@ -89,6 +94,7 @@ import org.jetbrains.kotlin.fir.types.isBasicFunctionType
 import org.jetbrains.kotlin.fir.types.isMarkedNullable
 import org.jetbrains.kotlin.fir.types.receiverType
 import org.jetbrains.kotlin.fir.types.renderReadable
+import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.type
 import org.jetbrains.kotlin.fir.types.valueParameterName
 import org.jetbrains.kotlin.fir.types.variance
@@ -290,15 +296,16 @@ private fun FirContext.parseSchema(type: FqType): ParsedProtocolSchema {
 
     val widgetAnnotation = findWidgetAnnotation(memberClass.annotations)
     val modifierAnnotation = findModifierAnnotation(memberClass.annotations)
+    val extraAnnotations = findExtraAnnotations(memberClass.annotations)
 
     if ((widgetAnnotation == null) == (modifierAnnotation == null)) {
       throw IllegalArgumentException(
         "$memberType must be annotated with either @Widget or @Modifier",
       )
     } else if (widgetAnnotation != null) {
-      widgets += parseWidget(memberType, memberClass, widgetAnnotation)
+      widgets += parseWidget(memberType, memberClass, widgetAnnotation, extraAnnotations)
     } else if (modifierAnnotation != null) {
-      modifiers += parseModifier(memberType, memberClass, modifierAnnotation)
+      modifiers += parseModifier(memberType, memberClass, modifierAnnotation, extraAnnotations)
     } else {
       throw AssertionError()
     }
@@ -424,6 +431,7 @@ private fun FirContext.parseWidget(
   memberType: FqType,
   firClass: FirRegularClass,
   annotation: WidgetAnnotation,
+  extraAnnotations: List<ParsedAnnotation>,
 ): ParsedProtocolWidget {
   val tag = annotation.tag
   require(tag in 1 until MAX_MEMBER_TAG) {
@@ -595,6 +603,7 @@ private fun FirContext.parseWidget(
     deprecation = deprecation,
     traits = traits,
     internalComposable = annotation.internalComposable,
+    annotations = extraAnnotations,
   )
 }
 
@@ -602,6 +611,7 @@ private fun FirContext.parseModifier(
   memberType: FqType,
   firClass: FirRegularClass,
   annotation: ModifierAnnotation,
+  extraAnnotations: List<ParsedAnnotation>,
 ): ParsedProtocolModifier {
   val tag = annotation.tag
   require(tag in 1 until MAX_MEMBER_TAG || isSpecialModifier(tag, memberType)) {
@@ -653,6 +663,7 @@ private fun FirContext.parseModifier(
     documentation = documentation,
     deprecation = deprecation,
     properties = properties,
+    annotations = extraAnnotations,
   )
 }
 
@@ -886,6 +897,28 @@ private data class DeprecationAnnotation(
   val hasReplaceWith: Boolean,
 )
 
+private fun FirContext.findExtraAnnotations(
+  annotations: List<FirAnnotation>,
+): List<ParsedAnnotation> {
+
+  return annotations.filter { annotation ->
+    val name = annotation.fqName(firSession) ?: return@filter false
+    name !in FqNames.Redwod && !name.startsWith(FqName("kotlin."))
+  }.mapNotNull { annotation ->
+    val type = annotation.toAnnotationClassId(firSession)?.toFqType()
+      ?: return@mapNotNull null
+
+    val arguments = annotation.argumentMapping.mapping.entries.associate { (name, expression) ->
+      name.asString() to (expression.toAnnotationValue(firSession) ?: return@mapNotNull null)
+    }
+
+    ParsedAnnotation(
+      type = type,
+      arguments = arguments
+    )
+  }
+}
+
 private fun DeprecationAnnotation.toDeprecation(source: () -> String): ParsedDeprecation {
   require(!hasReplaceWith) {
     "Schema deprecation does not support replacements: ${source()}"
@@ -942,6 +975,40 @@ private fun ClassId.toFqType() = FqType(
   },
 )
 
+private fun FirExpression.toAnnotationValue(
+  session: FirSession
+): String? = when (this) {
+  is FirLiteralExpression -> {
+    when (val value = value) {
+      is String -> "\"$value\""
+
+      is Char,
+      is Boolean,
+      is Byte,
+      is Short,
+      is Int,
+      is Long,
+      is Float,
+      is Double,
+        -> value.toString()
+
+      else -> null
+    }
+  }
+
+  is FirCall -> {
+    arguments.map {
+      it.toAnnotationValue(session)
+        ?: return null
+    }.joinToString(
+      prefix = "[",
+      postfix = "]",
+    )
+  }
+
+  else -> null
+}
+
 private object FqNames {
   val Children = FqName("app.cash.redwood.schema.Children")
   val Deprecated = FqName("kotlin.Deprecated")
@@ -951,4 +1018,14 @@ private object FqNames {
   val Serializable = FqName("kotlinx.serialization.Serializable")
   val Widget = FqName("app.cash.redwood.schema.Widget")
   val Unit = FqName("kotlin.Unit")
+
+  val Redwod = setOf(
+    Children,
+    Deprecated,
+    Modifier,
+    Property,
+    Schema,
+    Serializable,
+    Widget,
+  )
 }

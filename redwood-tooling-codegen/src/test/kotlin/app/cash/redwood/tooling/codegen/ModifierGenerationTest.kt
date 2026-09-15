@@ -16,7 +16,9 @@
 package app.cash.redwood.tooling.codegen
 
 import app.cash.redwood.schema.Modifier
+import app.cash.redwood.schema.Property
 import app.cash.redwood.schema.Schema
+import app.cash.redwood.schema.Widget
 import app.cash.redwood.tooling.schema.parseTestSchema
 import assertk.assertThat
 import assertk.assertions.contains
@@ -92,5 +94,29 @@ class ModifierGenerationTest {
 
     type = app.cash.redwood.Modifier.customTypeWithDefault(40.minutes, "hello")
     assertThat(type.toString()).isEqualTo("CustomTypeWithDefault(customType=40m, string=hello)")
+  }
+
+  @Retention(AnnotationRetention.SOURCE)
+  annotation class TestAnnotation(val member: String)
+
+  @Schema(
+    [
+      AnnotatedModifier::class
+    ]
+  )
+  interface AnnotatedSchema
+
+  @Modifier(1)
+  @TestAnnotation("TEST-MODIFIER")
+  data class AnnotatedModifier(
+    val id: Int,
+  )
+
+  @Test fun annotatedModifier() {
+    val schema = parseTestSchema(AnnotatedSchema::class).schema
+
+    val fileSpec = generateUnscopedModifiers(schema)
+    assertThat(fileSpec.toString())
+      .contains("@ModifierGenerationTest.TestAnnotation(member = \"TEST-MODIFIER\")")
   }
 }

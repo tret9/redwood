@@ -1458,4 +1458,44 @@ Property
     val modifierProperty = modifier.properties.single()
     assertThat(modifierProperty.documentation).isEqualTo("Property same line documentation.")
   }
+
+  @Retention(AnnotationRetention.SOURCE)
+  annotation class TestAnnotation(val value: String)
+
+  @Schema(
+    [
+      ExtraAnnotatedWidget::class,
+      ExtraAnnotatedModifier::class,
+    ]
+  )
+  interface ExtraAnnotatedSchema
+
+  @Widget(1)
+  @TestAnnotation("TEST-WIDGET")
+  data class ExtraAnnotatedWidget(
+    @Property(1) val id: Int,
+  )
+
+  @Modifier(1)
+  @TestAnnotation("TEST-MODIFIER")
+  data class ExtraAnnotatedModifier(
+    val id: Int,
+  )
+
+  @Test
+  fun extraAnnotations() = assertAll {
+    val schema = parseTestSchema(ExtraAnnotatedSchema::class).schema
+
+    val widget = schema.widgets.single()
+    val modifier = schema.modifiers.single()
+
+    val widgetAnnotation = widget.annotations.single()
+    val modifierAnnotation = modifier.annotations.single()
+
+    assertThat(widgetAnnotation.type).isEqualTo(TestAnnotation::class.toFqType())
+    assertThat(modifierAnnotation.type).isEqualTo(TestAnnotation::class.toFqType())
+
+    assertThat(widgetAnnotation.arguments).isEqualTo(mapOf("value" to "\"TEST-WIDGET\""))
+    assertThat(modifierAnnotation.arguments).isEqualTo(mapOf("value" to "\"TEST-MODIFIER\""))
+  }
 }

@@ -192,4 +192,28 @@ class ComposeGenerationTest {
     assertThat(fileSpec.toString())
       .contains("internal fun ComposeGenerationTestInternalComposableWidget(")
   }
+
+  @Retention(AnnotationRetention.SOURCE)
+  annotation class TestAnnotation(val member: String)
+
+  @Schema(
+    [
+      AnnotatedWidget::class
+    ]
+  )
+  interface AnnotatedSchema
+
+  @Widget(1)
+  @TestAnnotation("TEST-WIDGET")
+  data class AnnotatedWidget(
+    @Property(1) val id: Int,
+  )
+
+  @Test fun annotatedWidget() {
+    val schema = parseTestSchema(AnnotatedSchema::class).schema
+
+    val fileSpec = generateComposable(schema, schema.widgets.single())
+    assertThat(fileSpec.toString())
+      .contains("@ComposeGenerationTest.TestAnnotation(member = \"TEST-WIDGET\")")
+  }
 }

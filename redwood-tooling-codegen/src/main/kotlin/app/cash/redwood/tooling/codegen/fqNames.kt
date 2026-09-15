@@ -19,6 +19,7 @@ import app.cash.redwood.tooling.schema.FqType
 import app.cash.redwood.tooling.schema.FqType.Variance.In
 import app.cash.redwood.tooling.schema.FqType.Variance.Invariant
 import app.cash.redwood.tooling.schema.FqType.Variance.Out
+import com.squareup.kotlinpoet.ANY
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.STAR
@@ -40,4 +41,12 @@ internal fun FqType.asTypeName(): TypeName {
     In -> WildcardTypeName.consumerOf(typeName)
     Out -> WildcardTypeName.producerOf(typeName)
   }.copy(nullable = nullable)
+}
+
+internal fun FqType.asClassName(): ClassName {
+  if (this == FqType.Star) {
+    return ANY
+  }
+
+  return ClassName(names[0], names.drop(1))
 }

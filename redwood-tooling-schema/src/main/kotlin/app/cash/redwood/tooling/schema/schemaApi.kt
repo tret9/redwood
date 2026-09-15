@@ -70,6 +70,8 @@ public interface Widget {
 
   public val internalComposable: Boolean
 
+  public val annotations: List<Annotated>
+
   public sealed interface Trait {
     public val name: String
     public val documentation: String?
@@ -112,6 +114,8 @@ public interface Modifier {
   /** Non-empty list for a 'data class' [type] or empty list for 'object' [type]. */
   public val properties: List<Property>
 
+  public val annotations: List<Annotated>
+
   public interface Property {
     public val name: String
     public val documentation: String?
@@ -122,6 +126,11 @@ public interface Modifier {
     /** Non-null if this property is deprecated. */
     public val deprecation: Deprecation?
   }
+}
+
+public interface Annotated {
+  public val type: FqType
+  public val arguments: Map<String, String>
 }
 
 /** A [ProtocolSchema] and its dependencies. */

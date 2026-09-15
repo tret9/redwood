@@ -15,6 +15,7 @@
  */
 package app.cash.redwood.tooling.codegen
 
+import app.cash.redwood.tooling.schema.Annotated
 import app.cash.redwood.tooling.schema.Deprecation
 import app.cash.redwood.tooling.schema.Deprecation.Level.ERROR
 import app.cash.redwood.tooling.schema.Deprecation.Level.WARNING
@@ -191,6 +192,18 @@ internal fun <T : Annotatable.Builder<T>> T.maybeAddDeprecation(deprecation: Dep
 internal fun <T : Documentable.Builder<T>> T.maybeAddKDoc(string: String?) = apply {
   if (string != null) {
     addKdoc(string)
+  }
+}
+
+internal fun FunSpec.Builder.maybeAddExtraAnnotations(annotations: List<Annotated>) = apply {
+  for (annotation in annotations) {
+    val spec = AnnotationSpec.builder(annotation.type.asClassName())
+
+    for ((argName, argValue) in annotation.arguments) {
+      spec.addMember("%L = %L", argName, argValue)
+    }
+
+    addAnnotation(spec.build())
   }
 }
 
