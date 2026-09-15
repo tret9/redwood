@@ -31,6 +31,7 @@ import com.android.build.api.dsl.ApplicationExtension
 import com.android.build.api.dsl.CommonExtension
 import com.android.build.api.variant.AndroidComponentsExtension
 import com.diffplug.gradle.spotless.SpotlessExtension
+import com.vanniktech.maven.publish.AndroidSingleVariantLibrary
 import com.vanniktech.maven.publish.MavenPublishBaseExtension
 import java.io.File
 import kotlinx.validation.ApiValidationExtension
@@ -57,6 +58,7 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
 import org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
 import org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED
 import org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED
+import org.gradle.jvm.tasks.Jar
 import org.jetbrains.dokka.gradle.DokkaExtension
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile
@@ -75,7 +77,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 private const val REDWOOD_GROUP_ID = "io.github.tret9"
 
 // HEY! If you change the major version update release.yaml doc folder.
-private const val REDWOOD_VERSION = "0.20.0-composelive-hermes-0.3"
+private const val REDWOOD_VERSION = "0.20.0-composelive-hermes-0.4"
 
 private val isCiEnvironment = System.getenv("CI") == "true"
 
@@ -490,10 +492,27 @@ private class RedwoodBuildExtensionImpl(private val project: Project) : RedwoodB
 
     val mavenPublishing = project.extensions.getByName("mavenPublishing") as MavenPublishBaseExtension
     mavenPublishing.apply {
-      // Disable Javadoc jars. They're basically useless relics, but enabling this will also cause
-      // AGP to use an old version of Dokka which fails to run on the latest Java versions.
-      @Suppress("UnstableApiUsage")
-      configureBasedOnAppliedPlugins(javadocJar = false)
+      // Maven Central requires a Javadoc jar, so we publish an empty one. Real Javadoc jars are
+      // useless relics for Kotlin, and asking AGP for one makes it run a bundled old version of
+      // Dokka which fails on recent JDKs with "IllegalArgumentException: <java version>". For
+      // Android-only modules the plugin would delegate to AGP, so configure those ourselves.
+      // Multiplatform and JVM modules already get an empty Javadoc jar from the plugin because
+      // Dokka is not applied yet at this point.
+      val androidOnly = project.plugins.hasPlugin("com.android.library") &&
+        !project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform")
+      if (androidOnly) {
+        configure(AndroidSingleVariantLibrary(sourcesJar = true, publishJavadocJar = false))
+
+        val emptyJavadocJar = project.tasks.register("emptyJavadocJar", Jar::class.java) { jar ->
+          jar.archiveClassifier.set("javadoc")
+        }
+        publishing.publications.withType(MavenPublication::class.java).configureEach {
+          it.artifact(emptyJavadocJar)
+        }
+      } else {
+        @Suppress("UnstableApiUsage")
+        configureBasedOnAppliedPlugins(javadocJar = true)
+      }
 
       publishToMavenCentral(automaticRelease = true)
       if (project.providers.systemProperty("RELEASE_SIGNING_ENABLED").getOrElse("true").toBoolean()) {
