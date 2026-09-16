@@ -52,6 +52,10 @@ internal abstract class RedwoodGeneratorTask @Inject constructor(
   @get:Input
   abstract val bridgeJvmPackage: Property<String>
 
+  @get:Optional
+  @get:Input
+  abstract val directEventsOnly: Property<Boolean>
+
   @get:OutputDirectory
   abstract val outputDir: DirectoryProperty
 
@@ -64,6 +68,7 @@ internal abstract class RedwoodGeneratorTask @Inject constructor(
       it.classpath.setFrom(classpath)
       it.schemaType.set(schemaType)
       it.bridgeJvmPackage.set(bridgeJvmPackage)
+      it.directEventsOnly.set(directEventsOnly)
       it.outputDir.set(outputDir)
     }
   }
@@ -75,6 +80,7 @@ private interface RedwoodGeneratorParameters : WorkParameters {
   val classpath: ConfigurableFileCollection
   val schemaType: Property<String>
   val bridgeJvmPackage: Property<String>
+  val directEventsOnly: Property<Boolean>
   val outputDir: DirectoryProperty
 }
 
@@ -100,6 +106,11 @@ private abstract class RedwoodGeneratorWorker @Inject constructor(
       if (bridgePkg.isNotEmpty()) {
         args.add("--bridge-jvm-package")
         args.add(bridgePkg)
+      }
+      if (parameters.generatorFlag.get() == "--protocol-guest" &&
+        parameters.directEventsOnly.getOrElse(false)
+      ) {
+        args.add("--direct-events-only")
       }
       args.add(parameters.schemaType.get())
       exec.args = args

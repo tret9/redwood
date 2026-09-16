@@ -24,6 +24,7 @@ import app.cash.redwood.tooling.schema.ProtocolWidget.ProtocolEvent
 import app.cash.redwood.tooling.schema.ProtocolWidget.ProtocolProperty
 import app.cash.redwood.tooling.schema.Schema
 import app.cash.redwood.tooling.schema.Widget
+import com.squareup.kotlinpoet.ANY
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.BOOLEAN
 import com.squareup.kotlinpoet.BYTE
@@ -234,6 +235,7 @@ internal fun generateProtocolWidget(
   generatingSchema: ProtocolSchema,
   widgetSchema: ProtocolSchema,
   widget: ProtocolWidget,
+  directEventsOnly: Boolean = false,
 ): FileSpec {
   val type = generatingSchema.protocolWidgetType(widget, widgetSchema)
   val widgetName = widgetSchema.widgetType(widget)
@@ -244,6 +246,7 @@ internal fun generateProtocolWidget(
         .addModifiers(INTERNAL)
         .addSuperinterface(ProtocolGuest.ProtocolWidget)
         .addSuperinterface(widgetName.parameterizedBy(protocolViewType))
+        .addSuperinterface(ProtocolGuest.DirectEventDispatcher)
         .addAnnotation(Redwood.RedwoodCodegenApi)
         .primaryConstructor(
           FunSpec.constructorBuilder()
@@ -294,10 +297,11 @@ internal fun generateProtocolWidget(
                     .addModifiers(OVERRIDE)
                     .addParameter(trait.name, traitTypeName)
                     .apply {
-                      // Work around https://github.com/Kotlin/kotlinx.serialization/issues/2713.
-                      if (traitTypeName == U_INT) {
+                      if (directEventsOnly) {
+                        // Direct-only guests have no per-widget JSON serializers: every property
+                        // (regular, serializer-typed, Boolean, UInt) crosses via the bridge.
                         addStatement(
-                          "this.guestAdapter.appendPropertyChange(this.id, %T(%L), %T(%L), %N)",
+                          "this.guestAdapter.appendBridgedPropertyChange(this.id, %T(%L), %T(%L), %N)",
                           Protocol.WidgetTag,
                           widget.tag,
                           Protocol.PropertyTag,
@@ -305,18 +309,30 @@ internal fun generateProtocolWidget(
                           trait.name,
                         )
                       } else {
-                        val serializerId = serializerIds.computeIfAbsent(traitTypeName) {
-                          nextSerializerId++
+                        // Work around https://github.com/Kotlin/kotlinx.serialization/issues/2713.
+                        if (traitTypeName == U_INT) {
+                          addStatement(
+                            "this.guestAdapter.appendPropertyChange(this.id, %T(%L), %T(%L), %N)",
+                            Protocol.WidgetTag,
+                            widget.tag,
+                            Protocol.PropertyTag,
+                            trait.tag,
+                            trait.name,
+                          )
+                        } else {
+                          val serializerId = serializerIds.computeIfAbsent(traitTypeName) {
+                            nextSerializerId++
+                          }
+                          addStatement(
+                            "this.guestAdapter.appendPropertyChange(this.id, %T(%L), %T(%L), serializer_%L, %N)",
+                            Protocol.WidgetTag,
+                            widget.tag,
+                            Protocol.PropertyTag,
+                            trait.tag,
+                            serializerId,
+                            trait.name,
+                          )
                         }
-                        addStatement(
-                          "this.guestAdapter.appendPropertyChange(this.id, %T(%L), %T(%L), serializer_%L, %N)",
-                          Protocol.WidgetTag,
-                          widget.tag,
-                          Protocol.PropertyTag,
-                          trait.tag,
-                          serializerId,
-                          trait.name,
-                        )
                       }
                     }
                     .build(),
@@ -382,19 +398,64 @@ internal fun generateProtocolWidget(
             FunSpec.builder("sendEvent")
               .addModifiers(OVERRIDE)
               .addParameter("event", Protocol.Event)
-              .beginControlFlow("when (event.tag.value)")
+              .apply {
+                if (directEventsOnly) {
+                  // Direct-only guests never receive JSON events: the host routes host→guest
+                  // events through sendDirectEvent when its sink is present. A JSON event here
+                  // means an old host paired with a direct-only guest — loud, no fallback.
+                  addStatement(
+                    "throw %T(%S)",
+                    Stdlib.AssertionError,
+                    "JSON events are not supported in a direct-only guest build",
+                  )
+                } else {
+                  beginControlFlow("when (event.tag.value)")
+                  for (event in widget.traits.filterIsInstance<ProtocolEvent>()) {
+                    val arguments = mutableListOf<CodeBlock>()
+                    for ((index, parameter) in event.parameters.withIndex()) {
+                      val parameterType = parameter.type.asTypeName()
+                      val serializerId = serializerIds.computeIfAbsent(parameterType) {
+                        nextSerializerId++
+                      }
+                      arguments += CodeBlock.of(
+                        "guestAdapter.json.decodeFromJsonElement(serializer_%L, event.args[%L])",
+                        serializerId,
+                        index,
+                      )
+                    }
+                    addStatement(
+                      "%L -> %N?.invoke(%L)",
+                      event.tag,
+                      event.name,
+                      arguments.joinToCode(),
+                    )
+                  }
+                  addStatement("else -> mismatchHandler.onUnknownEvent(tag, event.tag)")
+                  endControlFlow()
+                }
+              }
+              .build(),
+          )
+
+          // Direct host→guest event dispatch: args arrive as already-converted JS values whose
+          // prototypes are the real guest classes, so a plain `as T` unboxes each one. (Enums and
+          // inline value classes would need their own unboxing rules; no current schema uses them
+          // as event parameters.)
+          addFunction(
+            FunSpec.builder("sendDirectEvent")
+              .addModifiers(OVERRIDE)
+              .addParameter("tag", Protocol.EventTag)
+              .addParameter("args", ClassName("kotlin", "Array").parameterizedBy(ANY.copy(nullable = true)))
+              .beginControlFlow("when (tag.value)")
               .apply {
                 for (event in widget.traits.filterIsInstance<ProtocolEvent>()) {
                   val arguments = mutableListOf<CodeBlock>()
                   for ((index, parameter) in event.parameters.withIndex()) {
                     val parameterType = parameter.type.asTypeName()
-                    val serializerId = serializerIds.computeIfAbsent(parameterType) {
-                      nextSerializerId++
-                    }
                     arguments += CodeBlock.of(
-                      "guestAdapter.json.decodeFromJsonElement(serializer_%L, event.args[%L])",
-                      serializerId,
+                      "args[%L] as %T",
                       index,
+                      parameterType,
                     )
                   }
                   addStatement(
@@ -405,7 +466,7 @@ internal fun generateProtocolWidget(
                   )
                 }
               }
-              .addStatement("else -> mismatchHandler.onUnknownEvent(tag, event.tag)")
+              .addStatement("else -> mismatchHandler.onUnknownEvent(this.tag, tag)")
               .endControlFlow()
               .build(),
           )

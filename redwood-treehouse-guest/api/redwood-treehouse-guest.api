@@ -7,6 +7,7 @@ public final class app/cash/redwood/treehouse/StandardAppLifecycle : app/cash/re
 }
 
 public final class app/cash/redwood/treehouse/TreehouseComposeKt {
-	public static final fun asZiplineTreehouseUi (Lapp/cash/redwood/treehouse/TreehouseUi;Lapp/cash/redwood/treehouse/StandardAppLifecycle;)Lapp/cash/redwood/treehouse/ZiplineTreehouseUi;
+	public static final fun asZiplineTreehouseUi (Lapp/cash/redwood/treehouse/TreehouseUi;Lapp/cash/redwood/treehouse/StandardAppLifecycle;Z)Lapp/cash/redwood/treehouse/ZiplineTreehouseUi;
+	public static synthetic fun asZiplineTreehouseUi$default (Lapp/cash/redwood/treehouse/TreehouseUi;Lapp/cash/redwood/treehouse/StandardAppLifecycle;ZILjava/lang/Object;)Lapp/cash/redwood/treehouse/ZiplineTreehouseUi;
 }
 

@@ -123,6 +123,18 @@ public class DefaultGuestProtocolAdapter(
     changes.add(PropertyChange(id, widgetTag, propertyTag, JsonPrimitive(value)))
   }
 
+  override fun appendBridgedPropertyChange(
+    id: Id,
+    widgetTag: WidgetTag,
+    propertyTag: PropertyTag,
+    value: Any?,
+  ) {
+    throw IllegalStateException(
+      "appendBridgedPropertyChange requires the direct (bridge) guest adapter — " +
+        "JSON property encoding is disabled in direct-only builds",
+    )
+  }
+
   override fun appendModifierChange(id: Id, value: Modifier) {
     val elements = mutableListOf<ModifierElement>()
 
