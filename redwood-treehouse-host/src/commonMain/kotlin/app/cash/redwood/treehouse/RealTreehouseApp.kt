@@ -82,11 +82,13 @@ internal class RealTreehouseApp<A : AppService> private constructor(
   override fun createContent(source: TreehouseContentSource<A>): Content {
     start()
 
+    val spec = this.spec ?: error("closed")
     return TreehouseAppContent(
       codeHost = codeHost,
       dispatchers = dispatchers,
       source = source,
       leakDetector = leakDetector,
+      directEventsEnabled = spec.directEventsEnabled,
     )
   }
 
