@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@file:OptIn(app.cash.redwood.RedwoodCodegenApi::class)
 @file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE") // for findFocusRequesterRecursive.
 
 package app.cash.redwood.treehouse
@@ -21,6 +22,7 @@ import app.cash.redwood.compose.findFocusRequesterRecursive
 import app.cash.redwood.leaks.LeakDetector
 import app.cash.redwood.protocol.Change
 import app.cash.redwood.protocol.EventSink
+import app.cash.redwood.protocol.host.DirectTransportUiEvent
 import app.cash.redwood.protocol.host.HostProtocolAdapter
 import app.cash.redwood.protocol.host.UiChange
 import app.cash.redwood.protocol.host.UiEvent
@@ -96,6 +98,7 @@ internal class TreehouseAppContent<A : AppService>(
   private val dispatchers: TreehouseDispatchers,
   private val source: TreehouseContentSource<A>,
   private val leakDetector: LeakDetector,
+  private val directEventsEnabled: Boolean = false,
 ) : Content,
   CodeHost.Listener<A>,
   CodeSession.Listener<A> {
@@ -312,6 +315,7 @@ internal class TreehouseAppContent<A : AppService>(
       onBackPressedDispatcher = onBackPressedDispatcher,
       firstUiConfiguration = firstUiConfiguration,
       leakDetector = leakDetector,
+      directEventsEnabled = directEventsEnabled,
     ).apply {
       start()
     }
@@ -340,6 +344,7 @@ private class ViewContentCodeBinding<A : AppService>(
   private val onBackPressedDispatcher: OnBackPressedDispatcher,
   firstUiConfiguration: StateFlow<UiConfiguration>,
   private val leakDetector: LeakDetector,
+  private val directEventsEnabled: Boolean = false,
 ) : ChangesSinkService,
   TreehouseView.SaveCallback,
   ZiplineTreehouseUi.Host {
@@ -374,7 +379,15 @@ private class ViewContentCodeBinding<A : AppService>(
   private var treehouseUiOrNull: ZiplineTreehouseUi? = null
 
   /** Note that this is necessary to break the retain cycle between host and guest. */
-  private val eventBridge = EventBridge(dispatchers.zipline, bindingScope)
+  private val eventBridge = EventBridge(
+    ziplineDispatcher = dispatchers.zipline,
+    bindingScope = bindingScope,
+    directEventsEnabled = directEventsEnabled,
+    // Resolved lazily on the zipline dispatcher (the binding resolves the session's zipline there).
+    engineProvider = {
+      (codeSession as? ZiplineCodeSession)?.zipline?.jsEngine
+    },
+  )
 
   /**
    * The [RdmaBridge] attached to this binding's zipline session, resolved on the zipline
@@ -668,9 +681,19 @@ private class EventBridge(
   // Both properties are only accessed on the UI dispatcher and null after cancel().
   var ziplineDispatcher: CoroutineDispatcher?,
   var bindingScope: CoroutineScope?,
+  private val directEventsEnabled: Boolean = false,
+  /** Resolves the session's [app.cash.zipline.JsEngine] on the zipline dispatcher. */
+  private val engineProvider: () -> app.cash.zipline.JsEngine?,
 ) : UiEventSink {
   // Only accessed on the Zipline dispatcher and null after cancel().
   var delegate: EventSink? = null
+
+  /**
+   * Whether the guest installed the direct-event sink. Resolved once on the zipline dispatcher
+   * (sink presence is static per session) and cached; null until the first direct-capable event.
+   * Only accessed on the Zipline dispatcher.
+   */
+  private var sinkPresent: Boolean? = null
 
   /** Send an event from the UI to Zipline. */
   override fun sendEvent(uiEvent: UiEvent) {
@@ -678,6 +701,22 @@ private class EventBridge(
     val dispatcher = this.ziplineDispatcher ?: return
     val bindingScope = this.bindingScope ?: return
     bindingScope.launch(dispatcher) {
+      if (directEventsEnabled && uiEvent is DirectTransportUiEvent) {
+        val jsEngine = engineProvider()
+        val hasSink = sinkPresent ?: (jsEngine?.hasGlobalFunction(DIRECT_EVENT_SINK_NAME) == true)
+        sinkPresent = hasSink
+        if (jsEngine != null && hasSink) {
+          // JSON-free delivery: args are converted host->JS by callGuestFunction (bridgeAnyToJs /
+          // anyToJs on the guest class prototypes) and dispatched to the widget's sendDirectEvent.
+          jsEngine.callGuestFunction(
+            DIRECT_EVENT_SINK_NAME,
+            listOf(uiEvent.id.value, uiEvent.tag.value) +
+              (uiEvent.args?.toList() ?: emptyList()),
+          )
+          return@launch
+        }
+      }
+
       // Perform initial serialization of event arguments into JSON model after the thread hop.
       val event = uiEvent.toProtocol()
 

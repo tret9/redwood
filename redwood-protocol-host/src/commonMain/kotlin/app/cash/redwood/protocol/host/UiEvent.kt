@@ -37,15 +37,31 @@ public fun interface UiEventSink {
   public fun sendEvent(uiEvent: UiEvent)
 }
 
+/**
+ * A [UiEvent] whose typed arguments are available as raw host objects and can therefore be
+ * transported to the guest without JSON encoding (via the direct event sink). Implemented by
+ * [GeneratedUiEvent], which always carries its [id], [tag], and raw [args] on hand.
+ *
+ * @suppress For generated code use only.
+ */
+@RedwoodCodegenApi
+public interface DirectTransportUiEvent : UiEvent {
+  public val id: Id
+  public val tag: EventTag
+  /** Raw typed args (null when the event has none). */
+  public val args: Array<Any?>?
+}
+
 /** @suppress For generated code use only. */
 @RedwoodCodegenApi
 public class GeneratedUiEvent(
-  private val id: Id,
-  private val tag: EventTag,
+  override val id: Id,
+  override val tag: EventTag,
   private val json: Json?,
-  private val args: Array<Any?>?,
+  override val args: Array<Any?>?,
   private val serializationStrategies: Array<out SerializationStrategy<Any?>>?,
-) : UiEvent {
+) : UiEvent,
+  DirectTransportUiEvent {
   override fun toProtocol(): Event {
     return Event(
       id = id,
