@@ -19,6 +19,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import kotlin.jvm.JvmInline
 import kotlinx.serialization.Serializable
+import app.cash.zipline.bridge.support.WithHost2JSBridge
 import app.cash.zipline.bridge.support.WithJS2HostBridge
 
 /**
@@ -27,6 +28,7 @@ import app.cash.zipline.bridge.support.WithJS2HostBridge
  */
 @[Immutable JvmInline Serializable]
 @WithJS2HostBridge
+@WithHost2JSBridge
 public value class Dp(
   public val value: Double,
 ) {
