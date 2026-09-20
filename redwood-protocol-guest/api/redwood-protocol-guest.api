@@ -4,6 +4,7 @@ public final class app/cash/redwood/protocol/guest/DefaultGuestProtocolAdapter :
 	public synthetic fun <init> (Lkotlinx/serialization/json/Json;Ljava/lang/String;Lapp/cash/redwood/protocol/guest/ProtocolWidgetSystemFactory;Lapp/cash/redwood/protocol/guest/ProtocolMismatchHandler;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun appendAdd-ARs5Qwk (IIILapp/cash/redwood/protocol/guest/ProtocolWidget;)V
 	public fun appendBridgeChange-z3jyS0k (ILjava/lang/Object;)V
+	public fun appendBridgedPropertyChange-ITsWdOQ (IIILjava/lang/Object;)V
 	public fun appendCreate-kyz2zXs (II)V
 	public fun appendModifierChange-z3jyS0k (ILapp/cash/redwood/Modifier;)V
 	public fun appendMove-HpxY78w (IIIII)V

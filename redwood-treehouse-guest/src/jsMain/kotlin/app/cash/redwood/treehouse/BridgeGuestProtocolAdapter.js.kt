@@ -147,6 +147,20 @@ internal class BridgeGuestProtocolAdapterImpl(
     rdmaObj.appendBridgeChange(id.value, change)
   }
 
+  override fun appendBridgedPropertyChange(
+    id: Id,
+    widgetTag: WidgetTag,
+    propertyTag: PropertyTag,
+    value: Any?,
+  ) {
+    // The value crosses JSON-free via the JS2Host bridge (appendBridgeChange), exactly like the
+    // serializer-taking appendPropertyChange overloads above.
+    val change = UiPropertyChange(id, propertyTag, value)
+    pinnedObjects.push(change)
+    val rdmaObj: dynamic = js("globalThis.app_cash_redwood_rdmaSendChanges")
+    rdmaObj.appendBridgeChange(id.value, change)
+  }
+
   override fun appendModifierChange(id: Id, value: Modifier) {
     val uiChange = UiModifierChange(id, reuse = false, value)
     pinnedObjects.push(uiChange)
@@ -241,4 +255,8 @@ internal class BridgeGuestProtocolAdapterImpl(
         }
       }
     }
+
+  init {
+    bindDirectEventSink(widgets = { widgets[it] }, mismatchHandler = mismatchHandler)
+  }
 }

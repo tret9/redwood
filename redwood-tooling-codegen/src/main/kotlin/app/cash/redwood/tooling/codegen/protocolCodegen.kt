@@ -26,13 +26,21 @@ public enum class ProtocolCodegenType {
   Host,
 }
 
-public fun ProtocolSchemaSet.generate(type: ProtocolCodegenType, destination: Path, bridgeJvmPackage: String? = null) {
-  for (fileSpec in generateFileSpecs(type)) {
+public fun ProtocolSchemaSet.generate(
+  type: ProtocolCodegenType,
+  destination: Path,
+  bridgeJvmPackage: String? = null,
+  directEventsOnly: Boolean = false,
+) {
+  for (fileSpec in generateFileSpecs(type, directEventsOnly)) {
     fileSpec.writeTo(destination)
   }
 }
 
-internal fun ProtocolSchemaSet.generateFileSpecs(type: ProtocolCodegenType): List<FileSpec> {
+internal fun ProtocolSchemaSet.generateFileSpecs(
+  type: ProtocolCodegenType,
+  directEventsOnly: Boolean = false,
+): List<FileSpec> {
   return buildList {
     when (type) {
       Guest -> {
@@ -41,7 +49,7 @@ internal fun ProtocolSchemaSet.generateFileSpecs(type: ProtocolCodegenType): Lis
           add(generateProtocolWidgetFactory(schema, dependency))
           generateProtocolModifierSerializers(schema, dependency)?.let { add(it) }
           for (widget in dependency.widgets) {
-            add(generateProtocolWidget(schema, dependency, widget))
+            add(generateProtocolWidget(schema, dependency, widget, directEventsOnly))
           }
         }
       }
