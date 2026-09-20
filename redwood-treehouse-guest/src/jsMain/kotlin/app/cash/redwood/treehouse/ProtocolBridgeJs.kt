@@ -45,15 +45,6 @@ internal actual fun GuestProtocolAdapter(
   widgetSystemFactory: ProtocolWidgetSystemFactory,
   mismatchHandler: ProtocolMismatchHandler,
 ): GuestProtocolAdapter {
-  val rdmaObj: dynamic = js("globalThis.app_cash_redwood_rdmaSendChanges")
-  if (rdmaObj != undefined && rdmaObj.appendBridgeChange != undefined) {
-    return BridgeGuestProtocolAdapter(
-      json = json,
-      hostVersion = hostVersion,
-      widgetSystemFactory = widgetSystemFactory,
-      mismatchHandler = mismatchHandler,
-    )
-  }
   return FastGuestProtocolAdapter(
     json = json,
     hostVersion = hostVersion,

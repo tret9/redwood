@@ -518,6 +518,13 @@ private class ViewContentCodeBinding<A : AppService>(
    *
    * Null for sessions not backed by Zipline (like test fakes); those deliver changes through
    * [sendChanges] only.
+   *
+   * The channel itself belongs to the application, not to this binding: redwood creates the
+   * per-session bridge and hands it its `callsink`, but whether an RDMA channel exists at all
+   * is the app's decision (it installs one only when RDMA is enabled). Redwood must not install
+   * a channel here, or a build without an RDMA bridge library would still expose
+   * `globalThis.app_cash_redwood_rdmaSendChanges` and the guest would pick a change transport
+   * whose JNI bridge table is empty.
    */
   private fun sessionRdmaBridge(): RdmaBridge? {
     val zipline = (codeSession as? ZiplineCodeSession)?.zipline ?: return null
