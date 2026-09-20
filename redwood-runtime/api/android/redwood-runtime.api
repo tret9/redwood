@@ -213,6 +213,7 @@ public final class app/cash/redwood/ui/Size {
 	public static final field $stable I
 	public static final field Companion Lapp/cash/redwood/ui/Size$Companion;
 	public synthetic fun <init> (DDLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun convertToJs (J)J
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getHeight-hdgK9uQ ()D
 	public final fun getWidth-hdgK9uQ ()D

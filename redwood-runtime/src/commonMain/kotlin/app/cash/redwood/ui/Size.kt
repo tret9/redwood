@@ -15,12 +15,14 @@
  */
 package app.cash.redwood.ui
 
+import app.cash.zipline.bridge.support.WithHost2JSBridge
 import dev.drewhamilton.poko.Poko
 import kotlinx.serialization.Serializable
 
 /** A two-dimensional size measured in density-independent pixels. */
 @Poko
 @Serializable
+@WithHost2JSBridge
 public class Size(
   public val width: Dp,
   public val height: Dp,
