@@ -509,11 +509,18 @@ private class ViewContentCodeBinding<A : AppService>(
   /**
    * The [RdmaBridge] attached to this binding's zipline session.
    *
-   * The session's QuickJS runtime routes its change stream into this same instance (the app
-   * wires [app.cash.zipline.QuickJs.rdmaChangeSink] from the instance it attached at
-   * session creation), so the per-session [callsink] set here reaches the changes emitted by
-   * the guest. Each zipline session gets exactly one bridge; closing and recreating a screen
-   * creates a fresh session with a fresh bridge, and concurrent sessions never cross-wire.
+   * The session's JS runtime routes its change stream into this same instance (the app wires
+   * [app.cash.zipline.JsEngine.rdmaChangeSink] from the instance it attached at session
+   * creation), so the per-session [callsink] set here reaches the changes emitted by the guest.
+   * Each zipline session gets exactly one bridge; closing and recreating a screen creates a
+   * fresh session with a fresh bridge, and concurrent sessions never cross-wire.
+   *
+   * The channel itself belongs to the application, not to this binding: redwood creates the
+   * per-session bridge and hands it its `callsink`, but whether an RDMA channel exists at all
+   * is the app's decision (it installs one only when RDMA is enabled). Redwood must not install
+   * a channel here, or a build without an RDMA bridge library would still expose
+   * `globalThis.app_cash_redwood_rdmaSendChanges` and the guest would pick a change transport
+   * whose JNI bridge table is empty.
    */
   private fun sessionRdmaBridge(): RdmaBridge {
     val zipline = (codeSession as? ZiplineCodeSession)?.zipline
@@ -526,9 +533,6 @@ private class ViewContentCodeBinding<A : AppService>(
       val rdmaBridge = sessionRdmaBridge()
       rdmaBridgeOrNull = rdmaBridge
       rdmaBridge.callsink = this@ViewContentCodeBinding
-      (codeSession as? ZiplineCodeSession)?.zipline?.jsEngine?.rdmaChangeSink =
-        rdmaBridge.asRdmaChangeSink()
-      (codeSession as? ZiplineCodeSession)?.zipline?.jsEngine?.initRdmaChangesChannel()
 
       val scopedAppService = serviceScope.apply(codeSession.appService)
       val treehouseUi = contentSource!!.get(scopedAppService)

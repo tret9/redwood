@@ -40,7 +40,7 @@ public fun TreehouseUi.asZiplineTreehouseUi(
   rdmaEnabled: Boolean = false,
 ): ZiplineTreehouseUi {
   val guestAdapter = if (rdmaEnabled) {
-    RdmaGuestProtocolAdapter(
+    BridgeGuestProtocolAdapter(
       hostVersion = appLifecycle.hostProtocolVersion,
       json = appLifecycle.json,
       widgetSystemFactory = appLifecycle.protocolWidgetSystemFactory,
