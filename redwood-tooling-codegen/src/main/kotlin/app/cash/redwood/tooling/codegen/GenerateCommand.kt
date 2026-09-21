@@ -21,6 +21,7 @@ import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.arguments.convert
 import com.github.ajalt.clikt.parameters.arguments.help
+import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.help
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.required
@@ -56,6 +57,10 @@ internal class GenerateCommand : CliktCommand(name = "generate") {
   private val bridgeJvmPackage by option("--bridge-jvm-package")
     .help("JVM package for bridge targetFqn in generated modifier Impls")
 
+  private val directEventsOnly by option("--direct-events-only")
+    .help("Generate protocol-guest code without JSON event decoding or per-widget serializers")
+    .flag()
+
   private val schemaType by argument("schema")
     .help("Fully-qualified class name for the @Schema-annotated interface")
     .convert { FqType.bestGuess(it) }
@@ -71,7 +76,7 @@ internal class GenerateCommand : CliktCommand(name = "generate") {
 
       is ProtocolCodegenType -> {
         val schemaSet = ProtocolSchemaSet.load(schemaType, classLoader)
-        schemaSet.generate(type, out)
+        schemaSet.generate(type, out, directEventsOnly = directEventsOnly)
       }
 
       else -> throw AssertionError()

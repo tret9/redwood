@@ -21,6 +21,7 @@ import app.cash.redwood.schema.Widget
 import app.cash.redwood.tooling.schema.parseTestSchema
 import assertk.assertThat
 import assertk.assertions.contains
+import assertk.assertions.doesNotContain
 import org.junit.Test
 
 class ProtocolGuestGenerationTest {
@@ -46,6 +47,56 @@ class ProtocolGuestGenerationTest {
       |  override fun id(id: String) {
       |    this.guestAdapter.appendPropertyChange(this.id,
       """.trimMargin(),
+    )
+  }
+
+  @Schema(
+    [
+      EventfulNode::class,
+    ],
+  )
+  interface EventfulSchema
+
+  @Widget(2)
+  data class EventfulNode(
+    @Property(1) val label: String,
+    @Property(2) val onChanged: ((text: String, index: Int) -> Unit)? = null,
+  )
+
+  @Test fun `dual mode emits sendEvent decode and sendDirectEvent dispatch`() {
+    val schema = parseTestSchema(EventfulSchema::class).schema
+    val fileSpec = generateProtocolWidget(schema, schema, schema.widgets.single()).toString()
+
+    // Direct-event seam on the generated widget.
+    assertThat(fileSpec).contains(": ProtocolWidget,")
+    assertThat(fileSpec).contains("DirectEventDispatcher")
+    assertThat(fileSpec).contains(
+      "override fun sendDirectEvent(tag: EventTag, args: Array<Any?>) {",
+    )
+    assertThat(fileSpec).contains("onChanged?.invoke(args[0] as String, args[1] as Int)")
+    assertThat(fileSpec).contains("else -> mismatchHandler.onUnknownEvent(this.tag, tag)")
+    // JSON path retained in dual mode.
+    assertThat(fileSpec).contains("override fun sendEvent(event: Event)")
+    assertThat(fileSpec).contains("decodeFromJsonElement(serializer_0, event.args[0])")
+    assertThat(fileSpec).contains("this.guestAdapter.appendPropertyChange(this.id,")
+  }
+
+  @Test fun `direct-only mode drops JSON decode and serializers`() {
+    val schema = parseTestSchema(EventfulSchema::class).schema
+    val fileSpec = generateProtocolWidget(
+      schema, schema, schema.widgets.single(), directEventsOnly = true,
+    ).toString()
+
+    // Direct dispatch + bridged property changes present.
+    assertThat(fileSpec).contains("override fun sendDirectEvent(")
+    assertThat(fileSpec).contains("onChanged?.invoke(args[0] as String, args[1] as Int)")
+    assertThat(fileSpec).contains("guestAdapter.appendBridgedPropertyChange(this.id,")
+    // JSON machinery gone.
+    assertThat(fileSpec).doesNotContain("decodeFromJsonElement")
+    assertThat(fileSpec).doesNotContain("serializer_0")
+    assertThat(fileSpec).doesNotContain("guestAdapter.json")
+    assertThat(fileSpec).contains(
+      "throw AssertionError(\"JSON events are not supported in a direct-only guest build\")",
     )
   }
 }

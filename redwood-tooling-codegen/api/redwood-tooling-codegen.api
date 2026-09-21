@@ -18,7 +18,8 @@ public final class app/cash/redwood/tooling/codegen/Main {
 }
 
 public final class app/cash/redwood/tooling/codegen/ProtocolCodegenKt {
-	public static final fun generate (Lapp/cash/redwood/tooling/schema/ProtocolSchemaSet;Lapp/cash/redwood/tooling/codegen/ProtocolCodegenType;Ljava/nio/file/Path;)V
+	public static final fun generate (Lapp/cash/redwood/tooling/schema/ProtocolSchemaSet;Lapp/cash/redwood/tooling/codegen/ProtocolCodegenType;Ljava/nio/file/Path;Ljava/lang/String;Z)V
+	public static synthetic fun generate$default (Lapp/cash/redwood/tooling/schema/ProtocolSchemaSet;Lapp/cash/redwood/tooling/codegen/ProtocolCodegenType;Ljava/nio/file/Path;Ljava/lang/String;ZILjava/lang/Object;)V
 }
 
 public final class app/cash/redwood/tooling/codegen/ProtocolCodegenType : java/lang/Enum {

@@ -155,5 +155,15 @@ public abstract class TreehouseApp<A : AppService> : AutoCloseable {
     )
 
     public abstract fun create(zipline: Zipline): A
+
+    /**
+     * When true, host→guest events whose args are typed host objects (see
+     * [app.cash.redwood.protocol.host.DirectTransportUiEvent]) are sent to the guest through the
+     * direct event sink (globalThis[app.cash.redwood.treehouse.DIRECT_EVENT_SINK_NAME]) with the
+     * args converted host→JS by the @WithHost2JSBridge machinery, bypassing JSON encoding. The
+     * guest must have installed the sink; otherwise the JSON path is used. Off by default.
+     */
+    public open val directEventsEnabled: Boolean
+      get() = false
   }
 }

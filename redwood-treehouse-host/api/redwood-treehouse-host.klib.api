@@ -122,6 +122,8 @@ abstract class <#A: app.cash.redwood.treehouse/AppService> app.cash.redwood.tree
             abstract fun <get-manifestUrl>(): kotlinx.coroutines.flow/Flow<kotlin/String> // app.cash.redwood.treehouse/TreehouseApp.Spec.manifestUrl.<get-manifestUrl>|<get-manifestUrl>(){}[0]
         abstract val name // app.cash.redwood.treehouse/TreehouseApp.Spec.name|{}name[0]
             abstract fun <get-name>(): kotlin/String // app.cash.redwood.treehouse/TreehouseApp.Spec.name.<get-name>|<get-name>(){}[0]
+        open val directEventsEnabled // app.cash.redwood.treehouse/TreehouseApp.Spec.directEventsEnabled|{}directEventsEnabled[0]
+            open fun <get-directEventsEnabled>(): kotlin/Boolean // app.cash.redwood.treehouse/TreehouseApp.Spec.directEventsEnabled.<get-directEventsEnabled>|<get-directEventsEnabled>(){}[0]
         open val freshnessChecker // app.cash.redwood.treehouse/TreehouseApp.Spec.freshnessChecker|{}freshnessChecker[0]
             open fun <get-freshnessChecker>(): app.cash.zipline.loader/FreshnessChecker // app.cash.redwood.treehouse/TreehouseApp.Spec.freshnessChecker.<get-freshnessChecker>|<get-freshnessChecker>(){}[0]
         open val loadCodeFromNetworkOnly // app.cash.redwood.treehouse/TreehouseApp.Spec.loadCodeFromNetworkOnly|{}loadCodeFromNetworkOnly[0]

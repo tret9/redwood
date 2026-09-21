@@ -124,5 +124,8 @@ final class app.cash.redwood.treehouse/StateSnapshot { // app.cash.redwood.treeh
     }
 }
 
+final const val app.cash.redwood.treehouse/DIRECT_EVENT_SINK_NAME // app.cash.redwood.treehouse/DIRECT_EVENT_SINK_NAME|{}DIRECT_EVENT_SINK_NAME[0]
+    final fun <get-DIRECT_EVENT_SINK_NAME>(): kotlin/String // app.cash.redwood.treehouse/DIRECT_EVENT_SINK_NAME.<get-DIRECT_EVENT_SINK_NAME>|<get-DIRECT_EVENT_SINK_NAME>(){}[0]
+
 final val app.cash.redwood.treehouse/SaveableStateSerializersModule // app.cash.redwood.treehouse/SaveableStateSerializersModule|{}SaveableStateSerializersModule[0]
     final fun <get-SaveableStateSerializersModule>(): kotlinx.serialization.modules/SerializersModule // app.cash.redwood.treehouse/SaveableStateSerializersModule.<get-SaveableStateSerializersModule>|<get-SaveableStateSerializersModule>(){}[0]
