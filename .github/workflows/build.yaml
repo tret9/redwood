@@ -1,30 +1,150 @@
 name: build
 
+# Pull requests: build, lint, tests and an optional (manually approved) -SNAPSHOT publication to
+# GitHub Packages.
+# Manual runs: the same as pull requests, optionally against another Zipline version (e.g. a
+# -SNAPSHOT published by the Zipline fork's CI) which then ends up in the published snapshot.
+# Pushes to tret9_trunk_hermes: bump library_version.txt, build, lint, tests, then publish to Maven
+# Central. Cancel the run while it builds to skip publishing a version.
 on:
   pull_request: {}
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      zipline-version:
+        description: 'Zipline version to build against, e.g. 1.28.0-composelive-hermes-0.9-abc1234-SNAPSHOT. Empty uses the one from gradle/libs.versions.toml.'
+        required: false
+        default: ''
+        type: string
   push:
     branches:
-      - 'trunk'
+      - 'tret9_trunk_hermes'
     tags-ignore:
       - '**'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  # Supersede stale PR and manual runs, but never interrupt a release in progress.
+  cancel-in-progress: ${{ github.event_name != 'push' }}
+
+permissions:
+  contents: read
 
 env:
   GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx6g -Dorg.gradle.daemon=false -Dorg.gradle.vfs.watch=false -Dkotlin.incremental=false"
   ANDROID_EMULATOR_WAIT_TIME_BEFORE_KILL: 60
 
 jobs:
+  version:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      sha: ${{ steps.version.outputs.sha }}
+      version-suffix: ${{ steps.version.outputs.version-suffix }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          # Pushes use the branch tip rather than github.sha so the bump lands on top of everything
+          # merged so far. A PAT/App token is only needed if branch protection blocks GITHUB_TOKEN.
+          ref: ${{ github.event_name == 'push' && github.ref_name || '' }}
+          token: ${{ github.event_name == 'push' && secrets.RELEASE_BOT_TOKEN || github.token }}
+
+      - name: Bump version
+        if: ${{ github.event_name == 'push' }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          for attempt in 1 2 3; do
+            git fetch origin "$GITHUB_REF_NAME"
+            git reset --hard "origin/$GITHUB_REF_NAME"
+            version=$(.github/scripts/bump-version.sh)
+            # [skip ci] keeps a PAT-authored push from starting another release.
+            git commit -am "Bump library version to $version" -m '[skip ci]'
+            if git push origin "HEAD:$GITHUB_REF_NAME"; then
+              exit 0
+            fi
+          done
+          echo "Could not push the version bump" >&2
+          exit 1
+
+      # Releases use the bumped version as-is; everything else is a snapshot of the current one.
+      - name: Resolve version
+        id: version
+        env:
+          # For PRs github.sha is a merge commit that exists only in CI; name snapshots after the
+          # PR's head commit instead.
+          SNAPSHOT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          if [ "$GITHUB_EVENT_NAME" != push ]; then
+            echo "version-suffix=-${SNAPSHOT_SHA:0:7}-SNAPSHOT" >> "$GITHUB_OUTPUT"
+          fi
+
+  # Builds every publication into a local Maven repository. The publish jobs upload that repository
+  # as-is, so what gets published is exactly what was built here.
+  build:
+    needs:
+      - version
+    runs-on: macos-latest
+    outputs:
+      version: ${{ steps.published.outputs.version }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.version.outputs.sha }}
+
+      - uses: ./.github/actions/setup-build
+        with:
+          zipline-version: ${{ inputs.zipline-version }}
+          zipline-packages-token: ${{ secrets.ZIPLINE_PACKAGES_TOKEN }}
+
+      # Signing happens in publish-to-maven-central.sh, so that only releases need the key.
+      - run: >
+          ./gradlew
+          -PredwoodNoApps
+          -PversionSuffix=${{ needs.version.outputs.version-suffix }}
+          -DRELEASE_SIGNING_ENABLED=false
+          publishAllPublicationsToLocalMavenRepository
+
+      # The full version is assembled by RedwoodBuildPlugin; read it back from the built repository.
+      - name: Read published version
+        id: published
+        env:
+          ZIPLINE_VERSION: ${{ inputs.zipline-version }}
+        run: |
+          version=$(basename "$(dirname "$(ls build/localMaven/io/github/tret9/redwood-runtime/*/*.pom | head -n 1)")")
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "Built \`$version\`" >> "$GITHUB_STEP_SUMMARY"
+          if [ -n "$ZIPLINE_VERSION" ]; then
+            echo "against Zipline \`$ZIPLINE_VERSION\`" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: maven-repository
+          path: build/localMaven
+          if-no-files-found: error
+          retention-days: 7
+
+  # Lint, API and build checks.
   check-no-tests:
+    needs:
+      - version
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-java@v5
+      - uses: actions/checkout@v6
         with:
-          distribution: 'zulu'
-          java-version-file: .github/workflows/.java-version
-      - uses: gradle/actions/setup-gradle@v5
+          ref: ${{ needs.version.outputs.sha }}
+          # Spotless compares against its baseline commit, so it needs the history.
+          fetch-depth: 0
 
+      # Runs 'git checkout .', so it must come before setup-build edits the version catalog.
       - run: ./scripts/enforce_git_lfs.sh
+
+      - uses: ./.github/actions/setup-build
+        with:
+          zipline-version: ${{ inputs.zipline-version }}
+          zipline-packages-token: ${{ secrets.ZIPLINE_PACKAGES_TOKEN }}
 
       # Disabling allTests should be enough, but https://youtrack.jetbrains.com/issue/KT-74509
       - run: >
@@ -40,16 +160,20 @@ jobs:
           -x jvmTest
 
   js-tests:
+    needs:
+      - version
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
+          ref: ${{ needs.version.outputs.sha }}
           lfs: true
-      - uses: actions/setup-java@v5
+
+      - uses: ./.github/actions/setup-build
         with:
-          distribution: 'zulu'
-          java-version-file: .github/workflows/.java-version
-      - uses: gradle/actions/setup-gradle@v5
+          zipline-version: ${{ inputs.zipline-version }}
+          zipline-packages-token: ${{ secrets.ZIPLINE_PACKAGES_TOKEN }}
+
       - run: >
           ./gradlew
           -PredwoodNoApps
@@ -57,14 +181,19 @@ jobs:
           jsTest
 
   jvm-tests:
+    needs:
+      - version
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-java@v5
+      - uses: actions/checkout@v6
         with:
-          distribution: 'zulu'
-          java-version-file: .github/workflows/.java-version
-      - uses: gradle/actions/setup-gradle@v5
+          ref: ${{ needs.version.outputs.sha }}
+
+      - uses: ./.github/actions/setup-build
+        with:
+          zipline-version: ${{ inputs.zipline-version }}
+          zipline-packages-token: ${{ secrets.ZIPLINE_PACKAGES_TOKEN }}
+
       - run: >
           ./gradlew
           -PredwoodNoApps
@@ -74,14 +203,19 @@ jobs:
           -x dokkaGeneratePublicationHtml
 
   native-tests:
+    needs:
+      - version
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-java@v5
+      - uses: actions/checkout@v6
         with:
-          distribution: 'zulu'
-          java-version-file: .github/workflows/.java-version
-      - uses: gradle/actions/setup-gradle@v5
+          ref: ${{ needs.version.outputs.sha }}
+
+      - uses: ./.github/actions/setup-build
+        with:
+          zipline-version: ${{ inputs.zipline-version }}
+          zipline-packages-token: ${{ secrets.ZIPLINE_PACKAGES_TOKEN }}
+
       - run: >
           ./gradlew
           -PredwoodNoApps
@@ -89,6 +223,8 @@ jobs:
           iosSimulatorArm64Test
 
   emulator-tests:
+    needs:
+      - version
     runs-on: ubuntu-latest
     steps:
       - name: Enable KVM group perms
@@ -97,12 +233,14 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
 
-      - uses: actions/checkout@v5
-      - uses: actions/setup-java@v5
+      - uses: actions/checkout@v6
         with:
-          distribution: 'zulu'
-          java-version-file: .github/workflows/.java-version
-      - uses: gradle/actions/setup-gradle@v5
+          ref: ${{ needs.version.outputs.sha }}
+
+      - uses: ./.github/actions/setup-build
+        with:
+          zipline-version: ${{ inputs.zipline-version }}
+          zipline-packages-token: ${{ secrets.ZIPLINE_PACKAGES_TOKEN }}
 
       - uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -110,36 +248,20 @@ jobs:
           emulator-boot-timeout: 20000
           script: ./gradlew connectedCheck -PredwoodNoApps
 
-  dokka:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-java@v5
-        with:
-          distribution: 'zulu'
-          java-version-file: .github/workflows/.java-version
-      - uses: gradle/actions/setup-gradle@v5
-
-      - run: ./gradlew dokkaGenerate
-
-      # If we're on the integration branch, save the site to deploy from the publish job.
-      - uses: actions/upload-artifact@v5
-        with:
-          name: site
-          path: build/dokka/html/
-          if-no-files-found: error
-
   screenshot-tests:
+    needs:
+      - version
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
+          ref: ${{ needs.version.outputs.sha }}
           lfs: true
-      - uses: actions/setup-java@v5
+
+      - uses: ./.github/actions/setup-build
         with:
-          distribution: 'zulu'
-          java-version-file: .github/workflows/.java-version
-      - uses: gradle/actions/setup-gradle@v5
+          zipline-version: ${{ inputs.zipline-version }}
+          zipline-packages-token: ${{ secrets.ZIPLINE_PACKAGES_TOKEN }}
 
       - run: ./gradlew verifyPaparazzi
 
@@ -155,7 +277,7 @@ jobs:
 
       - run: ./gradlew redwood-layout-dom:jsBrowserTest
 
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v7
         if: ${{ always() }}
         with:
           name: screenshot-test-results
@@ -165,27 +287,39 @@ jobs:
           retention-days: 1
 
   treehouse-host-check:
+    needs:
+      - version
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-java@v5
+      - uses: actions/checkout@v6
         with:
-          distribution: 'zulu'
-          java-version-file: .github/workflows/.java-version
-      - uses: gradle/actions/setup-gradle@v5
+          ref: ${{ needs.version.outputs.sha }}
+          # Spotless compares against its baseline commit, so it needs the history.
+          fetch-depth: 0
+
+      - uses: ./.github/actions/setup-build
+        with:
+          zipline-version: ${{ inputs.zipline-version }}
+          zipline-packages-token: ${{ secrets.ZIPLINE_PACKAGES_TOKEN }}
 
       # Run the tests that transitively depend on :test-app if it's available.
       - run: ./gradlew :redwood-treehouse-host:check
 
   sample-counter:
+    needs:
+      - version
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-java@v5
+      - uses: actions/checkout@v6
         with:
-          distribution: 'zulu'
-          java-version-file: .github/workflows/.java-version
-      - uses: gradle/actions/setup-gradle@v5
+          ref: ${{ needs.version.outputs.sha }}
+          # Spotless compares against its baseline commit, so it needs the history.
+          fetch-depth: 0
+
+      - uses: ./.github/actions/setup-build
+        with:
+          zipline-version: ${{ inputs.zipline-version }}
+          zipline-packages-token: ${{ secrets.ZIPLINE_PACKAGES_TOKEN }}
 
       - run: ./gradlew -p samples/counter build
 
@@ -197,6 +331,8 @@ jobs:
         run: xcodebuild -project samples/counter/ios-uikit/CounterApp.xcodeproj -scheme CounterApp -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.4'
 
   sample-counter-emulator:
+    needs:
+      - version
     runs-on: ubuntu-latest
     steps:
       - name: Enable KVM group perms
@@ -205,12 +341,14 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
 
-      - uses: actions/checkout@v5
-      - uses: actions/setup-java@v5
+      - uses: actions/checkout@v6
         with:
-          distribution: 'zulu'
-          java-version-file: .github/workflows/.java-version
-      - uses: gradle/actions/setup-gradle@v5
+          ref: ${{ needs.version.outputs.sha }}
+
+      - uses: ./.github/actions/setup-build
+        with:
+          zipline-version: ${{ inputs.zipline-version }}
+          zipline-packages-token: ${{ secrets.ZIPLINE_PACKAGES_TOKEN }}
 
       - uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -219,14 +357,20 @@ jobs:
           script: ./gradlew -p samples/counter connectedCheck
 
   sample-emoji:
+    needs:
+      - version
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-java@v5
+      - uses: actions/checkout@v6
         with:
-          distribution: 'zulu'
-          java-version-file: .github/workflows/.java-version
-      - uses: gradle/actions/setup-gradle@v5
+          ref: ${{ needs.version.outputs.sha }}
+          # Spotless compares against its baseline commit, so it needs the history.
+          fetch-depth: 0
+
+      - uses: ./.github/actions/setup-build
+        with:
+          zipline-version: ${{ inputs.zipline-version }}
+          zipline-packages-token: ${{ secrets.ZIPLINE_PACKAGES_TOKEN }}
 
       - run: ./gradlew -p samples/emoji-search build
 
@@ -237,7 +381,10 @@ jobs:
       - name: Build Emoji Search iOS (UIKit)
         run: xcodebuild -project samples/emoji-search/ios-uikit/EmojiSearchApp.xcodeproj -scheme EmojiSearchApp -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.4'
 
+  # Blocked by https://github.com/cashapp/redwood/issues/2698
   #sample-emoji-emulator:
+  #  needs:
+  #    - version
   #  runs-on: ubuntu-latest
   #  steps:
   #    - name: Enable KVM group perms
@@ -246,12 +393,14 @@ jobs:
   #        sudo udevadm control --reload-rules
   #        sudo udevadm trigger --name-match=kvm
   #
-  #    - uses: actions/checkout@v5
-  #    - uses: actions/setup-java@v4
+  #    - uses: actions/checkout@v6
   #      with:
-  #        distribution: 'zulu'
-  #        java-version-file: .github/workflows/.java-version
-  #    - uses: gradle/actions/setup-gradle@v4
+  #        ref: ${{ needs.version.outputs.sha }}
+  #
+  #    - uses: ./.github/actions/setup-build
+  #      with:
+  #        zipline-version: ${{ inputs.zipline-version }}
+  #        zipline-packages-token: ${{ secrets.ZIPLINE_PACKAGES_TOKEN }}
   #
   #    - uses: reactivecircus/android-emulator-runner@v2
   #      with:
@@ -260,14 +409,20 @@ jobs:
   #        script: ./gradlew -p samples/emoji-search connectedCheck
 
   test-app:
+    needs:
+      - version
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-java@v5
+      - uses: actions/checkout@v6
         with:
-          distribution: 'zulu'
-          java-version-file: .github/workflows/.java-version
-      - uses: gradle/actions/setup-gradle@v5
+          ref: ${{ needs.version.outputs.sha }}
+          # Spotless compares against its baseline commit, so it needs the history.
+          fetch-depth: 0
+
+      - uses: ./.github/actions/setup-build
+        with:
+          zipline-version: ${{ inputs.zipline-version }}
+          zipline-packages-token: ${{ secrets.ZIPLINE_PACKAGES_TOKEN }}
 
       - run: ./gradlew -p test-app build
 
@@ -278,84 +433,103 @@ jobs:
       - name: Build TestApp iOS (UIKit)
         run: xcodebuild -project test-app/ios-uikit/TestApp.xcodeproj -scheme TestApp -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.4'
 
+  # The single check to mark as required in branch protection.
   final-status:
     if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     needs:
+      - version
+      - build
       - check-no-tests
       - js-tests
       - jvm-tests
       - native-tests
-      - dokka
       - emulator-tests
       - screenshot-tests
+      - treehouse-host-check
       - sample-counter
       - sample-counter-emulator
       - sample-emoji
-      # Blocked by https://github.com/cashapp/redwood/issues/2698
-      #- sample-emoji-emulator
       - test-app
     steps:
       - name: Check
         run: |
           results=$(tr -d '\n' <<< '${{ toJSON(needs.*.result) }}')
-          if ! grep -q -v -E '(failure|cancelled)' <<< "$results"; then
+          # A skipped job means something it depends on failed.
+          if grep -q -E '(failure|cancelled|skipped)' <<< "$results"; then
             echo "One or more required jobs failed"
             exit 1
           fi
 
-  publish:
-    runs-on: macos-latest
-    if: ${{ github.ref == 'refs/heads/trunk' && github.repository == 'cashapp/redwood' }}
+  # Manual: runs only after approval in the 'github-packages-snapshot' environment (configure it
+  # with required reviewers). Doesn't wait for lint or tests. To publish a snapshot built against a
+  # Zipline -SNAPSHOT, start the workflow manually on the PR branch with the 'zipline-version' input.
+  publish-snapshot:
+    if: ${{ github.event_name != 'push' }}
     needs:
-      - final-status
+      - version
+      - build
+    runs-on: ubuntu-latest
+    environment: github-packages-snapshot
+    permissions:
+      contents: read
+      packages: write
     steps:
-      - uses: actions/checkout@v5
-
-      - uses: actions/download-artifact@v6
+      - uses: actions/checkout@v6
         with:
-          name: site
-          path: site
+          sparse-checkout: .github/scripts
 
-      - uses: actions/setup-java@v5
+      - uses: actions/download-artifact@v8
         with:
-          distribution: 'zulu'
-          java-version-file: .github/workflows/.java-version
-      - uses: gradle/actions/setup-gradle@v5
+          name: maven-repository
+          path: maven-repository
 
-      - run: ./gradlew publishToMavenCentral
+      - run: .github/scripts/publish-to-github-packages.sh maven-repository
         env:
-          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.SONATYPE_CENTRAL_USERNAME }}
-          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.SONATYPE_CENTRAL_PASSWORD }}
-          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.GPG_SECRET_KEY }}
-          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.GPG_SECRET_PASSPHRASE }}
+          GITHUB_TOKEN: ${{ github.token }}
 
-      - name: Deploy docs to website
-        uses: JamesIves/github-pages-deploy-action@releases/v3
+      - name: Summary
+        env:
+          ZIPLINE_VERSION: ${{ inputs.zipline-version }}
+        run: |
+          {
+            echo "Published \`${{ needs.build.outputs.version }}\` to GitHub Packages:"
+            echo '```kotlin'
+            echo 'maven("https://maven.pkg.github.com/${{ github.repository }}") {'
+            echo '  credentials { username = "<github user>"; password = "<token with read:packages>" }'
+            echo '}'
+            echo '```'
+            if [ -n "$ZIPLINE_VERSION" ]; then
+              echo "It depends on Zipline \`$ZIPLINE_VERSION\`, so also add the Zipline repository:"
+              echo '```kotlin'
+              echo 'maven("https://maven.pkg.github.com/tret9/zipline") {'
+              echo '  credentials { username = "<github user>"; password = "<token with read:packages>" }'
+              echo '}'
+              echo '```'
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  publish:
+    if: ${{ github.event_name == 'push' && github.repository == 'tret9/redwood' }}
+    needs:
+      - version
+      - build
+      - final-status
+    runs-on: ubuntu-latest
+    environment: maven-central
+    steps:
+      - uses: actions/checkout@v6
         with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BRANCH: site
-          FOLDER: site
-          TARGET_FOLDER: latest/docs/
-          CLEAN: true
+          sparse-checkout: .github/scripts
 
-      - name: Build sample web apps
-        run: ./gradlew -p samples jsBrowserDistribution
-
-      - name: Deploy counter sample to website
-        uses: JamesIves/github-pages-deploy-action@releases/v3
+      - uses: actions/download-artifact@v8
         with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BRANCH: site
-          FOLDER: samples/counter/browser/build/dist/js/productionExecutable
-          TARGET_FOLDER: latest/counter/
-          CLEAN: true
+          name: maven-repository
+          path: maven-repository
 
-      - name: Deploy counter sample to website
-        uses: JamesIves/github-pages-deploy-action@releases/v3
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BRANCH: site
-          FOLDER: samples/emoji-search/browser/build/dist/js/productionExecutable
-          TARGET_FOLDER: latest/emoji-search/
-          CLEAN: true
+      - run: .github/scripts/publish-to-maven-central.sh maven-repository "redwood ${{ needs.build.outputs.version }}"
+        env:
+          SONATYPE_CENTRAL_USERNAME: ${{ secrets.SONATYPE_CENTRAL_USERNAME }}
+          SONATYPE_CENTRAL_PASSWORD: ${{ secrets.SONATYPE_CENTRAL_PASSWORD }}
+          GPG_SECRET_KEY: ${{ secrets.GPG_SECRET_KEY }}
+          GPG_SECRET_PASSPHRASE: ${{ secrets.GPG_SECRET_PASSPHRASE }}
