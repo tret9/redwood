@@ -340,7 +340,7 @@ jobs:
           xcode-version: '16.4'
 
       - name: Build Counter iOS (UIKit)
-        run: xcodebuild -project samples/counter/ios-uikit/CounterApp.xcodeproj -scheme CounterApp -destination 'generic/platform=iOS Simulator'
+        run: xcodebuild -project samples/counter/ios-uikit/CounterApp.xcodeproj -scheme CounterApp -destination 'generic/platform=iOS Simulator' ARCHS=arm64
 
   sample-counter-emulator:
     needs:
@@ -391,7 +391,7 @@ jobs:
           xcode-version: '16.4'
 
       - name: Build Emoji Search iOS (UIKit)
-        run: xcodebuild -project samples/emoji-search/ios-uikit/EmojiSearchApp.xcodeproj -scheme EmojiSearchApp -destination 'generic/platform=iOS Simulator'
+        run: xcodebuild -project samples/emoji-search/ios-uikit/EmojiSearchApp.xcodeproj -scheme EmojiSearchApp -destination 'generic/platform=iOS Simulator' ARCHS=arm64
 
   # Blocked by https://github.com/cashapp/redwood/issues/2698
   #sample-emoji-emulator:
@@ -443,7 +443,7 @@ jobs:
           xcode-version: '16.4'
 
       - name: Build TestApp iOS (UIKit)
-        run: xcodebuild -project test-app/ios-uikit/TestApp.xcodeproj -scheme TestApp -destination 'generic/platform=iOS Simulator'
+        run: xcodebuild -project test-app/ios-uikit/TestApp.xcodeproj -scheme TestApp -destination 'generic/platform=iOS Simulator' ARCHS=arm64
 
   # The single check to mark as required in branch protection.
   final-status:
