@@ -253,10 +253,13 @@ jobs:
           emulator-boot-timeout: 20000
           script: ./gradlew connectedCheck -PredwoodNoApps
 
+  # Jobs using Xcode are pinned to macos-15: macos-latest (macos-26) only ships Xcode 26, which
+  # drops the iOS 18.4 simulator the iOS snapshots were recorded on and the samples' deployment
+  # targets.
   screenshot-tests:
     needs:
       - version
-    runs-on: macos-latest
+    runs-on: macos-15
     steps:
       - uses: actions/checkout@v6
         with:
@@ -315,7 +318,7 @@ jobs:
   sample-counter:
     needs:
       - version
-    runs-on: macos-latest
+    runs-on: macos-15
     steps:
       - uses: actions/checkout@v6
         with:
@@ -366,7 +369,7 @@ jobs:
   sample-emoji:
     needs:
       - version
-    runs-on: macos-latest
+    runs-on: macos-15
     steps:
       - uses: actions/checkout@v6
         with:
@@ -418,7 +421,7 @@ jobs:
   test-app:
     needs:
       - version
-    runs-on: macos-latest
+    runs-on: macos-15
     steps:
       - uses: actions/checkout@v6
         with:
