@@ -1,11 +1,12 @@
 // Klib ABI Dump
 // Targets: [iosArm64, iosSimulatorArm64, js]
+// Alias: ios => [iosArm64, iosSimulatorArm64]
 // Rendering settings:
 // - Signature version: 2
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <app.cash.redwood:redwood-protocol-host>
+// Library unique name: <io.github.tret9:redwood-protocol-host>
 abstract fun interface app.cash.redwood.protocol.host/UiChangesSink { // app.cash.redwood.protocol.host/UiChangesSink|null[0]
     abstract fun sendChanges(kotlin.collections/List<app.cash.redwood.protocol.host/UiChange>) // app.cash.redwood.protocol.host/UiChangesSink.sendChanges|sendChanges(kotlin.collections.List<app.cash.redwood.protocol.host.UiChange>){}[0]
 }
@@ -59,3 +60,15 @@ final class <#A: kotlin/Any> app.cash.redwood.protocol.host/HostProtocolAdapter 
 
 final val app.cash.redwood.protocol.host/hostRedwoodVersion // app.cash.redwood.protocol.host/hostRedwoodVersion|{}hostRedwoodVersion[0]
     final fun <get-hostRedwoodVersion>(): app.cash.redwood.protocol/RedwoodVersion // app.cash.redwood.protocol.host/hostRedwoodVersion.<get-hostRedwoodVersion>|<get-hostRedwoodVersion>(){}[0]
+
+// Targets: [ios]
+final fun generated_bridges/app_cash_redwood_protocol_host_UiChildrenChange_toKotlin(kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>?, kotlin/Int): kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>? // generated_bridges/app_cash_redwood_protocol_host_UiChildrenChange_toKotlin|app_cash_redwood_protocol_host_UiChildrenChange_toKotlin(kotlinx.cinterop.CPointer<out|kotlinx.cinterop.CPointed>?;kotlin.Int){}[0]
+
+// Targets: [ios]
+final fun generated_bridges/app_cash_redwood_protocol_host_UiCreate_toKotlin(kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>?, kotlin/Int): kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>? // generated_bridges/app_cash_redwood_protocol_host_UiCreate_toKotlin|app_cash_redwood_protocol_host_UiCreate_toKotlin(kotlinx.cinterop.CPointer<out|kotlinx.cinterop.CPointed>?;kotlin.Int){}[0]
+
+// Targets: [ios]
+final fun generated_bridges/app_cash_redwood_protocol_host_UiModifierChange_toKotlin(kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>?, kotlin/Int): kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>? // generated_bridges/app_cash_redwood_protocol_host_UiModifierChange_toKotlin|app_cash_redwood_protocol_host_UiModifierChange_toKotlin(kotlinx.cinterop.CPointer<out|kotlinx.cinterop.CPointed>?;kotlin.Int){}[0]
+
+// Targets: [ios]
+final fun generated_bridges/app_cash_redwood_protocol_host_UiPropertyChange_toKotlin(kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>?, kotlin/Int): kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>? // generated_bridges/app_cash_redwood_protocol_host_UiPropertyChange_toKotlin|app_cash_redwood_protocol_host_UiPropertyChange_toKotlin(kotlinx.cinterop.CPointer<out|kotlinx.cinterop.CPointed>?;kotlin.Int){}[0]

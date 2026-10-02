@@ -6,7 +6,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <app.cash.redwood:redwood-compose>
+// Library unique name: <io.github.tret9:redwood-compose>
 abstract interface app.cash.redwood.compose/RedwoodComposition { // app.cash.redwood.compose/RedwoodComposition|null[0]
     abstract fun cancel() // app.cash.redwood.compose/RedwoodComposition.cancel|cancel(){}[0]
     abstract fun setContent(kotlin/Function2<androidx.compose.runtime/Composer, kotlin/Int, kotlin/Unit>) // app.cash.redwood.compose/RedwoodComposition.setContent|setContent(kotlin.Function2<androidx.compose.runtime.Composer,kotlin.Int,kotlin.Unit>){}[0]

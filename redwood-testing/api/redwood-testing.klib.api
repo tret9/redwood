@@ -5,7 +5,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <app.cash.redwood:redwood-testing>
+// Library unique name: <io.github.tret9:redwood-testing>
 abstract interface <#A: kotlin/Any?> app.cash.redwood.testing/TestRedwoodComposition : app.cash.redwood.compose/RedwoodComposition { // app.cash.redwood.testing/TestRedwoodComposition|null[0]
     abstract val focusDirector // app.cash.redwood.testing/TestRedwoodComposition.focusDirector|{}focusDirector[0]
         abstract fun <get-focusDirector>(): app.cash.redwood.testing/TestFocusDirector // app.cash.redwood.testing/TestRedwoodComposition.focusDirector.<get-focusDirector>|<get-focusDirector>(){}[0]

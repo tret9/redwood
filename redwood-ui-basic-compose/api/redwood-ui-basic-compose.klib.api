@@ -5,7 +5,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <app.cash.redwood:redwood-ui-basic-compose>
+// Library unique name: <io.github.tret9:redwood-ui-basic-compose>
 final fun (app.cash.redwood/Modifier).app.cash.redwood.ui.basic.compose/reuse(): app.cash.redwood/Modifier // app.cash.redwood.ui.basic.compose/reuse|reuse@app.cash.redwood.Modifier(){}[0]
 final fun app.cash.redwood.ui.basic.compose/Button(kotlin/String?, kotlin/Boolean, kotlin/Function0<kotlin/Unit>?, app.cash.redwood/Modifier?, androidx.compose.runtime/Composer?, kotlin/Int, kotlin/Int) // app.cash.redwood.ui.basic.compose/Button|Button(kotlin.String?;kotlin.Boolean;kotlin.Function0<kotlin.Unit>?;app.cash.redwood.Modifier?;androidx.compose.runtime.Composer?;kotlin.Int;kotlin.Int){}[0]
 final fun app.cash.redwood.ui.basic.compose/Image(kotlin/String, kotlin/Function0<kotlin/Unit>?, app.cash.redwood/Modifier?, androidx.compose.runtime/Composer?, kotlin/Int, kotlin/Int) // app.cash.redwood.ui.basic.compose/Image|Image(kotlin.String;kotlin.Function0<kotlin.Unit>?;app.cash.redwood.Modifier?;androidx.compose.runtime.Composer?;kotlin.Int;kotlin.Int){}[0]

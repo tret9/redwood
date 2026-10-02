@@ -5,7 +5,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <app.cash.redwood:redwood-ui-basic-testing>
+// Library unique name: <io.github.tret9:redwood-ui-basic-testing>
 final class app.cash.redwood.ui.basic.testing/ButtonValue : app.cash.redwood.testing/WidgetValue { // app.cash.redwood.ui.basic.testing/ButtonValue|null[0]
     constructor <init>(app.cash.redwood/Modifier = ..., kotlin/String?, kotlin/Boolean = ..., kotlin/Function0<kotlin/Unit>? = ...) // app.cash.redwood.ui.basic.testing/ButtonValue.<init>|<init>(app.cash.redwood.Modifier;kotlin.String?;kotlin.Boolean;kotlin.Function0<kotlin.Unit>?){}[0]
 

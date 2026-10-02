@@ -5,7 +5,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <app.cash.redwood:redwood-treehouse-host>
+// Library unique name: <io.github.tret9:redwood-treehouse-host>
 abstract fun interface <#A: app.cash.redwood.treehouse/AppService> app.cash.redwood.treehouse/TreehouseContentSource { // app.cash.redwood.treehouse/TreehouseContentSource|null[0]
     abstract fun get(#A): app.cash.redwood.treehouse/ZiplineTreehouseUi // app.cash.redwood.treehouse/TreehouseContentSource.get|get(1:0){}[0]
 }
@@ -145,6 +145,33 @@ final class app.cash.redwood.treehouse/MemoryStateStore : app.cash.redwood.treeh
 
     final suspend fun get(kotlin/String): app.cash.redwood.treehouse/StateSnapshot? // app.cash.redwood.treehouse/MemoryStateStore.get|get(kotlin.String){}[0]
     final suspend fun put(kotlin/String, app.cash.redwood.treehouse/StateSnapshot) // app.cash.redwood.treehouse/MemoryStateStore.put|put(kotlin.String;app.cash.redwood.treehouse.StateSnapshot){}[0]
+}
+
+final class app.cash.redwood.treehouse/RdmaBridge : app.cash.redwood.protocol/ChangesSink { // app.cash.redwood.treehouse/RdmaBridge|null[0]
+    constructor <init>() // app.cash.redwood.treehouse/RdmaBridge.<init>|<init>(){}[0]
+
+    final fun asRdmaChangeSink(): app.cash.zipline/RdmaChangeSink // app.cash.redwood.treehouse/RdmaBridge.asRdmaChangeSink|asRdmaChangeSink(){}[0]
+    final fun sendBatch(kotlin.collections/List<app.cash.redwood.protocol/Change>) // app.cash.redwood.treehouse/RdmaBridge.sendBatch|sendBatch(kotlin.collections.List<app.cash.redwood.protocol.Change>){}[0]
+    final fun sendChanges(kotlin.collections/List<app.cash.redwood.protocol/Change>) // app.cash.redwood.treehouse/RdmaBridge.sendChanges|sendChanges(kotlin.collections.List<app.cash.redwood.protocol.Change>){}[0]
+
+    final object Companion { // app.cash.redwood.treehouse/RdmaBridge.Companion|null[0]
+        final fun createAdd(kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int): app.cash.redwood.protocol/ChildrenChange // app.cash.redwood.treehouse/RdmaBridge.Companion.createAdd|createAdd(kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int){}[0]
+        final fun createBridgeChange(kotlin/Int, kotlin/Any?): app.cash.redwood.protocol/BridgeChange // app.cash.redwood.treehouse/RdmaBridge.Companion.createBridgeChange|createBridgeChange(kotlin.Int;kotlin.Any?){}[0]
+        final fun createCreate(kotlin/Int, kotlin/Int): app.cash.redwood.protocol/Create // app.cash.redwood.treehouse/RdmaBridge.Companion.createCreate|createCreate(kotlin.Int;kotlin.Int){}[0]
+        final fun createJsonArray(kotlin.collections/List<kotlinx.serialization.json/JsonElement>): kotlinx.serialization.json/JsonArray // app.cash.redwood.treehouse/RdmaBridge.Companion.createJsonArray|createJsonArray(kotlin.collections.List<kotlinx.serialization.json.JsonElement>){}[0]
+        final fun createJsonObject(kotlin.collections/List<kotlin/String>, kotlin.collections/List<kotlinx.serialization.json/JsonElement>): kotlinx.serialization.json/JsonObject // app.cash.redwood.treehouse/RdmaBridge.Companion.createJsonObject|createJsonObject(kotlin.collections.List<kotlin.String>;kotlin.collections.List<kotlinx.serialization.json.JsonElement>){}[0]
+        final fun createModifierChange(kotlin/Int, kotlin.collections/List<app.cash.redwood.protocol/ModifierElement>): app.cash.redwood.protocol/ModifierChange // app.cash.redwood.treehouse/RdmaBridge.Companion.createModifierChange|createModifierChange(kotlin.Int;kotlin.collections.List<app.cash.redwood.protocol.ModifierElement>){}[0]
+        final fun createModifierElement(kotlin/Int, kotlinx.serialization.json/JsonElement): app.cash.redwood.protocol/ModifierElement // app.cash.redwood.treehouse/RdmaBridge.Companion.createModifierElement|createModifierElement(kotlin.Int;kotlinx.serialization.json.JsonElement){}[0]
+        final fun createMove(kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int): app.cash.redwood.protocol/ChildrenChange // app.cash.redwood.treehouse/RdmaBridge.Companion.createMove|createMove(kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int){}[0]
+        final fun createPropertyChange(kotlin/Int, kotlin/Int, kotlin/Int, kotlinx.serialization.json/JsonElement): app.cash.redwood.protocol/PropertyChange // app.cash.redwood.treehouse/RdmaBridge.Companion.createPropertyChange|createPropertyChange(kotlin.Int;kotlin.Int;kotlin.Int;kotlinx.serialization.json.JsonElement){}[0]
+        final fun createRemove(kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Boolean): app.cash.redwood.protocol/ChildrenChange // app.cash.redwood.treehouse/RdmaBridge.Companion.createRemove|createRemove(kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Boolean){}[0]
+        final fun jsonNull(): kotlinx.serialization.json/JsonNull // app.cash.redwood.treehouse/RdmaBridge.Companion.jsonNull|jsonNull(){}[0]
+        final fun jsonPrimitiveBoolean(kotlin/Boolean): kotlinx.serialization.json/JsonPrimitive // app.cash.redwood.treehouse/RdmaBridge.Companion.jsonPrimitiveBoolean|jsonPrimitiveBoolean(kotlin.Boolean){}[0]
+        final fun jsonPrimitiveDouble(kotlin/Double): kotlinx.serialization.json/JsonPrimitive // app.cash.redwood.treehouse/RdmaBridge.Companion.jsonPrimitiveDouble|jsonPrimitiveDouble(kotlin.Double){}[0]
+        final fun jsonPrimitiveInt(kotlin/Int): kotlinx.serialization.json/JsonPrimitive // app.cash.redwood.treehouse/RdmaBridge.Companion.jsonPrimitiveInt|jsonPrimitiveInt(kotlin.Int){}[0]
+        final fun jsonPrimitiveLong(kotlin/Long): kotlinx.serialization.json/JsonPrimitive // app.cash.redwood.treehouse/RdmaBridge.Companion.jsonPrimitiveLong|jsonPrimitiveLong(kotlin.Long){}[0]
+        final fun jsonPrimitiveString(kotlin/String): kotlinx.serialization.json/JsonPrimitive // app.cash.redwood.treehouse/RdmaBridge.Companion.jsonPrimitiveString|jsonPrimitiveString(kotlin.String){}[0]
+    }
 }
 
 open class app.cash.redwood.treehouse/EventListener { // app.cash.redwood.treehouse/EventListener|null[0]

@@ -1,3 +1,30 @@
+public final class app/cash/redwood/protocol/BridgeChange : app/cash/redwood/protocol/Change {
+	public static final field Companion Lapp/cash/redwood/protocol/BridgeChange$Companion;
+	public synthetic fun <init> (ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getId-0HhLjSo ()I
+	public final fun getWrapped ()Ljava/lang/Object;
+	public fun hashCode ()I
+	public final fun setWrapped (Ljava/lang/Object;)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class app/cash/redwood/protocol/BridgeChange$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lapp/cash/redwood/protocol/BridgeChange$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lapp/cash/redwood/protocol/BridgeChange;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lapp/cash/redwood/protocol/BridgeChange;)V
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+}
+
+public final class app/cash/redwood/protocol/BridgeChange$Companion {
+	public final fun invoke-z3jyS0k (ILjava/lang/Object;)Lapp/cash/redwood/protocol/BridgeChange;
+	public static synthetic fun invoke-z3jyS0k$default (Lapp/cash/redwood/protocol/BridgeChange$Companion;ILjava/lang/Object;ILjava/lang/Object;)Lapp/cash/redwood/protocol/BridgeChange;
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
 public abstract interface class app/cash/redwood/protocol/Change {
 	public static final field Companion Lapp/cash/redwood/protocol/Change$Companion;
 	public abstract fun getId-0HhLjSo ()I
@@ -85,6 +112,7 @@ public final class app/cash/redwood/protocol/ChildrenChange$Remove : app/cash/re
 	public final fun getIndex ()I
 	public fun getTag-b0W0yNk ()I
 	public fun hashCode ()I
+	public final fun setDetach (Z)V
 	public fun toString ()Ljava/lang/String;
 }
 

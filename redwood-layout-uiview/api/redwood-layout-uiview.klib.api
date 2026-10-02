@@ -5,7 +5,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <app.cash.redwood:redwood-layout-uiview>
+// Library unique name: <io.github.tret9:redwood-layout-uiview>
 final class app.cash.redwood.layout.uiview/UIViewRedwoodLayoutWidgetFactory : app.cash.redwood.layout.widget/RedwoodLayoutWidgetFactory<platform.UIKit/UIView> { // app.cash.redwood.layout.uiview/UIViewRedwoodLayoutWidgetFactory|null[0]
     constructor <init>() // app.cash.redwood.layout.uiview/UIViewRedwoodLayoutWidgetFactory.<init>|<init>(){}[0]
 

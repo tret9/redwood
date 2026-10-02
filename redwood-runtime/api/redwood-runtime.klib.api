@@ -6,7 +6,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <app.cash.redwood:redwood-runtime>
+// Library unique name: <io.github.tret9:redwood-runtime>
 open annotation class app.cash.redwood/LayoutScopeMarker : kotlin/Annotation { // app.cash.redwood/LayoutScopeMarker|null[0]
     constructor <init>() // app.cash.redwood/LayoutScopeMarker.<init>|<init>(){}[0]
 }
@@ -178,6 +178,25 @@ final class app.cash.redwood.ui/UiConfiguration { // app.cash.redwood.ui/UiConfi
     }
 }
 
+final class app.cash.redwood/CombinedModifier : app.cash.redwood/Modifier { // app.cash.redwood/CombinedModifier|null[0]
+    constructor <init>(app.cash.redwood/Modifier, app.cash.redwood/Modifier) // app.cash.redwood/CombinedModifier.<init>|<init>(app.cash.redwood.Modifier;app.cash.redwood.Modifier){}[0]
+
+    final val inner // app.cash.redwood/CombinedModifier.inner|{}inner[0]
+        final fun <get-inner>(): app.cash.redwood/Modifier // app.cash.redwood/CombinedModifier.inner.<get-inner>|<get-inner>(){}[0]
+    final val outer // app.cash.redwood/CombinedModifier.outer|{}outer[0]
+        final fun <get-outer>(): app.cash.redwood/Modifier // app.cash.redwood/CombinedModifier.outer.<get-outer>|<get-outer>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // app.cash.redwood/CombinedModifier.equals|equals(kotlin.Any?){}[0]
+    final fun forEach(kotlin/Function1<app.cash.redwood/Modifier.Element, kotlin/Unit>) // app.cash.redwood/CombinedModifier.forEach|forEach(kotlin.Function1<app.cash.redwood.Modifier.Element,kotlin.Unit>){}[0]
+    final fun forEachScoped(kotlin/Function1<app.cash.redwood/Modifier.ScopedElement, kotlin/Unit>) // app.cash.redwood/CombinedModifier.forEachScoped|forEachScoped(kotlin.Function1<app.cash.redwood.Modifier.ScopedElement,kotlin.Unit>){}[0]
+    final fun forEachUnscoped(kotlin/Function1<app.cash.redwood/Modifier.UnscopedElement, kotlin/Unit>) // app.cash.redwood/CombinedModifier.forEachUnscoped|forEachUnscoped(kotlin.Function1<app.cash.redwood.Modifier.UnscopedElement,kotlin.Unit>){}[0]
+    final fun hashCode(): kotlin/Int // app.cash.redwood/CombinedModifier.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // app.cash.redwood/CombinedModifier.toString|toString(){}[0]
+
+    // Targets: [js]
+    final object Companion // app.cash.redwood/CombinedModifier.Companion|null[0]
+}
+
 final value class app.cash.redwood.ui/Density { // app.cash.redwood.ui/Density|null[0]
     constructor <init>(kotlin/Double) // app.cash.redwood.ui/Density.<init>|<init>(kotlin.Double){}[0]
 
@@ -271,6 +290,7 @@ final val app.cash.redwood.ui/dp // app.cash.redwood.ui/dp|@kotlin.Float{}dp[0]
     final inline fun (kotlin/Float).<get-dp>(): app.cash.redwood.ui/Dp // app.cash.redwood.ui/dp.<get-dp>|<get-dp>@kotlin.Float(){}[0]
 final val app.cash.redwood.ui/dp // app.cash.redwood.ui/dp|@kotlin.Int{}dp[0]
     final inline fun (kotlin/Int).<get-dp>(): app.cash.redwood.ui/Dp // app.cash.redwood.ui/dp.<get-dp>|<get-dp>@kotlin.Int(){}[0]
+final val app.cash.redwood/app_cash_redwood_CombinedModifier$stableprop // app.cash.redwood/app_cash_redwood_CombinedModifier$stableprop|#static{}app_cash_redwood_CombinedModifier$stableprop[0]
 
 final fun (app.cash.redwood.ui/Dp).app.cash.redwood.ui/toPlatformDp(): kotlin/Double // app.cash.redwood.ui/toPlatformDp|toPlatformDp@app.cash.redwood.ui.Dp(){}[0]
 final fun (app.cash.redwood.ui/Dp.Companion).app.cash.redwood.ui/fromPlatformDp(kotlin/Double): app.cash.redwood.ui/Dp // app.cash.redwood.ui/fromPlatformDp|fromPlatformDp@app.cash.redwood.ui.Dp.Companion(kotlin.Double){}[0]
@@ -286,7 +306,20 @@ final fun app.cash.redwood.ui/app_cash_redwood_ui_Size$stableprop_getter(): kotl
 final fun app.cash.redwood.ui/app_cash_redwood_ui_Size_$serializer$stableprop_getter(): kotlin/Int // app.cash.redwood.ui/app_cash_redwood_ui_Size_$serializer$stableprop_getter|app_cash_redwood_ui_Size_$serializer$stableprop_getter(){}[0]
 final fun app.cash.redwood.ui/app_cash_redwood_ui_UiConfiguration$stableprop_getter(): kotlin/Int // app.cash.redwood.ui/app_cash_redwood_ui_UiConfiguration$stableprop_getter|app_cash_redwood_ui_UiConfiguration$stableprop_getter(){}[0]
 final fun app.cash.redwood.ui/app_cash_redwood_ui_UiConfiguration_$serializer$stableprop_getter(): kotlin/Int // app.cash.redwood.ui/app_cash_redwood_ui_UiConfiguration_$serializer$stableprop_getter|app_cash_redwood_ui_UiConfiguration_$serializer$stableprop_getter(){}[0]
+final fun app.cash.redwood/app_cash_redwood_CombinedModifier$stableprop_getter(): kotlin/Int // app.cash.redwood/app_cash_redwood_CombinedModifier$stableprop_getter|app_cash_redwood_CombinedModifier$stableprop_getter(){}[0]
 
 // Targets: [ios]
 final val app.cash.redwood.ui/Default // app.cash.redwood.ui/Default|@app.cash.redwood.ui.Density.Companion{}Default[0]
     final fun (app.cash.redwood.ui/Density.Companion).<get-Default>(): app.cash.redwood.ui/Density // app.cash.redwood.ui/Default.<get-Default>|<get-Default>@app.cash.redwood.ui.Density.Companion(){}[0]
+
+// Targets: [ios]
+final fun generated_bridges/app_cash_redwood_CombinedModifier_toKotlin(kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>?, kotlin/Int): kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>? // generated_bridges/app_cash_redwood_CombinedModifier_toKotlin|app_cash_redwood_CombinedModifier_toKotlin(kotlinx.cinterop.CPointer<out|kotlinx.cinterop.CPointed>?;kotlin.Int){}[0]
+
+// Targets: [ios]
+final fun generated_bridges/app_cash_redwood_Modifier_Companion_toKotlin(kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>?, kotlin/Int): kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>? // generated_bridges/app_cash_redwood_Modifier_Companion_toKotlin|app_cash_redwood_Modifier_Companion_toKotlin(kotlinx.cinterop.CPointer<out|kotlinx.cinterop.CPointed>?;kotlin.Int){}[0]
+
+// Targets: [ios]
+final fun generated_bridges/app_cash_redwood_ui_Dp_toKotlin(kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>?, kotlin/Int): kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>? // generated_bridges/app_cash_redwood_ui_Dp_toKotlin|app_cash_redwood_ui_Dp_toKotlin(kotlinx.cinterop.CPointer<out|kotlinx.cinterop.CPointed>?;kotlin.Int){}[0]
+
+// Targets: [ios]
+final fun generated_bridges/app_cash_redwood_ui_Margin_toKotlin(kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>?, kotlin/Int): kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>? // generated_bridges/app_cash_redwood_ui_Margin_toKotlin|app_cash_redwood_ui_Margin_toKotlin(kotlinx.cinterop.CPointer<out|kotlinx.cinterop.CPointed>?;kotlin.Int){}[0]

@@ -98,8 +98,8 @@ functions = [
   # fun sendEvent(app.cash.redwood.protocol.Event): kotlin.Unit
   "NSFL6TSu",
 
-  # fun snapshotState(): app.cash.redwood.treehouse.StateSnapshot
-  "mPBGCHFl",
+  # fun snapshotState(): app.cash.redwood.treehouse.StateSnapshot?
+  "ea1xPqmj",
 
   # fun start(app.cash.redwood.treehouse.ZiplineTreehouseUi.Host): kotlin.Unit
   "h9yZr91W",
@@ -123,8 +123,8 @@ functions = [
   # fun sendChanges(kotlin.collections.List): kotlin.Unit
   "W8qOuU0t",
 
-  # val stateSnapshot: app.cash.redwood.treehouse.StateSnapshot
-  "hIDyr4lf",
+  # val stateSnapshot: app.cash.redwood.treehouse.StateSnapshot?
+  "qj0+pZr1",
 
   # val uiConfigurations: kotlinx.coroutines.flow.StateFlow<app.cash.redwood.ui.UiConfiguration>
   "iAkCX7gg",

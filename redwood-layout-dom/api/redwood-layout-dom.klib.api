@@ -5,7 +5,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <app.cash.redwood:redwood-layout-dom>
+// Library unique name: <io.github.tret9:redwood-layout-dom>
 final class app.cash.redwood.layout.dom/HTMLElementRedwoodLayoutWidgetFactory : app.cash.redwood.layout.widget/RedwoodLayoutWidgetFactory<org.w3c.dom/HTMLElement> { // app.cash.redwood.layout.dom/HTMLElementRedwoodLayoutWidgetFactory|null[0]
     constructor <init>(org.w3c.dom/Document) // app.cash.redwood.layout.dom/HTMLElementRedwoodLayoutWidgetFactory.<init>|<init>(org.w3c.dom.Document){}[0]
 

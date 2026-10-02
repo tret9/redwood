@@ -5,7 +5,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <app.cash.redwood:redwood-treehouse>
+// Library unique name: <io.github.tret9:redwood-treehouse>
 abstract interface app.cash.redwood.treehouse/AppLifecycle : app.cash.zipline/ZiplineService { // app.cash.redwood.treehouse/AppLifecycle|null[0]
     abstract val guestProtocolVersion // app.cash.redwood.treehouse/AppLifecycle.guestProtocolVersion|{}guestProtocolVersion[0]
         abstract fun <get-guestProtocolVersion>(): app.cash.redwood.protocol/RedwoodVersion // app.cash.redwood.treehouse/AppLifecycle.guestProtocolVersion.<get-guestProtocolVersion>|<get-guestProtocolVersion>(){}[0]

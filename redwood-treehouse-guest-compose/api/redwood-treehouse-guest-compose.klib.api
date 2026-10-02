@@ -5,7 +5,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <app.cash.redwood:redwood-treehouse-guest-compose>
+// Library unique name: <io.github.tret9:redwood-treehouse-guest-compose>
 abstract interface app.cash.redwood.treehouse/TreehouseUi { // app.cash.redwood.treehouse/TreehouseUi|null[0]
     abstract fun Show(androidx.compose.runtime/Composer?, kotlin/Int) // app.cash.redwood.treehouse/TreehouseUi.Show|Show(androidx.compose.runtime.Composer?;kotlin.Int){}[0]
     open fun close() // app.cash.redwood.treehouse/TreehouseUi.close|close(){}[0]

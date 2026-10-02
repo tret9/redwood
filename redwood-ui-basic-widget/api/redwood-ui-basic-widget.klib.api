@@ -5,7 +5,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <app.cash.redwood:redwood-ui-basic-widget>
+// Library unique name: <io.github.tret9:redwood-ui-basic-widget>
 abstract interface <#A: kotlin/Any> app.cash.redwood.ui.basic.widget/Button : app.cash.redwood.widget/Widget<#A> { // app.cash.redwood.ui.basic.widget/Button|null[0]
     abstract fun enabled(kotlin/Boolean) // app.cash.redwood.ui.basic.widget/Button.enabled|enabled(kotlin.Boolean){}[0]
     abstract fun onClick(kotlin/Function0<kotlin/Unit>?) // app.cash.redwood.ui.basic.widget/Button.onClick|onClick(kotlin.Function0<kotlin.Unit>?){}[0]

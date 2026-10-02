@@ -5,7 +5,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <app.cash.redwood:redwood-ui-basic-composeui>
+// Library unique name: <io.github.tret9:redwood-ui-basic-composeui>
 final class app.cash.redwood.ui.basic.composeui/ComposeUiRedwoodUiBasicWidgetFactory : app.cash.redwood.ui.basic.widget/RedwoodUiBasicWidgetFactory<kotlin/Function3<androidx.compose.ui/Modifier, androidx.compose.runtime/Composer, kotlin/Int, kotlin/Unit>> { // app.cash.redwood.ui.basic.composeui/ComposeUiRedwoodUiBasicWidgetFactory|null[0]
     constructor <init>(coil3/ImageLoader) // app.cash.redwood.ui.basic.composeui/ComposeUiRedwoodUiBasicWidgetFactory.<init>|<init>(coil3.ImageLoader){}[0]
 

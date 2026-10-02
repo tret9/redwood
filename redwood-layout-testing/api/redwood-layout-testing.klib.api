@@ -5,7 +5,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <app.cash.redwood:redwood-layout-testing>
+// Library unique name: <io.github.tret9:redwood-layout-testing>
 final class app.cash.redwood.layout.testing/BoxValue : app.cash.redwood.testing/WidgetValue { // app.cash.redwood.layout.testing/BoxValue|null[0]
     constructor <init>(app.cash.redwood/Modifier = ..., app.cash.redwood.layout.api/Constraint = ..., app.cash.redwood.layout.api/Constraint = ..., app.cash.redwood.ui/Margin = ..., app.cash.redwood.layout.api/CrossAxisAlignment = ..., app.cash.redwood.layout.api/CrossAxisAlignment = ..., kotlin.collections/List<app.cash.redwood.testing/WidgetValue> = ...) // app.cash.redwood.layout.testing/BoxValue.<init>|<init>(app.cash.redwood.Modifier;app.cash.redwood.layout.api.Constraint;app.cash.redwood.layout.api.Constraint;app.cash.redwood.ui.Margin;app.cash.redwood.layout.api.CrossAxisAlignment;app.cash.redwood.layout.api.CrossAxisAlignment;kotlin.collections.List<app.cash.redwood.testing.WidgetValue>){}[0]
 
