@@ -5,7 +5,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <app.cash.redwood:redwood-leak-detector>
+// Library unique name: <io.github.tret9:redwood-leak-detector>
 open annotation class app.cash.redwood.leaks/RedwoodLeakApi : kotlin/Annotation { // app.cash.redwood.leaks/RedwoodLeakApi|null[0]
     constructor <init>() // app.cash.redwood.leaks/RedwoodLeakApi.<init>|<init>(){}[0]
 }

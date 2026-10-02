@@ -5,7 +5,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <app.cash.redwood:redwood-widget-testing>
+// Library unique name: <io.github.tret9:redwood-widget-testing>
 abstract class <#A: kotlin/Any> app.cash.redwood.widget.testing/AbstractWidgetChildrenTest { // app.cash.redwood.widget.testing/AbstractWidgetChildrenTest|null[0]
     constructor <init>() // app.cash.redwood.widget.testing/AbstractWidgetChildrenTest.<init>|<init>(){}[0]
 

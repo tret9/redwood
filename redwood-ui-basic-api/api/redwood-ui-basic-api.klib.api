@@ -5,7 +5,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <app.cash.redwood:redwood-ui-basic-api>
+// Library unique name: <io.github.tret9:redwood-ui-basic-api>
 final class app.cash.redwood.ui.basic.api/TextFieldState { // app.cash.redwood.ui.basic.api/TextFieldState|null[0]
     constructor <init>(kotlin/String = ..., kotlin/Int = ..., kotlin/Int = ..., kotlin/Long = ...) // app.cash.redwood.ui.basic.api/TextFieldState.<init>|<init>(kotlin.String;kotlin.Int;kotlin.Int;kotlin.Long){}[0]
 

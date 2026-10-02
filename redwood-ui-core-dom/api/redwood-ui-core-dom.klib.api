@@ -5,7 +5,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <app.cash.redwood:redwood-ui-core-dom>
+// Library unique name: <io.github.tret9:redwood-ui-core-dom>
 final class app.cash.redwood.ui.core.dom/HTMLElementRedwoodUiCoreWidgetFactory : app.cash.redwood.ui.core.widget/RedwoodUiCoreWidgetFactory<org.w3c.dom/HTMLElement> { // app.cash.redwood.ui.core.dom/HTMLElementRedwoodUiCoreWidgetFactory|null[0]
     constructor <init>(org.w3c.dom/Document) // app.cash.redwood.ui.core.dom/HTMLElementRedwoodUiCoreWidgetFactory.<init>|<init>(org.w3c.dom.Document){}[0]
 

@@ -5,7 +5,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <app.cash.redwood:redwood-layout-composeui>
+// Library unique name: <io.github.tret9:redwood-layout-composeui>
 final class app.cash.redwood.layout.composeui/BoxMeasurePolicy : androidx.compose.ui.layout/MeasurePolicy { // app.cash.redwood.layout.composeui/BoxMeasurePolicy|null[0]
     constructor <init>(kotlin.collections/List<app.cash.redwood.layout.composeui/BoxChildLayoutInfo>, kotlin/Boolean) // app.cash.redwood.layout.composeui/BoxMeasurePolicy.<init>|<init>(kotlin.collections.List<app.cash.redwood.layout.composeui.BoxChildLayoutInfo>;kotlin.Boolean){}[0]
 

@@ -1,11 +1,12 @@
 // Klib ABI Dump
 // Targets: [iosArm64, iosSimulatorArm64, js]
+// Alias: ios => [iosArm64, iosSimulatorArm64]
 // Rendering settings:
 // - Signature version: 2
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <app.cash.redwood:redwood-protocol>
+// Library unique name: <io.github.tret9:redwood-protocol>
 abstract fun interface app.cash.redwood.protocol/ChangesSink { // app.cash.redwood.protocol/ChangesSink|null[0]
     abstract fun sendChanges(kotlin.collections/List<app.cash.redwood.protocol/Change>) // app.cash.redwood.protocol/ChangesSink.sendChanges|sendChanges(kotlin.collections.List<app.cash.redwood.protocol.Change>){}[0]
 }
@@ -91,14 +92,16 @@ sealed interface app.cash.redwood.protocol/ChildrenChange : app.cash.redwood.pro
     final class Remove : app.cash.redwood.protocol/ChildrenChange { // app.cash.redwood.protocol/ChildrenChange.Remove|null[0]
         final val count // app.cash.redwood.protocol/ChildrenChange.Remove.count|{}count[0]
             final fun <get-count>(): kotlin/Int // app.cash.redwood.protocol/ChildrenChange.Remove.count.<get-count>|<get-count>(){}[0]
-        final val detach // app.cash.redwood.protocol/ChildrenChange.Remove.detach|{}detach[0]
-            final fun <get-detach>(): kotlin/Boolean // app.cash.redwood.protocol/ChildrenChange.Remove.detach.<get-detach>|<get-detach>(){}[0]
         final val id // app.cash.redwood.protocol/ChildrenChange.Remove.id|{}id[0]
             final fun <get-id>(): app.cash.redwood.protocol/Id // app.cash.redwood.protocol/ChildrenChange.Remove.id.<get-id>|<get-id>(){}[0]
         final val index // app.cash.redwood.protocol/ChildrenChange.Remove.index|{}index[0]
             final fun <get-index>(): kotlin/Int // app.cash.redwood.protocol/ChildrenChange.Remove.index.<get-index>|<get-index>(){}[0]
         final val tag // app.cash.redwood.protocol/ChildrenChange.Remove.tag|{}tag[0]
             final fun <get-tag>(): app.cash.redwood.protocol/ChildrenTag // app.cash.redwood.protocol/ChildrenChange.Remove.tag.<get-tag>|<get-tag>(){}[0]
+
+        final var detach // app.cash.redwood.protocol/ChildrenChange.Remove.detach|{}detach[0]
+            final fun <get-detach>(): kotlin/Boolean // app.cash.redwood.protocol/ChildrenChange.Remove.detach.<get-detach>|<get-detach>(){}[0]
+            final fun <set-detach>(kotlin/Boolean) // app.cash.redwood.protocol/ChildrenChange.Remove.detach.<set-detach>|<set-detach>(kotlin.Boolean){}[0]
 
         final fun equals(kotlin/Any?): kotlin/Boolean // app.cash.redwood.protocol/ChildrenChange.Remove.equals|equals(kotlin.Any?){}[0]
         final fun hashCode(): kotlin/Int // app.cash.redwood.protocol/ChildrenChange.Remove.hashCode|hashCode(){}[0]
@@ -126,6 +129,33 @@ sealed interface app.cash.redwood.protocol/ChildrenChange : app.cash.redwood.pro
 }
 
 sealed interface app.cash.redwood.protocol/ValueChange : app.cash.redwood.protocol/Change // app.cash.redwood.protocol/ValueChange|null[0]
+
+final class app.cash.redwood.protocol/BridgeChange : app.cash.redwood.protocol/Change { // app.cash.redwood.protocol/BridgeChange|null[0]
+    final val id // app.cash.redwood.protocol/BridgeChange.id|{}id[0]
+        final fun <get-id>(): app.cash.redwood.protocol/Id // app.cash.redwood.protocol/BridgeChange.id.<get-id>|<get-id>(){}[0]
+
+    final var wrapped // app.cash.redwood.protocol/BridgeChange.wrapped|{}wrapped[0]
+        final fun <get-wrapped>(): kotlin/Any? // app.cash.redwood.protocol/BridgeChange.wrapped.<get-wrapped>|<get-wrapped>(){}[0]
+        final fun <set-wrapped>(kotlin/Any?) // app.cash.redwood.protocol/BridgeChange.wrapped.<set-wrapped>|<set-wrapped>(kotlin.Any?){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // app.cash.redwood.protocol/BridgeChange.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // app.cash.redwood.protocol/BridgeChange.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // app.cash.redwood.protocol/BridgeChange.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<app.cash.redwood.protocol/BridgeChange> { // app.cash.redwood.protocol/BridgeChange.$serializer|null[0]
+        final val descriptor // app.cash.redwood.protocol/BridgeChange.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // app.cash.redwood.protocol/BridgeChange.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // app.cash.redwood.protocol/BridgeChange.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): app.cash.redwood.protocol/BridgeChange // app.cash.redwood.protocol/BridgeChange.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, app.cash.redwood.protocol/BridgeChange) // app.cash.redwood.protocol/BridgeChange.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;app.cash.redwood.protocol.BridgeChange){}[0]
+    }
+
+    final object Companion { // app.cash.redwood.protocol/BridgeChange.Companion|null[0]
+        final fun invoke(app.cash.redwood.protocol/Id, kotlin/Any? = ...): app.cash.redwood.protocol/BridgeChange // app.cash.redwood.protocol/BridgeChange.Companion.invoke|invoke(app.cash.redwood.protocol.Id;kotlin.Any?){}[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<app.cash.redwood.protocol/BridgeChange> // app.cash.redwood.protocol/BridgeChange.Companion.serializer|serializer(){}[0]
+    }
+}
 
 final class app.cash.redwood.protocol/Create : app.cash.redwood.protocol/Change { // app.cash.redwood.protocol/Create|null[0]
     final val id // app.cash.redwood.protocol/Create.id|{}id[0]
@@ -453,3 +483,30 @@ final value class app.cash.redwood.protocol/WidgetTag { // app.cash.redwood.prot
         final fun serializer(): kotlinx.serialization/KSerializer<app.cash.redwood.protocol/WidgetTag> // app.cash.redwood.protocol/WidgetTag.Companion.serializer|serializer(){}[0]
     }
 }
+
+// Targets: [ios]
+final fun generated_bridges/app_cash_redwood_protocol_ChildrenChange_Add_toKotlin(kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>?, kotlin/Int): kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>? // generated_bridges/app_cash_redwood_protocol_ChildrenChange_Add_toKotlin|app_cash_redwood_protocol_ChildrenChange_Add_toKotlin(kotlinx.cinterop.CPointer<out|kotlinx.cinterop.CPointed>?;kotlin.Int){}[0]
+
+// Targets: [ios]
+final fun generated_bridges/app_cash_redwood_protocol_ChildrenChange_Move_toKotlin(kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>?, kotlin/Int): kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>? // generated_bridges/app_cash_redwood_protocol_ChildrenChange_Move_toKotlin|app_cash_redwood_protocol_ChildrenChange_Move_toKotlin(kotlinx.cinterop.CPointer<out|kotlinx.cinterop.CPointed>?;kotlin.Int){}[0]
+
+// Targets: [ios]
+final fun generated_bridges/app_cash_redwood_protocol_ChildrenChange_Remove_toKotlin(kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>?, kotlin/Int): kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>? // generated_bridges/app_cash_redwood_protocol_ChildrenChange_Remove_toKotlin|app_cash_redwood_protocol_ChildrenChange_Remove_toKotlin(kotlinx.cinterop.CPointer<out|kotlinx.cinterop.CPointed>?;kotlin.Int){}[0]
+
+// Targets: [ios]
+final fun generated_bridges/app_cash_redwood_protocol_ChildrenTag_toKotlin(kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>?, kotlin/Int): kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>? // generated_bridges/app_cash_redwood_protocol_ChildrenTag_toKotlin|app_cash_redwood_protocol_ChildrenTag_toKotlin(kotlinx.cinterop.CPointer<out|kotlinx.cinterop.CPointed>?;kotlin.Int){}[0]
+
+// Targets: [ios]
+final fun generated_bridges/app_cash_redwood_protocol_EventTag_toKotlin(kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>?, kotlin/Int): kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>? // generated_bridges/app_cash_redwood_protocol_EventTag_toKotlin|app_cash_redwood_protocol_EventTag_toKotlin(kotlinx.cinterop.CPointer<out|kotlinx.cinterop.CPointed>?;kotlin.Int){}[0]
+
+// Targets: [ios]
+final fun generated_bridges/app_cash_redwood_protocol_Id_toKotlin(kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>?, kotlin/Int): kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>? // generated_bridges/app_cash_redwood_protocol_Id_toKotlin|app_cash_redwood_protocol_Id_toKotlin(kotlinx.cinterop.CPointer<out|kotlinx.cinterop.CPointed>?;kotlin.Int){}[0]
+
+// Targets: [ios]
+final fun generated_bridges/app_cash_redwood_protocol_ModifierTag_toKotlin(kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>?, kotlin/Int): kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>? // generated_bridges/app_cash_redwood_protocol_ModifierTag_toKotlin|app_cash_redwood_protocol_ModifierTag_toKotlin(kotlinx.cinterop.CPointer<out|kotlinx.cinterop.CPointed>?;kotlin.Int){}[0]
+
+// Targets: [ios]
+final fun generated_bridges/app_cash_redwood_protocol_PropertyTag_toKotlin(kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>?, kotlin/Int): kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>? // generated_bridges/app_cash_redwood_protocol_PropertyTag_toKotlin|app_cash_redwood_protocol_PropertyTag_toKotlin(kotlinx.cinterop.CPointer<out|kotlinx.cinterop.CPointed>?;kotlin.Int){}[0]
+
+// Targets: [ios]
+final fun generated_bridges/app_cash_redwood_protocol_WidgetTag_toKotlin(kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>?, kotlin/Int): kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>? // generated_bridges/app_cash_redwood_protocol_WidgetTag_toKotlin|app_cash_redwood_protocol_WidgetTag_toKotlin(kotlinx.cinterop.CPointer<out|kotlinx.cinterop.CPointed>?;kotlin.Int){}[0]

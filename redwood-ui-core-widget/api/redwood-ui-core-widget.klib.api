@@ -5,7 +5,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <app.cash.redwood:redwood-ui-core-widget>
+// Library unique name: <io.github.tret9:redwood-ui-core-widget>
 abstract interface <#A: kotlin/Any> app.cash.redwood.ui.core.widget/RedwoodUiCoreWidgetFactory { // app.cash.redwood.ui.core.widget/RedwoodUiCoreWidgetFactory|null[0]
     abstract fun FocusRequester(#A, app.cash.redwood.ui.core.modifier/FocusRequester) // app.cash.redwood.ui.core.widget/RedwoodUiCoreWidgetFactory.FocusRequester|FocusRequester(1:0;app.cash.redwood.ui.core.modifier.FocusRequester){}[0]
 }

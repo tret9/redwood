@@ -5,7 +5,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <app.cash.redwood:redwood-ui-basic-dom>
+// Library unique name: <io.github.tret9:redwood-ui-basic-dom>
 final class app.cash.redwood.ui.basic.dom/HTMLElementRedwoodUiBasicWidgetFactory : app.cash.redwood.ui.basic.widget/RedwoodUiBasicWidgetFactory<org.w3c.dom/HTMLElement> { // app.cash.redwood.ui.basic.dom/HTMLElementRedwoodUiBasicWidgetFactory|null[0]
     constructor <init>(org.w3c.dom/Document) // app.cash.redwood.ui.basic.dom/HTMLElementRedwoodUiBasicWidgetFactory.<init>|<init>(org.w3c.dom.Document){}[0]
 

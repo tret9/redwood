@@ -5,12 +5,16 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <app.cash.redwood:redwood-widget-composeui>
+// Library unique name: <io.github.tret9:redwood-widget-composeui>
 final class app.cash.redwood.widget.compose/ComposeWidgetChildren : app.cash.redwood.widget/Widget.Children<kotlin/Function3<androidx.compose.ui/Modifier, androidx.compose.runtime/Composer, kotlin/Int, kotlin/Unit>> { // app.cash.redwood.widget.compose/ComposeWidgetChildren|null[0]
     constructor <init>(kotlin/Function0<kotlin/Unit> = ...) // app.cash.redwood.widget.compose/ComposeWidgetChildren.<init>|<init>(kotlin.Function0<kotlin.Unit>){}[0]
 
     final val widgets // app.cash.redwood.widget.compose/ComposeWidgetChildren.widgets|{}widgets[0]
         final fun <get-widgets>(): kotlin.collections/List<app.cash.redwood.widget/Widget<kotlin/Function3<androidx.compose.ui/Modifier, androidx.compose.runtime/Composer, kotlin/Int, kotlin/Unit>>> // app.cash.redwood.widget.compose/ComposeWidgetChildren.widgets.<get-widgets>|<get-widgets>(){}[0]
+
+    final var modifierTick // app.cash.redwood.widget.compose/ComposeWidgetChildren.modifierTick|{}modifierTick[0]
+        final fun <get-modifierTick>(): kotlin/Int // app.cash.redwood.widget.compose/ComposeWidgetChildren.modifierTick.<get-modifierTick>|<get-modifierTick>(){}[0]
+        final fun <set-modifierTick>(kotlin/Int) // app.cash.redwood.widget.compose/ComposeWidgetChildren.modifierTick.<set-modifierTick>|<set-modifierTick>(kotlin.Int){}[0]
 
     final fun Render(androidx.compose.runtime/Composer?, kotlin/Int) // app.cash.redwood.widget.compose/ComposeWidgetChildren.Render|Render(androidx.compose.runtime.Composer?;kotlin.Int){}[0]
     final fun detach() // app.cash.redwood.widget.compose/ComposeWidgetChildren.detach|detach(){}[0]

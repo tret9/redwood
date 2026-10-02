@@ -1,3 +1,16 @@
+public final class app/cash/redwood/CombinedModifier : app/cash/redwood/Modifier {
+	public static final field $stable I
+	public fun <init> (Lapp/cash/redwood/Modifier;Lapp/cash/redwood/Modifier;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun forEach (Lkotlin/jvm/functions/Function1;)V
+	public fun forEachScoped (Lkotlin/jvm/functions/Function1;)V
+	public fun forEachUnscoped (Lkotlin/jvm/functions/Function1;)V
+	public final fun getInner ()Lapp/cash/redwood/Modifier;
+	public final fun getOuter ()Lapp/cash/redwood/Modifier;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public abstract interface annotation class app/cash/redwood/LayoutScopeMarker : java/lang/annotation/Annotation {
 }
 

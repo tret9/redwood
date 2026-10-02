@@ -5,7 +5,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <app.cash.redwood:redwood-layout-compose>
+// Library unique name: <io.github.tret9:redwood-layout-compose>
 abstract interface app.cash.redwood.layout.compose/BoxScope { // app.cash.redwood.layout.compose/BoxScope|null[0]
     open fun (app.cash.redwood/Modifier).height(app.cash.redwood.ui/Dp): app.cash.redwood/Modifier // app.cash.redwood.layout.compose/BoxScope.height|height@app.cash.redwood.Modifier(app.cash.redwood.ui.Dp){}[0]
     open fun (app.cash.redwood/Modifier).horizontalAlignment(app.cash.redwood.layout.api/CrossAxisAlignment): app.cash.redwood/Modifier // app.cash.redwood.layout.compose/BoxScope.horizontalAlignment|horizontalAlignment@app.cash.redwood.Modifier(app.cash.redwood.layout.api.CrossAxisAlignment){}[0]
