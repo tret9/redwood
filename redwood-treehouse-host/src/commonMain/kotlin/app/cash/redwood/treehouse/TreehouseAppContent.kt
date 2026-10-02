@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Square, Inc.
+ * Copyright (C) 2023-2026 Square, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ import app.cash.redwood.ui.OnBackPressedDispatcher
 import app.cash.redwood.ui.UiConfiguration
 import app.cash.redwood.ui.core.api.FocusRequester
 import app.cash.zipline.ZiplineScope
+import kotlin.concurrent.Volatile
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
@@ -42,7 +43,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlin.concurrent.Volatile
 
 private class InternalState<A : AppService>(
   val viewState: ViewState,
@@ -174,6 +174,7 @@ internal class TreehouseAppContent<A : AppService>(
     // code is coming.
     when (previousCodeState) {
       is CodeState.Idle -> view.showLoading()
+
       is CodeState.Running -> {
         previousCodeState.viewContentCodeBinding.initView(view, mustUpdateView = true)
       }
