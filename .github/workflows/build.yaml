@@ -253,9 +253,9 @@ jobs:
           emulator-boot-timeout: 20000
           script: ./gradlew connectedCheck -PredwoodNoApps
 
-  # Jobs using Xcode are pinned to macos-15: macos-latest (macos-26) only ships Xcode 26, which
-  # drops the iOS 18 simulators the iOS snapshots were recorded on (18.4; macos-15 has 18.5 as the
-  # closest) and the samples' deployment targets.
+  # Jobs using Xcode are pinned to macos-15: unlike macos-latest (macos-26), it has both Xcode 16.4,
+  # which still builds the samples' iOS 12/14 deployment targets, and the iOS 18 simulators the iOS
+  # snapshots were recorded on (18.4; 18.5 is the closest available).
   screenshot-tests:
     needs:
       - version
@@ -273,9 +273,11 @@ jobs:
 
       - run: ./gradlew verifyPaparazzi
 
+      # Xcode 26: Compose Multiplatform (via redwood-snapshot-testing) links UIKit APIs that are only in
+      # the iOS 26 SDK. Tests still run on the iOS 18.5 simulator the snapshots match.
       - uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: '16.4'
+          xcode-version: '26.2'
 
       # Skipped for the same reason as the uiview tests in native-tests: their test framework doesn't
       # compile with Kotlin 2.3.21 and Burst 2.12.2.
@@ -338,7 +340,7 @@ jobs:
           xcode-version: '16.4'
 
       - name: Build Counter iOS (UIKit)
-        run: xcodebuild -project samples/counter/ios-uikit/CounterApp.xcodeproj -scheme CounterApp -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.5'
+        run: xcodebuild -project samples/counter/ios-uikit/CounterApp.xcodeproj -scheme CounterApp -destination 'generic/platform=iOS Simulator'
 
   sample-counter-emulator:
     needs:
@@ -389,7 +391,7 @@ jobs:
           xcode-version: '16.4'
 
       - name: Build Emoji Search iOS (UIKit)
-        run: xcodebuild -project samples/emoji-search/ios-uikit/EmojiSearchApp.xcodeproj -scheme EmojiSearchApp -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.5'
+        run: xcodebuild -project samples/emoji-search/ios-uikit/EmojiSearchApp.xcodeproj -scheme EmojiSearchApp -destination 'generic/platform=iOS Simulator'
 
   # Blocked by https://github.com/cashapp/redwood/issues/2698
   #sample-emoji-emulator:
@@ -441,7 +443,7 @@ jobs:
           xcode-version: '16.4'
 
       - name: Build TestApp iOS (UIKit)
-        run: xcodebuild -project test-app/ios-uikit/TestApp.xcodeproj -scheme TestApp -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.5'
+        run: xcodebuild -project test-app/ios-uikit/TestApp.xcodeproj -scheme TestApp -destination 'generic/platform=iOS Simulator'
 
   # The single check to mark as required in branch protection.
   final-status:
