@@ -40,13 +40,12 @@ internal class SnapshotStore {
       "/snapshots/$fileName"
     }
 
-    val response = window.fetch(
-      input = url,
-      init = RequestInit(
-        method = "POST",
-        body = data,
-      ),
-    ).await()
+    // Not the RequestInit() factory: it sets every omitted option to null, and Chrome rejects
+    // null for enum options like 'cache'.
+    val init = js("{}").unsafeCast<RequestInit>()
+    init.method = "POST"
+    init.body = data
+    val response = window.fetch(input = url, init = init).await()
 
     if (!response.ok) {
       throw SnapshotStoreException(

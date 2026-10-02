@@ -177,6 +177,11 @@ class RedwoodBuildPlugin : Plugin<Project> {
     pluginManager.withPlugin("app.cash.paparazzi") {
       tasks.withType(Test::class.java).configureEach { task ->
         task.systemProperty("net.bytebuddy.experimental", "true")
+        // Paparazzi 2.0.0-alpha02's HTML report calls Gradle internals that changed in Gradle 9.4
+        // (NoSuchMethodError: TestResultsProvider.hasOutput), failing the task after the tests
+        // ran. Newer Paparazzi fixes it but renders text slightly differently, which would mean
+        // re-recording every snapshot. XML results are unaffected.
+        task.reports.html.required.set(false)
       }
     }
   }
@@ -540,7 +545,14 @@ private class RedwoodBuildExtensionImpl(private val project: Project) : RedwoodB
       }
 
       publishToMavenCentral(automaticRelease = true)
-      if (project.providers.systemProperty("RELEASE_SIGNING_ENABLED").getOrElse("true").toBoolean()) {
+      // Only sign when a key is configured. Versions aren't -SNAPSHOTs, so otherwise every local
+      // publication (like the ones the Gradle plugin tests use) would require a key. CI signs
+      // releases in .github/scripts/publish-to-maven-central.sh instead.
+      val hasSigningKey = listOf("signingInMemoryKey", "signing.keyId", "signing.gnupg.keyName")
+        .any { project.providers.gradleProperty(it).isPresent }
+      if (hasSigningKey &&
+        project.providers.systemProperty("RELEASE_SIGNING_ENABLED").getOrElse("true").toBoolean()
+      ) {
         signAllPublications()
       }
 
