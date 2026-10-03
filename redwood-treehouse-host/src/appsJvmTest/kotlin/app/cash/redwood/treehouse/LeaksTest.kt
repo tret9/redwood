@@ -246,6 +246,8 @@ class LeaksTest {
     val app = treehouseTester.loadApp()
     assertThat(treehouseTester.openTreehouseDispatchersCount).isEqualTo(1)
     app.close()
+    // Dispatchers close asynchronously, once Zipline has stopped on its dispatcher.
+    testScheduler.advanceUntilIdle()
     assertThat(treehouseTester.openTreehouseDispatchersCount).isEqualTo(0)
   }
 

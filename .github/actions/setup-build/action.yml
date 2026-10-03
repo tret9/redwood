@@ -1,0 +1,65 @@
+name: Set up build
+description: JDK, Gradle and, optionally, a Zipline version to build against instead of the one in the version catalog.
+
+inputs:
+  zipline-version:
+    description: >
+      Zipline version to build against, e.g. a -SNAPSHOT published by the Zipline fork's CI.
+      Empty keeps the version from gradle/libs.versions.toml.
+    required: false
+    default: ''
+  zipline-repository:
+    description: GitHub repository whose GitHub Packages Maven registry hosts Zipline -SNAPSHOTs.
+    required: false
+    default: 'tret9/zipline'
+  zipline-packages-token:
+    description: >
+      Token with read:packages access to zipline-repository. GitHub Packages Maven requires one
+      even for public packages, and the GITHUB_TOKEN of this repository can't read another
+      repository's Maven packages.
+    required: false
+    default: ''
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-java@v5
+      with:
+        distribution: 'zulu'
+        java-version-file: .github/workflows/.java-version
+
+    - uses: gradle/actions/setup-gradle@v6
+
+    # Rewrites the catalog rather than passing a Gradle property, so every build (including
+    # build-support, which reads the same catalog) sees the same version. The init script lets
+    # them all resolve Zipline -SNAPSHOTs from GitHub Packages.
+    - name: Use Zipline ${{ inputs.zipline-version }}
+      if: ${{ inputs.zipline-version != '' }}
+      shell: bash
+      env:
+        ZIPLINE_VERSION: ${{ inputs.zipline-version }}
+        ZIPLINE_REPOSITORY: ${{ inputs.zipline-repository }}
+        ZIPLINE_PACKAGES_TOKEN: ${{ inputs.zipline-packages-token }}
+      run: |
+        if [[ ! "$ZIPLINE_VERSION" =~ ^[A-Za-z0-9._+-]+$ ]]; then
+          echo "Invalid Zipline version '$ZIPLINE_VERSION'" >&2
+          exit 1
+        fi
+        if [ -z "$ZIPLINE_PACKAGES_TOKEN" ]; then
+          echo "::warning::No ZIPLINE_PACKAGES_TOKEN secret; resolving Zipline from GitHub Packages will likely fail"
+        fi
+
+        catalog=gradle/libs.versions.toml
+        sed -i.bak -E "s/^zipline = \".*\"$/zipline = \"$ZIPLINE_VERSION\"/" "$catalog"
+        rm "$catalog.bak"
+        grep -q "^zipline = \"$ZIPLINE_VERSION\"$" "$catalog"
+
+        mkdir -p ~/.gradle/init.d
+        cp "$GITHUB_ACTION_PATH/zipline-repository.init.gradle" ~/.gradle/init.d/
+        {
+          echo "ZIPLINE_MAVEN_URL=https://maven.pkg.github.com/$ZIPLINE_REPOSITORY"
+          echo "ZIPLINE_MAVEN_USERNAME=$GITHUB_ACTOR"
+          echo "ZIPLINE_MAVEN_PASSWORD=$ZIPLINE_PACKAGES_TOKEN"
+          # Builds with their own Gradle user home (like Gradle TestKit's) don't see init.d.
+          echo "ZIPLINE_INIT_SCRIPT=$HOME/.gradle/init.d/zipline-repository.init.gradle"
+        } >> "$GITHUB_ENV"

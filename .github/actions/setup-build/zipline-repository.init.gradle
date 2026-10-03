@@ -1,0 +1,32 @@
+// Lets every build resolve Zipline -SNAPSHOTs from the Zipline fork's GitHub Packages registry, in
+// addition to the repositories the builds declare. Installed by the setup-build action.
+// Env: ZIPLINE_MAVEN_URL, ZIPLINE_MAVEN_USERNAME, ZIPLINE_MAVEN_PASSWORD.
+
+def addZiplineRepository = { RepositoryHandler repositories ->
+  repositories.maven {
+    name = 'ziplineGitHubPackages'
+    url = System.getenv('ZIPLINE_MAVEN_URL')
+    credentials {
+      username = System.getenv('ZIPLINE_MAVEN_USERNAME')
+      password = System.getenv('ZIPLINE_MAVEN_PASSWORD')
+    }
+    content {
+      includeVersionByRegex('io\\.github\\.tret9', 'zipline.*', '.*-SNAPSHOT')
+    }
+  }
+}
+
+beforeSettings { settings ->
+  addZiplineRepository(settings.pluginManagement.repositories)
+  addZiplineRepository(settings.dependencyResolutionManagement.repositories)
+}
+
+allprojects { project ->
+  addZiplineRepository(project.buildscript.repositories)
+  // Projects that declare their own repositories ignore the settings ones.
+  project.afterEvaluate {
+    if (!project.repositories.isEmpty()) {
+      addZiplineRepository(project.repositories)
+    }
+  }
+}

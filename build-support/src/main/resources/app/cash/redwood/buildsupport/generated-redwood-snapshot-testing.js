@@ -83,8 +83,10 @@ function installSnapshotsStore(config) {
         });
 
         request.on('end', function () {
-          writeStream.end();
-          response.end('accepted');
+          // Respond once the file is flushed, so a GET right after this POST sees its content.
+          writeStream.end(function () {
+            response.end('accepted');
+          });
         });
       }
     }

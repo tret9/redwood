@@ -31,7 +31,14 @@ public data class DiffResult(
   val numDifferentPixels: Long = 0,
 )
 
-internal class ImageDiffer {
+/**
+ * @param maxPercentDifference images differing by at most this percentage are considered equal,
+ *   like Paparazzi's default. Browsers anti-alias text slightly differently across versions, so
+ *   exact matching fails as soon as CI's browser is updated.
+ */
+internal class ImageDiffer(
+  private val maxPercentDifference: Float = 0.1f,
+) {
   suspend fun compare(expected: Blob, actual: Blob): DiffResult {
     val expectedImage = expected.decodeImage()
     val expectedWidth = expectedImage.width
@@ -122,7 +129,7 @@ internal class ImageDiffer {
         ?: (deltaA * 100 / (totalPixels * 255L).toDouble()).toFloat()
 
     return DiffResult(
-      isDifferent = true,
+      isDifferent = percentDifference > maxPercentDifference,
       deltaImage = canvas.encodeImage(),
       percentDifference = percentDifference,
       numDifferentPixels = differentPixels,

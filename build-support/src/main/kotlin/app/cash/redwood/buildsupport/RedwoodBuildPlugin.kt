@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Square, Inc.
+ * Copyright (C) 2023-2026 Square, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -76,10 +76,21 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 private const val REDWOOD_GROUP_ID = "io.github.tret9"
 
-// HEY! If you change the major version update release.yaml doc folder.
-private const val REDWOOD_VERSION = "0.20.0-composelive-hermes-0.6"
+// The published version is <upstream Redwood version>-composelive-hermes-<library_version.txt>,
+// plus -PversionSuffix (CI uses it for "-<short commit sha>-SNAPSHOT").
+private const val REDWOOD_UPSTREAM_VERSION = "0.20.0"
+
+private const val SPOTLESS_BASELINE_COMMIT = "6e2d1c451fd313374f078e73ecc000b771251168"
 
 private val isCiEnvironment = System.getenv("CI") == "true"
+
+private fun Project.redwoodVersion(): String {
+  val libraryVersion = providers
+    .fileContents(rootProject.layout.projectDirectory.file("library_version.txt"))
+    .asText.get().trim()
+  val versionSuffix = providers.gradleProperty("versionSuffix").orNull.orEmpty()
+  return "$REDWOOD_UPSTREAM_VERSION-composelive-hermes-$libraryVersion$versionSuffix"
+}
 
 @Suppress("unused") // Invoked reflectively by Gradle.
 class RedwoodBuildPlugin : Plugin<Project> {
@@ -87,7 +98,7 @@ class RedwoodBuildPlugin : Plugin<Project> {
 
   override fun apply(target: Project) {
     target.group = REDWOOD_GROUP_ID
-    target.version = REDWOOD_VERSION
+    target.version = target.redwoodVersion()
 
     libs = target.extensions.getByName("libs") as LibrariesForLibs
 
@@ -108,6 +119,10 @@ class RedwoodBuildPlugin : Plugin<Project> {
     val spotless = extensions.getByName("spotless") as SpotlessExtension
     val licenseHeaderFile = rootProject.file("gradle/license-header.txt")
     spotless.apply {
+      // Baseline: only check files changed since this commit, as many files from before it have
+      // format violations. Needs this commit in the local history (CI checks out with full depth).
+      ratchetFrom(SPOTLESS_BASELINE_COMMIT)
+
       // The nested build-support Gradle project contains Java sources. Use our root project to
       // target its sources rather than duplicating the Spotless setup in multiple places.
       if (path == ":") {
@@ -162,6 +177,11 @@ class RedwoodBuildPlugin : Plugin<Project> {
     pluginManager.withPlugin("app.cash.paparazzi") {
       tasks.withType(Test::class.java).configureEach { task ->
         task.systemProperty("net.bytebuddy.experimental", "true")
+        // Paparazzi 2.0.0-alpha02's HTML report calls Gradle internals that changed in Gradle 9.4
+        // (NoSuchMethodError: TestResultsProvider.hasOutput), failing the task after the tests
+        // ran. Newer Paparazzi fixes it but renders text slightly differently, which would mean
+        // re-recording every snapshot. XML results are unaffected.
+        task.reports.html.required.set(false)
       }
     }
   }
@@ -343,6 +363,7 @@ private class RedwoodBuildExtensionImpl(private val project: Project) : RedwoodB
         // Needed for lint in downstream Android projects to analyze this dependency.
         project.plugins.apply("com.android.lint")
       }
+
       CommonWithAndroid -> {
         project.plugins.apply("com.android.library")
         project.applyKotlinMultiplatform {
@@ -356,6 +377,7 @@ private class RedwoodBuildExtensionImpl(private val project: Project) : RedwoodB
           jvm()
         }
       }
+
       Tooling -> {
         project.applyKotlinJvm {
           // Not every project needs this, but it's cheap to do everywhere.
@@ -364,6 +386,7 @@ private class RedwoodBuildExtensionImpl(private val project: Project) : RedwoodB
         // Needed for lint in downstream Android projects to analyze this dependency.
         project.plugins.apply("com.android.lint")
       }
+
       ToolkitAllWithoutAndroid -> {
         project.applyKotlinMultiplatform {
           iosTargets()
@@ -373,21 +396,25 @@ private class RedwoodBuildExtensionImpl(private val project: Project) : RedwoodB
         // Needed for lint in downstream Android projects to analyze this dependency.
         project.plugins.apply("com.android.lint")
       }
+
       ToolkitAndroid -> {
         project.plugins.apply("com.android.library")
         project.plugins.apply("org.jetbrains.kotlin.android")
         modifiedGroup[AndroidDeviceTests, AndroidDeviceTests.Disable].applyTo(project)
       }
+
       ToolkitIos -> {
         project.applyKotlinMultiplatform {
           iosTargets()
         }
       }
+
       ToolkitHtml -> {
         project.applyKotlinMultiplatform {
           js().browser()
         }
       }
+
       ToolkitComposeUi -> {
         project.plugins.apply("com.android.library")
         project.applyKotlinMultiplatform {
@@ -398,6 +425,7 @@ private class RedwoodBuildExtensionImpl(private val project: Project) : RedwoodB
           jvm()
         }
       }
+
       TreehouseCommon -> {
         project.plugins.apply("com.android.library")
         project.applyKotlinMultiplatform {
@@ -409,12 +437,14 @@ private class RedwoodBuildExtensionImpl(private val project: Project) : RedwoodB
           jvm()
         }
       }
+
       TreehouseGuest -> {
         project.applyKotlinMultiplatform {
           js().nodejs()
           jvm() // For easier testing.
         }
       }
+
       TreehouseHost -> {
         project.plugins.apply("com.android.library")
         project.applyKotlinMultiplatform {
@@ -515,11 +545,18 @@ private class RedwoodBuildExtensionImpl(private val project: Project) : RedwoodB
       }
 
       publishToMavenCentral(automaticRelease = true)
-      if (project.providers.systemProperty("RELEASE_SIGNING_ENABLED").getOrElse("true").toBoolean()) {
+      // Only sign when a key is configured. Versions aren't -SNAPSHOTs, so otherwise every local
+      // publication (like the ones the Gradle plugin tests use) would require a key. CI signs
+      // releases in .github/scripts/publish-to-maven-central.sh instead.
+      val hasSigningKey = listOf("signingInMemoryKey", "signing.keyId", "signing.gnupg.keyName")
+        .any { project.providers.gradleProperty(it).isPresent }
+      if (hasSigningKey &&
+        project.providers.systemProperty("RELEASE_SIGNING_ENABLED").getOrElse("true").toBoolean()
+      ) {
         signAllPublications()
       }
 
-      coordinates(REDWOOD_GROUP_ID, project.name, REDWOOD_VERSION)
+      coordinates(REDWOOD_GROUP_ID, project.name, project.version.toString())
 
       pom { pom ->
         pom.name.set(project.name)

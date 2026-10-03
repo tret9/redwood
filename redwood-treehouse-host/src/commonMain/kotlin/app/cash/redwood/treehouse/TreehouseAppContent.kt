@@ -515,10 +515,12 @@ private class ViewContentCodeBinding<A : AppService>(
    * session creation), so the per-session [callsink] set here reaches the changes emitted by
    * the guest. Each zipline session gets exactly one bridge; closing and recreating a screen
    * creates a fresh session with a fresh bridge, and concurrent sessions never cross-wire.
+   *
+   * Null for sessions not backed by Zipline (like test fakes); those deliver changes through
+   * [sendChanges] only.
    */
-  private fun sessionRdmaBridge(): RdmaBridge {
-    val zipline = (codeSession as? ZiplineCodeSession)?.zipline
-      ?: error("RDMA bridge requires a zipline code session")
+  private fun sessionRdmaBridge(): RdmaBridge? {
+    val zipline = (codeSession as? ZiplineCodeSession)?.zipline ?: return null
     return zipline.getOrPutAttachment(RdmaBridge::class) { RdmaBridge() }
   }
 
@@ -526,7 +528,7 @@ private class ViewContentCodeBinding<A : AppService>(
     bindingScope.launch(dispatchers.zipline) {
       val rdmaBridge = sessionRdmaBridge()
       rdmaBridgeOrNull = rdmaBridge
-      rdmaBridge.callsink = this@ViewContentCodeBinding
+      rdmaBridge?.callsink = this@ViewContentCodeBinding
 
       val scopedAppService = serviceScope.apply(codeSession.appService)
       val treehouseUi = contentSource!!.get(scopedAppService)
