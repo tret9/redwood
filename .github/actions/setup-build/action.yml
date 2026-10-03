@@ -60,4 +60,6 @@ runs:
           echo "ZIPLINE_MAVEN_URL=https://maven.pkg.github.com/$ZIPLINE_REPOSITORY"
           echo "ZIPLINE_MAVEN_USERNAME=$GITHUB_ACTOR"
           echo "ZIPLINE_MAVEN_PASSWORD=$ZIPLINE_PACKAGES_TOKEN"
+          # Builds with their own Gradle user home (like Gradle TestKit's) don't see init.d.
+          echo "ZIPLINE_INIT_SCRIPT=$HOME/.gradle/init.d/zipline-repository.init.gradle"
         } >> "$GITHUB_ENV"

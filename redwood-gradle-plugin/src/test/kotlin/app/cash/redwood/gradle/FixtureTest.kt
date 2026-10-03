@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Square, Inc.
+ * Copyright (C) 2021-2026 Square, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -117,9 +117,21 @@ class FixtureTest {
     val gradleRoot = File(fixtureDir, "gradle").also { it.mkdir() }
     File("../gradle/wrapper").copyRecursively(File(gradleRoot, "wrapper"), true)
 
+    // CI sets this when building against a Zipline -SNAPSHOT: it adds the repository hosting it.
+    // TestKit builds use their own Gradle user home, so they don't pick it up from init.d.
+    val initScriptArgs = System.getenv("ZIPLINE_INIT_SCRIPT")
+      ?.let { listOf("--init-script", it) }
+      .orEmpty()
+
     return GradleRunner.create()
       .withProjectDir(fixtureDir)
-      .withArguments(*tasks, "--no-build-cache", "--stacktrace", "-PredwoodVersion=$redwoodVersion")
+      .withArguments(
+        *tasks,
+        "--no-build-cache",
+        "--stacktrace",
+        "-PredwoodVersion=$redwoodVersion",
+        *initScriptArgs.toTypedArray(),
+      )
       .withDebug(true) // Do not use a daemon.
   }
 }
