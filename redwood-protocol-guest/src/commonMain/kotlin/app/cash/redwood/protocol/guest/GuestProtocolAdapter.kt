@@ -120,6 +120,21 @@ public abstract class GuestProtocolAdapter(
     value: Modifier,
   )
 
+  /**
+   * JSON-free property change: [value] crosses to the host as a real bridged JS object (built by
+   * the @WithHost2JSBridge machinery) instead of a JSON-encoded payload. Only the direct
+   * (bridge) guest adapter supports this; JSON-mode adapters must never receive this call.
+   *
+   * @suppress For generated code use only.
+   */
+  @RedwoodCodegenApi
+  public abstract fun appendBridgedPropertyChange(
+    id: Id,
+    widgetTag: WidgetTag,
+    propertyTag: PropertyTag,
+    value: Any?,
+  )
+
   @RedwoodCodegenApi
   public abstract fun appendAdd(
     id: Id,

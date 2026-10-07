@@ -45,15 +45,6 @@ internal actual fun GuestProtocolAdapter(
   widgetSystemFactory: ProtocolWidgetSystemFactory,
   mismatchHandler: ProtocolMismatchHandler,
 ): GuestProtocolAdapter {
-  val rdmaObj: dynamic = js("globalThis.app_cash_redwood_rdmaSendChanges")
-  if (rdmaObj != undefined && rdmaObj.appendBridgeChange != undefined) {
-    return BridgeGuestProtocolAdapter(
-      json = json,
-      hostVersion = hostVersion,
-      widgetSystemFactory = widgetSystemFactory,
-      mismatchHandler = mismatchHandler,
-    )
-  }
   return FastGuestProtocolAdapter(
     json = json,
     hostVersion = hostVersion,
@@ -172,6 +163,18 @@ internal class FastGuestProtocolAdapter(
     changes.push(js("""["property",{"id":id,"widget":widget,"tag":tag,"value":value}]"""))
   }
 
+  override fun appendBridgedPropertyChange(
+    id: Id,
+    widgetTag: WidgetTag,
+    propertyTag: PropertyTag,
+    value: Any?,
+  ) {
+    throw IllegalStateException(
+      "appendBridgedPropertyChange requires the direct (bridge) guest adapter — " +
+        "JSON property encoding is disabled in direct-only builds",
+    )
+  }
+
   override fun appendModifierChange(id: Id, value: Modifier) {
     val elements = js("[]")
 
@@ -275,4 +278,8 @@ internal class FastGuestProtocolAdapter(
         }
       }
     }
+
+  init {
+    bindDirectEventSink(widgets = { widgets[it] }, mismatchHandler = mismatchHandler)
+  }
 }
