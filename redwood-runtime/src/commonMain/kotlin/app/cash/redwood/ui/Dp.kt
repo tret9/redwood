@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Square, Inc.
+ * Copyright (C) 2023-2026 Square, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,10 @@ package app.cash.redwood.ui
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
-import kotlin.jvm.JvmInline
-import kotlinx.serialization.Serializable
 import app.cash.zipline.bridge.support.WithHost2JSBridge
 import app.cash.zipline.bridge.support.WithJS2HostBridge
+import kotlin.jvm.JvmInline
+import kotlinx.serialization.Serializable
 
 /**
  * Represents a density-independent pixel value. Values will be scaled and

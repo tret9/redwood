@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Square, Inc.
+ * Copyright (C) 2021-2026 Square, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -84,7 +84,10 @@ class ProtocolGuestGenerationTest {
   @Test fun `direct-only mode drops JSON decode and serializers`() {
     val schema = parseTestSchema(EventfulSchema::class).schema
     val fileSpec = generateProtocolWidget(
-      schema, schema, schema.widgets.single(), directEventsOnly = true,
+      schema,
+      schema,
+      schema.widgets.single(),
+      directEventsOnly = true,
     ).toString()
 
     // Direct dispatch + bridged property changes present.

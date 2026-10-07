@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2026 Square, Inc.
+ * Copyright (C) 2026 Square, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,21 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package app.cash.redwood.ui
+package app.cash.redwood.treehouse
 
-import app.cash.zipline.bridge.support.WithHost2JSBridge
-import dev.drewhamilton.poko.Poko
-import kotlinx.serialization.Serializable
+import app.cash.redwood.protocol.RedwoodVersion
+import app.cash.redwood.protocol.guest.GuestProtocolAdapter
+import app.cash.redwood.protocol.guest.ProtocolMismatchHandler
+import app.cash.redwood.protocol.guest.ProtocolWidgetSystemFactory
+import kotlinx.serialization.json.Json
 
-/** A two-dimensional size measured in density-independent pixels. */
-@Poko
-@Serializable
-@WithHost2JSBridge
-public class Size(
-  public val width: Dp,
-  public val height: Dp,
-) {
-  public companion object {
-    public val Zero: Size = Size(0.dp, 0.dp)
-  }
-}
+internal expect fun bridgeGuestProtocolAdapter(
+  json: Json,
+  hostVersion: RedwoodVersion,
+  widgetSystemFactory: ProtocolWidgetSystemFactory,
+  mismatchHandler: ProtocolMismatchHandler,
+): GuestProtocolAdapter
