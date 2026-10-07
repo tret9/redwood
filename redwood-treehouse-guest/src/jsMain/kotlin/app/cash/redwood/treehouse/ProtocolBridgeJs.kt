@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Square, Inc.
+ * Copyright (C) 2024-2026 Square, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -185,6 +185,7 @@ internal class FastGuestProtocolAdapter(
           val value = json.encodeToDynamic(serializer, element)
           elements.push(js("""[tag,value]"""))
         }
+
         else -> {
           elements.push(js("""[tag]"""))
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Square, Inc.
+ * Copyright (C) 2022-2026 Square, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ public fun TreehouseUi.asZiplineTreehouseUi(
   rdmaEnabled: Boolean = false,
 ): ZiplineTreehouseUi {
   val guestAdapter = if (rdmaEnabled) {
-    BridgeGuestProtocolAdapter(
+    bridgeGuestProtocolAdapter(
       hostVersion = appLifecycle.hostProtocolVersion,
       json = appLifecycle.json,
       widgetSystemFactory = appLifecycle.protocolWidgetSystemFactory,

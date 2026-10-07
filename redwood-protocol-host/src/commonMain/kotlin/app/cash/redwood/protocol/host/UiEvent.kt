@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Square, Inc.
+ * Copyright (C) 2024-2026 Square, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,6 +48,7 @@ public fun interface UiEventSink {
 public interface DirectTransportUiEvent : UiEvent {
   public val id: Id
   public val tag: EventTag
+
   /** Raw typed args (null when the event has none). */
   public val args: Array<Any?>?
 }
