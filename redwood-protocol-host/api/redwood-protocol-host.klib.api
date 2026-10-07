@@ -72,3 +72,6 @@ final fun generated_bridges/app_cash_redwood_protocol_host_UiModifierChange_toKo
 
 // Targets: [ios]
 final fun generated_bridges/app_cash_redwood_protocol_host_UiPropertyChange_toKotlin(kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>?, kotlin/Int): kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>? // generated_bridges/app_cash_redwood_protocol_host_UiPropertyChange_toKotlin|app_cash_redwood_protocol_host_UiPropertyChange_toKotlin(kotlinx.cinterop.CPointer<out|kotlinx.cinterop.CPointed>?;kotlin.Int){}[0]
+
+// Targets: [js]
+final fun app.cash.redwood.protocol.host/__bridgeWarmUpHost2Js(): kotlin/Boolean // app.cash.redwood.protocol.host/__bridgeWarmUpHost2Js|__bridgeWarmUpHost2Js(){}[0]
