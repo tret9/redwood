@@ -510,3 +510,6 @@ final fun generated_bridges/app_cash_redwood_protocol_PropertyTag_toKotlin(kotli
 
 // Targets: [ios]
 final fun generated_bridges/app_cash_redwood_protocol_WidgetTag_toKotlin(kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>?, kotlin/Int): kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>? // generated_bridges/app_cash_redwood_protocol_WidgetTag_toKotlin|app_cash_redwood_protocol_WidgetTag_toKotlin(kotlinx.cinterop.CPointer<out|kotlinx.cinterop.CPointed>?;kotlin.Int){}[0]
+
+// Targets: [js]
+final fun app.cash.redwood.protocol/__bridgeWarmUpHost2Js(): kotlin/Boolean // app.cash.redwood.protocol/__bridgeWarmUpHost2Js|__bridgeWarmUpHost2Js(){}[0]
