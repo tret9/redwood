@@ -25,6 +25,7 @@ import kotlin.native.ObjCName
  */
 @Stable
 @ObjCName("Modifier", exact = true)
+@WithJS2HostBridge
 public interface Modifier {
   /**
    * Iterates over all [Element]s in this [Modifier].
