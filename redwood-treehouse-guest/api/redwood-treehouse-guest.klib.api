@@ -6,6 +6,12 @@
 // - Show declarations: true
 
 // Library unique name: <io.github.tret9:redwood-treehouse-guest>
+abstract interface app.cash.redwood.treehouse/MountableZiplineTreehouseUi : app.cash.redwood.treehouse/ZiplineTreehouseUi { // app.cash.redwood.treehouse/MountableZiplineTreehouseUi|null[0]
+    abstract fun mount(kotlin/String, kotlin/Function0<kotlin/Unit>) // app.cash.redwood.treehouse/MountableZiplineTreehouseUi.mount|mount(kotlin.String;kotlin.Function0<kotlin.Unit>){}[0]
+    abstract fun unmount(kotlin/String) // app.cash.redwood.treehouse/MountableZiplineTreehouseUi.unmount|unmount(kotlin.String){}[0]
+    abstract fun updateViewport(kotlin/String, kotlin/Double, kotlin/Double) // app.cash.redwood.treehouse/MountableZiplineTreehouseUi.updateViewport|updateViewport(kotlin.String;kotlin.Double;kotlin.Double){}[0]
+}
+
 final class app.cash.redwood.treehouse/StandardAppLifecycle : app.cash.redwood.treehouse/AppLifecycle { // app.cash.redwood.treehouse/StandardAppLifecycle|null[0]
     constructor <init>(app.cash.redwood.protocol.guest/ProtocolWidgetSystemFactory, kotlinx.serialization.json/Json, kotlin/UInt) // app.cash.redwood.treehouse/StandardAppLifecycle.<init>|<init>(app.cash.redwood.protocol.guest.ProtocolWidgetSystemFactory;kotlinx.serialization.json.Json;kotlin.UInt){}[0]
 
@@ -18,4 +24,5 @@ final class app.cash.redwood.treehouse/StandardAppLifecycle : app.cash.redwood.t
     final fun start(app.cash.redwood.treehouse/AppLifecycle.Host) // app.cash.redwood.treehouse/StandardAppLifecycle.start|start(app.cash.redwood.treehouse.AppLifecycle.Host){}[0]
 }
 
+final fun (app.cash.redwood.treehouse/TreehouseUi).app.cash.redwood.treehouse/asMountableZiplineTreehouseUi(app.cash.redwood.treehouse/StandardAppLifecycle, kotlin/Boolean = ...): app.cash.redwood.treehouse/MountableZiplineTreehouseUi // app.cash.redwood.treehouse/asMountableZiplineTreehouseUi|asMountableZiplineTreehouseUi@app.cash.redwood.treehouse.TreehouseUi(app.cash.redwood.treehouse.StandardAppLifecycle;kotlin.Boolean){}[0]
 final fun (app.cash.redwood.treehouse/TreehouseUi).app.cash.redwood.treehouse/asZiplineTreehouseUi(app.cash.redwood.treehouse/StandardAppLifecycle, kotlin/Boolean = ...): app.cash.redwood.treehouse/ZiplineTreehouseUi // app.cash.redwood.treehouse/asZiplineTreehouseUi|asZiplineTreehouseUi@app.cash.redwood.treehouse.TreehouseUi(app.cash.redwood.treehouse.StandardAppLifecycle;kotlin.Boolean){}[0]

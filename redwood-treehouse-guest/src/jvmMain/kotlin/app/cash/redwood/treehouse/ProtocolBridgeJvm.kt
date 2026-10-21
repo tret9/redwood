@@ -15,6 +15,7 @@
  */
 package app.cash.redwood.treehouse
 
+import app.cash.redwood.protocol.ChangesSink
 import app.cash.redwood.protocol.RedwoodVersion
 import app.cash.redwood.protocol.guest.DefaultGuestProtocolAdapter
 import app.cash.redwood.protocol.guest.GuestProtocolAdapter
@@ -28,3 +29,20 @@ internal actual fun GuestProtocolAdapter(
   widgetSystemFactory: ProtocolWidgetSystemFactory,
   mismatchHandler: ProtocolMismatchHandler,
 ): GuestProtocolAdapter = DefaultGuestProtocolAdapter(json, hostVersion, widgetSystemFactory, mismatchHandler)
+
+internal actual fun compositionProtocolAdapter(
+  appLifecycle: StandardAppLifecycle,
+  host: ZiplineTreehouseUi.Host,
+  compositionId: String,
+): GuestProtocolAdapter {
+  return DefaultGuestProtocolAdapter(
+    json = appLifecycle.json,
+    hostVersion = appLifecycle.hostProtocolVersion,
+    widgetSystemFactory = appLifecycle.protocolWidgetSystemFactory,
+    mismatchHandler = appLifecycle.mismatchHandler,
+  ).also { adapter ->
+    adapter.initChangesSink(ChangesSink { changes ->
+      host.sendCompositionChanges(compositionId, changes)
+    })
+  }
+}

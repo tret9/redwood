@@ -10,6 +10,11 @@ abstract fun interface <#A: app.cash.redwood.treehouse/AppService> app.cash.redw
     abstract fun get(#A): app.cash.redwood.treehouse/ZiplineTreehouseUi // app.cash.redwood.treehouse/TreehouseContentSource.get|get(1:0){}[0]
 }
 
+abstract interface <#A: kotlin/Any> app.cash.redwood.treehouse/CompositionDisplay { // app.cash.redwood.treehouse/CompositionDisplay|null[0]
+    abstract fun children(kotlin/String): app.cash.redwood.widget/Widget.Children<#A> // app.cash.redwood.treehouse/CompositionDisplay.children|children(kotlin.String){}[0]
+    abstract fun onFailed(kotlin/String, kotlin/String) // app.cash.redwood.treehouse/CompositionDisplay.onFailed|onFailed(kotlin.String;kotlin.String){}[0]
+}
+
 abstract interface <#A: kotlin/Any> app.cash.redwood.treehouse/Crashed : app.cash.redwood.widget/Widget<#A> { // app.cash.redwood.treehouse/Crashed|null[0]
     abstract fun restart(kotlin/Function0<kotlin/Unit>) // app.cash.redwood.treehouse/Crashed.restart|restart(kotlin.Function0<kotlin.Unit>){}[0]
     abstract fun uncaughtException(kotlin/Throwable) // app.cash.redwood.treehouse/Crashed.uncaughtException|uncaughtException(kotlin.Throwable){}[0]

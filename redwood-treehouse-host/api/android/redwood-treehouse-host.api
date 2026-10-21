@@ -3,6 +3,11 @@ public final class app/cash/redwood/treehouse/ChangeListRenderer {
 	public final fun render-rqC_l18 (Lapp/cash/redwood/treehouse/TreehouseView;Ljava/util/List;)V
 }
 
+public abstract interface class app/cash/redwood/treehouse/CompositionDisplay {
+	public abstract fun children (Ljava/lang/String;)Lapp/cash/redwood/widget/Widget$Children;
+	public abstract fun onFailed (Ljava/lang/String;Ljava/lang/String;)V
+}
+
 public abstract interface class app/cash/redwood/treehouse/Content {
 	public abstract fun bind (Lapp/cash/redwood/treehouse/TreehouseView;)V
 	public abstract fun getState ()Lkotlinx/coroutines/flow/StateFlow;

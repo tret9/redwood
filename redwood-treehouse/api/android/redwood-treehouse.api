@@ -188,6 +188,8 @@ public final class app/cash/redwood/treehouse/StateSnapshotKt {
 
 public abstract interface class app/cash/redwood/treehouse/ZiplineTreehouseUi : app/cash/redwood/protocol/EventSink, app/cash/zipline/ZiplineService {
 	public static final field Companion Lapp/cash/redwood/treehouse/ZiplineTreehouseUi$Companion;
+	public fun abortComposition (Ljava/lang/String;)V
+	public fun sendCompositionEvent (Ljava/lang/String;Lapp/cash/redwood/protocol/Event;)V
 	public fun snapshotState ()Lapp/cash/redwood/treehouse/StateSnapshot;
 	public abstract fun start (Lapp/cash/redwood/treehouse/ZiplineTreehouseUi$Host;)V
 }
@@ -208,10 +210,13 @@ public final class app/cash/redwood/treehouse/ZiplineTreehouseUi$Companion$Adapt
 public abstract interface class app/cash/redwood/treehouse/ZiplineTreehouseUi$Host : app/cash/redwood/treehouse/ChangesSinkService, app/cash/zipline/ZiplineService {
 	public static final field Companion Lapp/cash/redwood/treehouse/ZiplineTreehouseUi$Host$Companion;
 	public abstract fun addOnBackPressedCallback (Lapp/cash/redwood/treehouse/OnBackPressedCallbackService;)Lapp/cash/redwood/treehouse/CancellableService;
+	public fun closeComposition (Ljava/lang/String;)V
 	public abstract fun getStateSnapshot ()Lapp/cash/redwood/treehouse/StateSnapshot;
 	public abstract fun getUiConfigurations ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun hideSoftwareKeyboard ()V
+	public fun onCompositionFailed (Ljava/lang/String;Ljava/lang/String;)V
 	public abstract fun requestFocus (Lapp/cash/redwood/ui/core/api/FocusRequester;)V
+	public fun sendCompositionChanges (Ljava/lang/String;Ljava/util/List;)V
 }
 
 public final class app/cash/redwood/treehouse/ZiplineTreehouseUi$Host$Companion {

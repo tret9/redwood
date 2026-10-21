@@ -112,16 +112,14 @@ internal class BridgeGuestProtocolAdapterImpl(
   ) {
     val change = UiCreate(id, tag)
     pinnedObjects.push(change)
-    val rdmaObj: dynamic = js("globalThis.app_cash_redwood_rdmaSendChanges")
-    rdmaObj.appendBridgeChange(id.value, change)
+    rdmaChanges().appendBridgeChange(id.value, change)
   }
 
   override fun appendBridgeChange(
     id: Id,
     wrapped: Any?,
   ) {
-    val rdmaObj: dynamic = js("globalThis.app_cash_redwood_rdmaSendChanges")
-    rdmaObj.appendBridgeChange(id.value, wrapped)
+    rdmaChanges().appendBridgeChange(id.value, wrapped)
   }
 
   // -- Bridge path for property changes --
@@ -135,8 +133,7 @@ internal class BridgeGuestProtocolAdapterImpl(
   ) {
     val change = UiPropertyChange(id, propertyTag, value)
     pinnedObjects.push(change)
-    val rdmaObj: dynamic = js("globalThis.app_cash_redwood_rdmaSendChanges")
-    rdmaObj.appendBridgeChange(id.value, change)
+    rdmaChanges().appendBridgeChange(id.value, change)
   }
 
   override fun appendPropertyChange(
@@ -147,8 +144,7 @@ internal class BridgeGuestProtocolAdapterImpl(
   ) {
     val change = UiPropertyChange(id, propertyTag, value)
     pinnedObjects.push(change)
-    val rdmaObj: dynamic = js("globalThis.app_cash_redwood_rdmaSendChanges")
-    rdmaObj.appendBridgeChange(id.value, change)
+    rdmaChanges().appendBridgeChange(id.value, change)
   }
 
   override fun appendPropertyChange(
@@ -159,8 +155,7 @@ internal class BridgeGuestProtocolAdapterImpl(
   ) {
     val change = UiPropertyChange(id, propertyTag, value)
     pinnedObjects.push(change)
-    val rdmaObj: dynamic = js("globalThis.app_cash_redwood_rdmaSendChanges")
-    rdmaObj.appendBridgeChange(id.value, change)
+    rdmaChanges().appendBridgeChange(id.value, change)
   }
 
   override fun appendBridgedPropertyChange(
@@ -173,15 +168,13 @@ internal class BridgeGuestProtocolAdapterImpl(
     // serializer-taking appendPropertyChange overloads above.
     val change = UiPropertyChange(id, propertyTag, value)
     pinnedObjects.push(change)
-    val rdmaObj: dynamic = js("globalThis.app_cash_redwood_rdmaSendChanges")
-    rdmaObj.appendBridgeChange(id.value, change)
+    rdmaChanges().appendBridgeChange(id.value, change)
   }
 
   override fun appendModifierChange(id: Id, value: Modifier) {
     val uiChange = UiModifierChange(id, reuse = false, value)
     pinnedObjects.push(uiChange)
-    val rdmaObj: dynamic = js("globalThis.app_cash_redwood_rdmaSendChanges")
-    rdmaObj.appendBridgeChange(id.value, uiChange)
+    rdmaChanges().appendBridgeChange(id.value, uiChange)
   }
 
   override fun appendAdd(
@@ -205,8 +198,7 @@ internal class BridgeGuestProtocolAdapterImpl(
     val protocolChange = ChildrenChange.Add(id, tag, childId, index)
     val uiChange = UiChildrenChange(protocolChange)
     pinnedObjects.push(uiChange)
-    val rdmaObj: dynamic = js("globalThis.app_cash_redwood_rdmaSendChanges")
-    rdmaObj.appendBridgeChange(id.value, uiChange)
+    rdmaChanges().appendBridgeChange(id.value, uiChange)
   }
 
   override fun appendMove(
@@ -219,8 +211,7 @@ internal class BridgeGuestProtocolAdapterImpl(
     val protocolChange = ChildrenChange.Move(id, tag, fromIndex, toIndex, count)
     val uiChange = UiChildrenChange(protocolChange)
     pinnedObjects.push(uiChange)
-    val rdmaObj: dynamic = js("globalThis.app_cash_redwood_rdmaSendChanges")
-    rdmaObj.appendBridgeChange(id.value, uiChange)
+    rdmaChanges().appendBridgeChange(id.value, uiChange)
   }
 
   override fun appendRemove(
@@ -236,15 +227,11 @@ internal class BridgeGuestProtocolAdapterImpl(
     pendingRemoveObjects.add(protocolChange)
     val uiChange = UiChildrenChange(protocolChange)
     pinnedObjects.push(uiChange)
-    val rdmaObj: dynamic = js("globalThis.app_cash_redwood_rdmaSendChanges")
-    rdmaObj.appendBridgeChange(id.value, uiChange)
+    rdmaChanges().appendBridgeChange(id.value, uiChange)
   }
 
   override fun emitChanges() {
-    val rdmaObj: dynamic = js("globalThis.app_cash_redwood_rdmaSendChanges")
-    if (rdmaObj == undefined) {
-      throw AssertionError("RDMA changes channel not registered")
-    }
+    val rdmaObj = rdmaChanges()
 
     removed.forEach { id ->
       val widget = widgets[id]
@@ -257,6 +244,20 @@ internal class BridgeGuestProtocolAdapterImpl(
     rdmaObj.finishChanges()
     pendingRemoveObjects.clear()
     pinnedObjects = js("[]")
+  }
+
+  /**
+   * A guest compiled with RDMA enabled has no Fast-adapter fallback. A missing
+   * channel, including the empty flush in [start], is a misconfigured runtime.
+   */
+  private fun rdmaChanges(): dynamic {
+    val rdmaObj: dynamic = js("globalThis.app_cash_redwood_rdmaSendChanges")
+    if (rdmaObj == undefined) {
+      throw IllegalStateException(
+        "RDMA changes channel not registered. The guest was started with RDMA enabled.",
+      )
+    }
+    return rdmaObj
   }
 
   private val childrenRemover: ProtocolWidget.ChildrenVisitor =

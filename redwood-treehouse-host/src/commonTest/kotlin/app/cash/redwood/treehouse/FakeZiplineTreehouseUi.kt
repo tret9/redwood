@@ -19,11 +19,13 @@ import app.cash.redwood.RedwoodCodegenApi
 import app.cash.redwood.protocol.ChildrenTag
 import app.cash.redwood.protocol.Event
 import app.cash.redwood.protocol.Id
+import app.cash.redwood.protocol.ChangesSink
 import app.cash.redwood.protocol.guest.DefaultGuestProtocolAdapter
 import app.cash.redwood.protocol.guest.GuestProtocolAdapter
 import app.cash.redwood.protocol.guest.ProtocolMismatchHandler
 import app.cash.redwood.protocol.guest.ProtocolWidget
 import app.cash.redwood.protocol.guest.guestRedwoodVersion
+import app.cash.zipline.ZiplineException
 import app.cash.redwood.ui.core.api.FocusDirector
 import app.cash.redwood.ui.core.api.FocusRequester
 import com.example.redwood.testapp.protocol.guest.TestSchemaProtocolWidgetSystemFactory
@@ -60,6 +62,8 @@ class FakeZiplineTreehouseUi(
   )
 
   private var nextFocusRequesterId = 3000
+  private var compositionEventException: ZiplineException? = null
+  private val compositionAdapters = mutableMapOf<String, GuestProtocolAdapter>()
 
   override fun start(host: ZiplineTreehouseUi.Host) {
     eventLog += "$name.start()"
@@ -81,6 +85,58 @@ class FakeZiplineTreehouseUi(
 
   fun emitChanges() {
     guestProtocolAdapter.emitChanges()
+  }
+
+  @OptIn(RedwoodCodegenApi::class)
+  fun addCompositionWidget(compositionId: String, label: String): Button<Unit> {
+    val adapter = compositionAdapter(compositionId)
+    val widgetSystem = TestSchemaProtocolWidgetSystemFactory.create(
+      guestAdapter = adapter,
+      mismatchHandler = ProtocolMismatchHandler.Throwing,
+    )
+    val button = widgetSystem.TestSchema.Button()
+    val protocolButton = button as ProtocolWidget
+    button.text(label)
+    button.onClick {}
+    button.color(0u)
+    adapter.appendAdd(Id.Root, ChildrenTag.Root, 0, protocolButton)
+    adapter.emitChanges()
+    return button
+  }
+
+  fun emitCompositionChanges(compositionId: String) {
+    compositionAdapters.getValue(compositionId).emitChanges()
+  }
+
+  fun throwZiplineExceptionOnNextCompositionEvent(message: String) {
+    compositionEventException = ZiplineException(message)
+  }
+
+  private fun compositionAdapter(compositionId: String): GuestProtocolAdapter {
+    return compositionAdapters.getOrPut(compositionId) {
+      DefaultGuestProtocolAdapter(
+        hostVersion = guestRedwoodVersion,
+        json = json,
+        widgetSystemFactory = TestSchemaProtocolWidgetSystemFactory,
+      ).also { adapter ->
+        adapter.initChangesSink(ChangesSink { changes ->
+          host.sendCompositionChanges(compositionId, changes)
+        })
+      }
+    }
+  }
+
+  override fun sendCompositionEvent(compositionId: String, event: Event) {
+    eventLog += "$name.sendCompositionEvent($compositionId)"
+    val toThrow = compositionEventException
+    if (toThrow != null) {
+      compositionEventException = null
+      throw toThrow
+    }
+  }
+
+  override fun abortComposition(compositionId: String) {
+    eventLog += "$name.abortComposition($compositionId)"
   }
 
   fun throwOnNextEvent(message: String) {

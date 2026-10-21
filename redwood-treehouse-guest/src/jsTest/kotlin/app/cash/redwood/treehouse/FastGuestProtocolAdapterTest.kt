@@ -120,6 +120,44 @@ class FastGuestProtocolAdapterTest {
     assertEquals(listOf("from host"), received)
   }
 
+  @Test fun bridgeThrowsWhenChangesChannelMissing() {
+    js(
+      """
+      globalThis.__rdmaPrevious = globalThis.app_cash_redwood_rdmaSendChanges
+      delete globalThis.app_cash_redwood_rdmaSendChanges
+      """,
+    )
+    try {
+      val guest = BridgeGuestProtocolAdapterImpl(
+        hostVersion = guestRedwoodVersion,
+        widgetSystemFactory = TestSchemaProtocolWidgetSystemFactory,
+        json = Json.Default,
+        mismatchHandler = ProtocolMismatchHandler.Throwing,
+      )
+      val widgetSystem = guest.widgetSystem as TestSchemaWidgetSystem<Unit>
+      val queued = assertFailsWith<IllegalStateException> {
+        guest.root.insert(0, widgetSystem.TestSchema.Button())
+      }
+      val flushed = assertFailsWith<IllegalStateException> {
+        guest.emitChanges()
+      }
+      val expected = "RDMA changes channel not registered. The guest was started with RDMA enabled."
+      assertEquals(expected, queued.message)
+      assertEquals(expected, flushed.message)
+    } finally {
+      js(
+        """
+        if (typeof globalThis.__rdmaPrevious === 'undefined') {
+          delete globalThis.app_cash_redwood_rdmaSendChanges
+        } else {
+          globalThis.app_cash_redwood_rdmaSendChanges = globalThis.__rdmaPrevious
+        }
+        delete globalThis.__rdmaPrevious
+        """,
+      )
+    }
+  }
+
   @Test fun bridgeAdapterInstallsAndRoutesDirectEvents() {
     // The bridge adapter sends guest->host changes through the RDMA global; stub it with no-ops.
     js(
@@ -150,6 +188,32 @@ class FastGuestProtocolAdapterTest {
     sink((textInput as app.cash.redwood.protocol.guest.ProtocolWidget).id.value, 3, js("['bridged host']"))
 
     assertEquals(listOf("bridged host"), received)
+  }
+
+  @Test fun compositionAdapterLeavesRootDirectEventRouter() {
+    val root = FastGuestProtocolAdapter(
+      hostVersion = guestRedwoodVersion,
+      widgetSystemFactory = TestSchemaProtocolWidgetSystemFactory,
+      json = Json.Default,
+      mismatchHandler = ProtocolMismatchHandler.Throwing,
+    )
+    val received = mutableListOf<String>()
+    val widgetSystem = root.widgetSystem as TestSchemaWidgetSystem<Unit>
+    val textInput = widgetSystem.TestSchema.TextInput()
+    textInput.onChange { text -> received += text }
+    root.root.insert(0, textInput)
+
+    FastGuestProtocolAdapter(
+      hostVersion = guestRedwoodVersion,
+      widgetSystemFactory = TestSchemaProtocolWidgetSystemFactory,
+      json = Json.Default,
+      mismatchHandler = ProtocolMismatchHandler.Throwing,
+      bindDirectEvents = false,
+    )
+
+    val sink: dynamic = js("globalThis['${DIRECT_EVENT_SINK_NAME}']")
+    sink((textInput as app.cash.redwood.protocol.guest.ProtocolWidget).id.value, 3, js("['still root']"))
+    assertEquals(listOf("still root"), received)
   }
 
   @Test fun directEventSinkToUnknownNodeThrows() {
