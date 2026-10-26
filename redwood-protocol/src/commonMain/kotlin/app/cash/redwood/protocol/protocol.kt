@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Square, Inc.
+ * Copyright (C) 2021-2026 Square, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package app.cash.redwood.protocol
 
+import app.cash.zipline.bridge.support.WithJS2HostBridge
 import dev.drewhamilton.poko.Poko
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
@@ -29,7 +30,6 @@ import kotlinx.serialization.json.JsonEncoder
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonArray
-import app.cash.zipline.bridge.support.WithJS2HostBridge
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonPrimitive
 
@@ -211,6 +211,7 @@ private object ModifierElementSerializer : KSerializer<ModifierElement> {
 }
 
 @Serializable
+@WithJS2HostBridge
 public sealed interface ChildrenChange : Change {
   /** Identifies which group of children changed on the widget with [id]. */
   public val tag: ChildrenTag

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Square, Inc.
+ * Copyright (C) 2024-2026 Square, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,15 +57,22 @@ public sealed interface UiChange {
 
       return when (change) {
         is Create -> UiCreate(change.id, change.tag)
+
         is ChildrenChange -> UiChildrenChange(change)
+
         is PropertyChange -> {
           val widgetProtocol = factory.widget(change.widgetTag)
             ?: return null
           val propertyDeserializer = widgetProtocol.propertyDeserializer(change.propertyTag)
             ?: return null
+
+          // The per-property deserializer only ever yields bridge-safe values, but its static
+          // type is Any?, so the bridge safety checker cannot prove it.
+          @Suppress("BRIDGE_UNSAFE")
           val value = protocol.json.decodeFromJsonElement(propertyDeserializer, change.value)
           UiPropertyChange(change.id, change.propertyTag, value)
         }
+
         is ModifierChange -> {
           var reuse = false
           val modifier = change.elements.fold<_, Modifier>(Modifier) { outer, element ->
@@ -76,6 +83,7 @@ public sealed interface UiChange {
           }
           UiModifierChange(change.id, reuse, modifier)
         }
+
         is BridgeChange -> {
           change.wrapped as? UiChange
         }
