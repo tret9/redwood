@@ -123,7 +123,7 @@ public open class RedwoodLayout(
     val viewportSize: Size
     val density: Double
     with(Density(resources)) {
-      density = rawDensity
+      density = rawDensity * Density.densityMultiplier
       viewportSize = Size(width.toDp(), height.toDp())
     }
     return UiConfiguration(

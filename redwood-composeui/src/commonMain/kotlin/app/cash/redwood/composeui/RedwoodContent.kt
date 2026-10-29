@@ -63,7 +63,7 @@ public fun RedwoodContent(
     darkMode = isSystemInDarkTheme(),
     safeAreaInsets = safeAreaInsets(),
     viewportSize = viewportSize,
-    density = density.density.toDouble(),
+    density = density.density.toDouble() * Density.densityMultiplier,
     layoutDirection = when (LocalLayoutDirection.current) {
       LayoutDirection.Ltr -> RedwoodLayoutDirection.Ltr
       LayoutDirection.Rtl -> RedwoodLayoutDirection.Rtl

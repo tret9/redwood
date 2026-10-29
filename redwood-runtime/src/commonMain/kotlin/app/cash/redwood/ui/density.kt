@@ -62,7 +62,13 @@ public value class Density(
   }
 
   /** Empty companion object used for extensions. */
-  public companion object
+  public companion object {
+    /**
+     * A multiplier that normalizes the density values of each target platform so [Dp] values
+     * look visually similar on each device.
+     */
+    public val densityMultiplier: Double get() = DENSITY_MULTIPLIER
+  }
 }
 
 /**

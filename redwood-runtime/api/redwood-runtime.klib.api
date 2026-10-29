@@ -222,6 +222,9 @@ final value class app.cash.redwood.ui/Density { // app.cash.redwood.ui/Density|n
     }
 
     final object Companion { // app.cash.redwood.ui/Density.Companion|null[0]
+        final val densityMultiplier // app.cash.redwood.ui/Density.Companion.densityMultiplier|{}densityMultiplier[0]
+            final fun <get-densityMultiplier>(): kotlin/Double // app.cash.redwood.ui/Density.Companion.densityMultiplier.<get-densityMultiplier>|<get-densityMultiplier>(){}[0]
+
         final fun serializer(): kotlinx.serialization/KSerializer<app.cash.redwood.ui/Density> // app.cash.redwood.ui/Density.Companion.serializer|serializer(){}[0]
     }
 }

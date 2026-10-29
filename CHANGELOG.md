@@ -12,6 +12,7 @@ Fixed:
 - Fix memory leak in `HostProtocolAdapter`
 - Fix memory leak in `RealTreehouseApp.close`
 - Fix Dp not accepting negative values (e.g. Modifier.offset(-10.dp))
+- Fix Dp<->RedwoodDp conversion was inverted
 
 These leaks affected some Treehouse-based screens and prevented UI components and their associated memory from being released after dismissal.
 

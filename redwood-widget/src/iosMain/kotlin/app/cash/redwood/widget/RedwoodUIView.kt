@@ -324,7 +324,7 @@ internal fun computeUiConfiguration(
         Size(size.width.toDp(), size.height.toDp())
       }
     },
-    density = density.rawDensity,
+    density = density.rawDensity * Density.densityMultiplier,
     layoutDirection = when (layoutDirection) {
       UIUserInterfaceLayoutDirectionRightToLeft -> LayoutDirection.Rtl
       UIUserInterfaceLayoutDirectionLeftToRight -> LayoutDirection.Ltr

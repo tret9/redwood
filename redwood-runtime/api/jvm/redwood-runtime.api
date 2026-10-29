@@ -83,6 +83,7 @@ public final synthetic class app/cash/redwood/ui/Density$$serializer : kotlinx/s
 }
 
 public final class app/cash/redwood/ui/Density$Companion {
+	public final fun getDensityMultiplier ()D
 	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 

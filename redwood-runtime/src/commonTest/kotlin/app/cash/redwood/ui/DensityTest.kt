@@ -40,4 +40,12 @@ class DensityTest {
       assertThat(px.toDp().toPx()).isEqualTo(px)
     }
   }
+
+  @Test fun platformDpIsConsistentWithPxConversion() {
+    with(Density(2.5)) {
+      val dp = 16.dp
+      assertThat(dp.toPlatformDp()).isEqualTo(dp.toPx() / rawDensity)
+      assertThat(Dp.fromPlatformDp(dp.toPlatformDp())).isEqualTo(dp)
+    }
+  }
 }

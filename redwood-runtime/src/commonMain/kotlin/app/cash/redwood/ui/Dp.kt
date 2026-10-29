@@ -100,7 +100,7 @@ public inline val Double.dp: Dp get() = Dp(toDouble())
  * device-specific density-independent pixel value.
  */
 public fun Dp.toPlatformDp(): Double {
-  return value / DENSITY_MULTIPLIER
+  return value * DENSITY_MULTIPLIER
 }
 
 /**
@@ -108,5 +108,5 @@ public fun Dp.toPlatformDp(): Double {
  * device-agnostic density-independent pixel value.
  */
 public fun Dp.Companion.fromPlatformDp(value: Double): Dp {
-  return Dp(value * DENSITY_MULTIPLIER)
+  return Dp(value / DENSITY_MULTIPLIER)
 }
