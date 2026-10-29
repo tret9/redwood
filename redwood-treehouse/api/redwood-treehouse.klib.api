@@ -60,6 +60,8 @@ abstract interface app.cash.redwood.treehouse/OnBackPressedDispatcherService : a
 
 abstract interface app.cash.redwood.treehouse/ZiplineTreehouseUi : app.cash.redwood.protocol/EventSink, app.cash.zipline/ZiplineService { // app.cash.redwood.treehouse/ZiplineTreehouseUi|null[0]
     abstract fun start(app.cash.redwood.treehouse/ZiplineTreehouseUi.Host) // app.cash.redwood.treehouse/ZiplineTreehouseUi.start|start(app.cash.redwood.treehouse.ZiplineTreehouseUi.Host){}[0]
+    open fun abortComposition(kotlin/String) // app.cash.redwood.treehouse/ZiplineTreehouseUi.abortComposition|abortComposition(kotlin.String){}[0]
+    open fun sendCompositionEvent(kotlin/String, app.cash.redwood.protocol/Event) // app.cash.redwood.treehouse/ZiplineTreehouseUi.sendCompositionEvent|sendCompositionEvent(kotlin.String;app.cash.redwood.protocol.Event){}[0]
     open fun snapshotState(): app.cash.redwood.treehouse/StateSnapshot? // app.cash.redwood.treehouse/ZiplineTreehouseUi.snapshotState|snapshotState(){}[0]
 
     abstract interface Host : app.cash.redwood.treehouse/ChangesSinkService, app.cash.zipline/ZiplineService { // app.cash.redwood.treehouse/ZiplineTreehouseUi.Host|null[0]
@@ -71,6 +73,9 @@ abstract interface app.cash.redwood.treehouse/ZiplineTreehouseUi : app.cash.redw
         abstract fun addOnBackPressedCallback(app.cash.redwood.treehouse/OnBackPressedCallbackService): app.cash.redwood.treehouse/CancellableService // app.cash.redwood.treehouse/ZiplineTreehouseUi.Host.addOnBackPressedCallback|addOnBackPressedCallback(app.cash.redwood.treehouse.OnBackPressedCallbackService){}[0]
         abstract fun hideSoftwareKeyboard() // app.cash.redwood.treehouse/ZiplineTreehouseUi.Host.hideSoftwareKeyboard|hideSoftwareKeyboard(){}[0]
         abstract fun requestFocus(app.cash.redwood.ui.core.api/FocusRequester) // app.cash.redwood.treehouse/ZiplineTreehouseUi.Host.requestFocus|requestFocus(app.cash.redwood.ui.core.api.FocusRequester){}[0]
+        open fun closeComposition(kotlin/String) // app.cash.redwood.treehouse/ZiplineTreehouseUi.Host.closeComposition|closeComposition(kotlin.String){}[0]
+        open fun onCompositionFailed(kotlin/String, kotlin/String) // app.cash.redwood.treehouse/ZiplineTreehouseUi.Host.onCompositionFailed|onCompositionFailed(kotlin.String;kotlin.String){}[0]
+        open fun sendCompositionChanges(kotlin/String, kotlin.collections/List<app.cash.redwood.protocol/Change>) // app.cash.redwood.treehouse/ZiplineTreehouseUi.Host.sendCompositionChanges|sendCompositionChanges(kotlin.String;kotlin.collections.List<app.cash.redwood.protocol.Change>){}[0]
 
         final object Companion // app.cash.redwood.treehouse/ZiplineTreehouseUi.Host.Companion|null[0]
     }

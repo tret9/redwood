@@ -20,11 +20,13 @@ import app.cash.redwood.leaks.LeakDetector
 import app.cash.redwood.ui.UiConfiguration
 import app.cash.redwood.ui.core.compose.focusRequester
 import assertk.assertThat
+import assertk.assertions.contains
 import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
 import assertk.assertions.isInstanceOf
 import assertk.assertions.isNotEmpty
 import assertk.assertions.isNull
+import assertk.assertions.isTrue
 import com.example.redwood.testapp.testing.ButtonValue
 import com.example.redwood.testapp.widget.Button
 import kotlin.coroutines.EmptyCoroutineContext
@@ -579,6 +581,132 @@ class TreehouseAppContentTest {
     eventLog.clear()
   }
 
+  @Test
+  fun requestFocusInMountedComposition() = runTest {
+    val content = treehouseAppContent()
+
+    val codeSession = codeHost.startCodeSession("codeSession")
+    val view = treehouseView("view")
+    content.bind(view)
+    val sessionContent = codeSession.appService.uis.single()
+
+    val focusRequester = sessionContent.newFocusRequester()
+    with(sessionContent) {
+      val widget = addCompositionWidget("pane", "name")
+      widget.modifier = Modifier.focusRequester(focusRequester)
+      emitCompositionChanges("pane")
+    }
+
+    val nameWidget = view.compositionChildren.getValue("pane").widgets.single {
+      (it.value as? ButtonValue)?.text == "name"
+    }
+    assertThat(view.focused).isNull()
+
+    focusRequester.requestFocus()
+    assertThat(view.focused).isEqualTo(nameWidget)
+
+    content.unbind()
+    content.awaitCodeDetached()
+    eventLog.clear()
+  }
+
+  @Test
+  fun requestFocusDoesNotRecreateClosedCompositionChildren() = runTest {
+    val content = treehouseAppContent()
+
+    val codeSession = codeHost.startCodeSession("codeSession")
+    val view = treehouseView("view")
+    content.bind(view)
+    val sessionContent = codeSession.appService.uis.single()
+
+    with(sessionContent) {
+      addCompositionWidget("pane", "name")
+      emitCompositionChanges("pane")
+    }
+    assertThat(view.compositionChildren.keys).isEqualTo(setOf("pane"))
+
+    // The layout slot is gone, but the host adapter for it is still mounted.
+    view.compositionChildren.remove("pane")
+    sessionContent.newFocusRequester().requestFocus()
+
+    assertThat(view.compositionChildren).isEmpty()
+    assertThat(view.focused).isNull()
+
+    content.unbind()
+    content.awaitCodeDetached()
+    eventLog.clear()
+  }
+
+  @Test
+  fun compositionEventExceptionDoesNotStopTheSession() = runTest {
+    val content = treehouseAppContent()
+
+    val view = treehouseView("view")
+    content.bind(view)
+    content.awaitInitialCodeLoading()
+
+    val codeSession = codeHost.startCodeSession("codeSession")
+    eventLog.takeEvent("codeSession.start()")
+    eventLog.takeEvent("codeSession.app.uis[0].start()")
+
+    val sessionContent = codeSession.appService.uis.single()
+    sessionContent.addWidget("root")
+    content.awaitCodeLoaded()
+
+    sessionContent.addCompositionWidget("pane", "pane")
+    sessionContent.throwZiplineExceptionOnNextCompositionEvent("boom!")
+    val button = view.compositionChildren.getValue("pane").widgets.single().value as ButtonValue
+    button.onClick!!.invoke()
+
+    eventLog.takeEvent("codeSession.app.uis[0].sendCompositionEvent(pane)")
+    eventLog.takeEvent("codeSession.app.uis[0].abortComposition(pane)")
+    assertThat(view.compositionFailures.map { it.first }).isEqualTo(listOf("pane"))
+    assertThat(view.compositionFailures.single().second).contains("boom!")
+    assertThat(view.views.any { (it as? ButtonValue)?.text == "root" }).isTrue()
+
+    content.unbind()
+    content.awaitCodeDetached()
+    eventLog.takeEvent("codeSession.app.uis[0].close()")
+  }
+
+  @Test
+  fun twoCompositionsKeepChangesAndEventsApart() = runTest {
+    val content = treehouseAppContent()
+
+    val view = treehouseView("view")
+    content.bind(view)
+    content.awaitInitialCodeLoading()
+
+    val codeSession = codeHost.startCodeSession("codeSession")
+    eventLog.takeEvent("codeSession.start()")
+    eventLog.takeEvent("codeSession.app.uis[0].start()")
+
+    val sessionContent = codeSession.appService.uis.single()
+    sessionContent.addWidget("root")
+    content.awaitCodeLoaded()
+
+    val leftButton = sessionContent.addCompositionWidget("left", "left")
+    val rightButton = sessionContent.addCompositionWidget("right", "right")
+
+    assertThat(buttonText(view, "left")).isEqualTo("left")
+    assertThat(buttonText(view, "right")).isEqualTo("right")
+    assertThat(view.views.filterIsInstance<ButtonValue>().map { it.text }).isEqualTo(listOf("root"))
+
+    leftButton.text("left-2")
+    sessionContent.emitCompositionChanges("left")
+    assertThat(buttonText(view, "left")).isEqualTo("left-2")
+    assertThat(buttonText(view, "right")).isEqualTo("right")
+
+    button(view, "left").onClick!!.invoke()
+    eventLog.takeEvent("codeSession.app.uis[0].sendCompositionEvent(left)")
+    button(view, "right").onClick!!.invoke()
+    eventLog.takeEvent("codeSession.app.uis[0].sendCompositionEvent(right)")
+
+    content.unbind()
+    content.awaitCodeDetached()
+    eventLog.takeEvent("codeSession.app.uis[0].close()")
+  }
+
   private fun treehouseAppContent(): TreehouseAppContent<FakeAppService> {
     return TreehouseAppContent(
       codeHost = codeHost,
@@ -586,6 +714,14 @@ class TreehouseAppContentTest {
       source = { app -> app.newUi() },
       leakDetector = LeakDetector.none(),
     )
+  }
+
+  private fun button(view: FakeTreehouseView, compositionId: String): ButtonValue {
+    return view.compositionChildren.getValue(compositionId).widgets.single().value as ButtonValue
+  }
+
+  private fun buttonText(view: FakeTreehouseView, compositionId: String): String? {
+    return button(view, compositionId).text
   }
 
   private fun treehouseView(name: String): FakeTreehouseView {
