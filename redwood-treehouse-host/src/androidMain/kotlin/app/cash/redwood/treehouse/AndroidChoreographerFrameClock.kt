@@ -15,35 +15,48 @@
  */
 package app.cash.redwood.treehouse
 
-import android.view.Choreographer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 /**
- * A [FrameClock] that sends frames using [Choreographer].
+ * Sends a frame as soon as one is requested.
+ *
+ * Waiting for the next [android.view.Choreographer] frame parked guest composition until the
+ * following vsync, which added about one frame to scroll-to-compose.
  */
 internal class AndroidChoreographerFrameClock private constructor(
-  private val choreographer: Choreographer,
   private val scope: CoroutineScope,
   private val dispatchers: TreehouseDispatchers,
 ) : FrameClock {
+  private var closed = false
+  private var frameScheduled = false
+  private var lastFrameNanos = 0L
 
   override fun requestFrame(appLifecycle: AppLifecycle) {
-    choreographer.postFrameCallback { frameTimeNanos ->
-      scope.launch(dispatchers.zipline) {
-        appLifecycle.sendFrame(frameTimeNanos)
-      }
+    if (closed || frameScheduled) return
+    frameScheduled = true
+    scope.launch(dispatchers.zipline) {
+      frameScheduled = false
+      if (closed) return@launch
+      appLifecycle.sendFrame(nextFrameNanos())
     }
   }
 
+  private fun nextFrameNanos(): Long {
+    val now = System.nanoTime()
+    val time = if (now > lastFrameNanos) now else lastFrameNanos + 1
+    lastFrameNanos = time
+    return time
+  }
+
   override fun close() {
+    closed = true
   }
 
   class Factory : FrameClock.Factory {
-    private val choreographer = Choreographer.getInstance()
     override fun create(
       scope: CoroutineScope,
       dispatchers: TreehouseDispatchers,
-    ) = AndroidChoreographerFrameClock(choreographer, scope, dispatchers)
+    ) = AndroidChoreographerFrameClock(scope, dispatchers)
   }
 }

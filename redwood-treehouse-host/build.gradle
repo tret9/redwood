@@ -166,7 +166,11 @@ android {
 
   // Ensure bridge source files are generated before CMake configure.
   afterEvaluate {
-    tasks.matching { it.name.startsWith('buildCMake') || it.name.contains('ConfigureCMake') }.configureEach {
+    tasks.matching {
+      it.name.startsWith('buildCMake') ||
+        it.name.contains('configureCMake') ||
+        it.name.contains('ConfigureCMake')
+    }.configureEach {
       dependsOn(extractHermesJni,
                 ':redwood-protocol-host:compileKotlinJvm',
                 ':redwood-protocol:compileKotlinJvm',
@@ -195,7 +199,11 @@ android {
 
   // Ensure bridge source files are generated before CMake configure.
   afterEvaluate {
-    tasks.matching { it.name.startsWith('buildCMake') || it.name.contains('ConfigureCMake') }.configureEach {
+    tasks.matching {
+      it.name.startsWith('buildCMake') ||
+        it.name.contains('configureCMake') ||
+        it.name.contains('ConfigureCMake')
+    }.configureEach {
       dependsOn(extractHermesJni,
                 ':redwood-protocol-host:compileKotlinJvm',
                 ':redwood-protocol:compileKotlinJvm',
