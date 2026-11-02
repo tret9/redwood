@@ -21,33 +21,40 @@ import kotlinx.coroutines.launch
 import platform.posix.CLOCK_MONOTONIC_RAW
 import platform.posix.clock_gettime_nsec_np
 
+/**
+ * Sends a frame as soon as one is requested.
+ *
+ * Waiting for the next CADisplayLink frame parked guest composition until the
+ * following vsync, which added about one frame to scroll-to-compose. Pacing later
+ * frames with a timer did the same once a scroll was underway.
+ */
 internal class IosDisplayLinkClock private constructor(
   private val scope: CoroutineScope,
   private val dispatchers: TreehouseDispatchers,
 ) : FrameClock {
-  /** Non-null if we're expecting a call to [AppLifecycle.sendFrame]. */
-  private var appLifecycle: AppLifecycle? = null
-
-  private var displayLinkTarget: DisplayLinkTarget? = DisplayLinkTarget {
-    unsubscribe()
-    scope.launch(dispatchers.zipline) {
-      val nanos = clock_gettime_nsec_np(CLOCK_MONOTONIC_RAW.convert()).convert<Long>()
-      appLifecycle?.sendFrame(nanos)
-      appLifecycle = null
-    }
-  }
+  private var closed = false
+  private var lastFrameNanos = 0L
 
   override fun requestFrame(appLifecycle: AppLifecycle) {
-    this.appLifecycle = appLifecycle
-    scope.launch(dispatchers.ui) {
-      displayLinkTarget?.subscribe()
+    if (closed) return
+    scope.launch(dispatchers.zipline) {
+      if (closed) return@launch
+      appLifecycle.sendFrame(nextFrameNanos())
     }
   }
 
+  private fun nextFrameNanos(): Long {
+    val now = monotonicNanos()
+    val time = if (now > lastFrameNanos) now else lastFrameNanos + 1
+    lastFrameNanos = time
+    return time
+  }
+
+  private fun monotonicNanos(): Long =
+    clock_gettime_nsec_np(CLOCK_MONOTONIC_RAW.convert()).convert<Long>()
+
   override fun close() {
-    appLifecycle = null
-    displayLinkTarget?.close()
-    displayLinkTarget = null // Break a reference cycle.
+    closed = true
   }
 
   companion object : FrameClock.Factory {

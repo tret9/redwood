@@ -15,12 +15,6 @@
  */
 package app.cash.redwood.treehouse
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
-
 class AndroidChoreographerFrameClockTest : AbstractFrameClockTest() {
-  // Tests run on a background thread but Choreographer can only be grabbed from the main thread.
-  override val frameClockFactory = runBlocking(Dispatchers.Main) {
-    AndroidChoreographerFrameClock.Factory()
-  }
+  override val frameClockFactory = AndroidChoreographerFrameClock.Factory()
 }
