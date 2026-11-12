@@ -62,6 +62,7 @@ internal class FastGuestProtocolAdapter(
   hostVersion: RedwoodVersion,
   private val widgetSystemFactory: ProtocolWidgetSystemFactory,
   private val mismatchHandler: ProtocolMismatchHandler = ProtocolMismatchHandler.Throwing,
+  bindDirectEvents: Boolean = true,
 ) : GuestProtocolAdapter(hostVersion) {
   private var nextValue = Id.Root.value + 1
   private val widgets = JsMap<Int, ProtocolWidget>()
@@ -244,7 +245,40 @@ internal class FastGuestProtocolAdapter(
       }
     }
 
+  /**
+   * Sends this composition's changes through [ZiplineTreehouseUi.Host.sendCompositionChanges].
+   */
+  internal fun initCompositionChangesSink(
+    host: ZiplineTreehouseUi.Host,
+    compositionId: String,
+  ) {
+    initChangesSink(
+      ChangesSink { changes ->
+        host.sendCompositionChanges(compositionId, changes)
+      },
+    )
+  }
+
   init {
-    bindDirectEventSink(widgets = { widgets[it] }, mismatchHandler = mismatchHandler)
+    if (bindDirectEvents) {
+      bindDirectEventSink(widgets = { widgets[it] }, mismatchHandler = mismatchHandler)
+    }
+  }
+}
+
+internal actual fun compositionProtocolAdapter(
+  appLifecycle: StandardAppLifecycle,
+  host: ZiplineTreehouseUi.Host,
+  compositionId: String,
+): GuestProtocolAdapter {
+  // Per-composition changes go through sendCompositionChanges, not the root sink.
+  return FastGuestProtocolAdapter(
+    json = appLifecycle.json,
+    hostVersion = appLifecycle.hostProtocolVersion,
+    widgetSystemFactory = appLifecycle.protocolWidgetSystemFactory,
+    mismatchHandler = appLifecycle.mismatchHandler,
+    bindDirectEvents = false,
+  ).also { adapter ->
+    adapter.initCompositionChangesSink(host, compositionId)
   }
 }

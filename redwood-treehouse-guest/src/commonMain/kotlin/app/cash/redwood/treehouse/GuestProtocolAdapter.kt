@@ -27,3 +27,16 @@ internal expect fun GuestProtocolAdapter(
   widgetSystemFactory: ProtocolWidgetSystemFactory,
   mismatchHandler: ProtocolMismatchHandler,
 ): GuestProtocolAdapter
+
+/**
+ * Adapter for one mounted composition.
+ *
+ * On JS this is the fast adapter, matching the root composition. It does not
+ * install the global direct-event sink: widget ids restart in every composition,
+ * and that sink has no composition id.
+ */
+internal expect fun compositionProtocolAdapter(
+  appLifecycle: StandardAppLifecycle,
+  host: ZiplineTreehouseUi.Host,
+  compositionId: String,
+): GuestProtocolAdapter

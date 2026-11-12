@@ -38,8 +38,20 @@ internal class FakeTreehouseView(
   private val name: String,
   override val onBackPressedDispatcher: OnBackPressedDispatcher,
   override val uiConfiguration: StateFlow<UiConfiguration> = MutableStateFlow(UiConfiguration()),
-) : TreehouseView<WidgetValue> {
+) : TreehouseView<WidgetValue>,
+  CompositionDisplay<WidgetValue> {
   override val children = MutableListChildren<WidgetValue>()
+
+  val compositionChildren = mutableMapOf<String, MutableListChildren<WidgetValue>>()
+  val compositionFailures = mutableListOf<Pair<String, String>>()
+
+  override fun children(compositionId: String): Widget.Children<WidgetValue> {
+    return compositionChildren.getOrPut(compositionId) { MutableListChildren() }
+  }
+
+  override fun onFailed(compositionId: String, message: String) {
+    compositionFailures += compositionId to message
+  }
 
   val views: List<WidgetValue>
     get() = children.map { it.value }

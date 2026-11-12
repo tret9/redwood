@@ -1,0 +1,30 @@
+[app.cash.redwood.treehouse.MountableZiplineTreehouseUi]
+
+functions = [
+  # fun abortComposition(kotlin.String): kotlin.Unit
+  "dt1j0r9C",
+
+  # fun close(): kotlin.Unit
+  "moYx+T3e",
+
+  # fun mount(kotlin.String, kotlin.Function0): kotlin.Unit
+  "53nSk+j9",
+
+  # fun sendCompositionEvent(kotlin.String, app.cash.redwood.protocol.Event): kotlin.Unit
+  "oj/NkFen",
+
+  # fun sendEvent(app.cash.redwood.protocol.Event): kotlin.Unit
+  "NSFL6TSu",
+
+  # fun snapshotState(): app.cash.redwood.treehouse.StateSnapshot?
+  "ea1xPqmj",
+
+  # fun start(app.cash.redwood.treehouse.ZiplineTreehouseUi.Host): kotlin.Unit
+  "h9yZr91W",
+
+  # fun unmount(kotlin.String): kotlin.Unit
+  "J+oqw4pE",
+
+  # fun updateViewport(kotlin.String, kotlin.Double, kotlin.Double): kotlin.Unit
+  "ZsDtu1ZR",
+]

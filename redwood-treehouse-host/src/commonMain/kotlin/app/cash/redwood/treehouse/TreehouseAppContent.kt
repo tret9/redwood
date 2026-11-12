@@ -21,7 +21,6 @@ package app.cash.redwood.treehouse
 import app.cash.redwood.compose.findFocusRequesterRecursive
 import app.cash.redwood.leaks.LeakDetector
 import app.cash.redwood.protocol.Change
-import app.cash.redwood.protocol.EventSink
 import app.cash.redwood.protocol.host.DirectTransportUiEvent
 import app.cash.redwood.protocol.host.HostProtocolAdapter
 import app.cash.redwood.protocol.host.UiChange
@@ -32,8 +31,11 @@ import app.cash.redwood.ui.OnBackPressedCallback
 import app.cash.redwood.ui.OnBackPressedDispatcher
 import app.cash.redwood.ui.UiConfiguration
 import app.cash.redwood.ui.core.api.FocusRequester
+import app.cash.redwood.widget.Widget
+import app.cash.zipline.ZiplineException
 import app.cash.zipline.ZiplineScope
 import kotlin.concurrent.Volatile
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
@@ -45,6 +47,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withContext
 
 private class InternalState<A : AppService>(
   val viewState: ViewState,
@@ -369,6 +372,12 @@ private class ViewContentCodeBinding<A : AppService>(
    */
   private var hostAdapterOrNull: HostProtocolAdapter<*>? = null
 
+  /** Only accessed on [TreehouseDispatchers.ui]. */
+  private val compositionAdapters = mutableMapOf<String, CompositionHost<*>>()
+
+  /** Only accessed on [TreehouseDispatchers.ui]. */
+  private val compositionChangesAwaitingView = ArrayDeque<Pair<String, List<UiChange>>>()
+
   /** Only accessed on [TreehouseDispatchers.zipline]. */
   private val serviceScope = codeSession.newServiceScope()
 
@@ -381,12 +390,14 @@ private class ViewContentCodeBinding<A : AppService>(
   /** Note that this is necessary to break the retain cycle between host and guest. */
   private val eventBridge = EventBridge(
     ziplineDispatcher = dispatchers.zipline,
+    uiDispatcher = dispatchers.ui,
     bindingScope = bindingScope,
     directEventsEnabled = directEventsEnabled,
     // Resolved lazily on the zipline dispatcher (the binding resolves the session's zipline there).
     engineProvider = {
       (codeSession as? ZiplineCodeSession)?.zipline?.jsEngine
     },
+    onCompositionEventException = ::onCompositionEventException,
   )
 
   /**
@@ -436,6 +447,11 @@ private class ViewContentCodeBinding<A : AppService>(
       receiveChangesOnUiDispatcher(changes)
     }
 
+    while (true) {
+      val (compositionId, changes) = compositionChangesAwaitingView.removeFirstOrNull() ?: break
+      receiveCompositionChangesOnUiDispatcher(compositionId, changes)
+    }
+
     if (mustUpdateView && !hasChanges) {
       view.showLoading()
     }
@@ -454,6 +470,75 @@ private class ViewContentCodeBinding<A : AppService>(
     bindingScope.launch(dispatchers.ui) {
       receiveChangesOnUiDispatcher(uiChanges)
     }
+  }
+
+  override fun sendCompositionChanges(compositionId: String, changes: List<Change>) {
+    val uiChanges = changes.mapNotNull { change ->
+      UiChange.fromProtocol(
+        protocol = codeSession.hostProtocol,
+        change = change,
+      )
+    }
+    bindingScope.launch(dispatchers.ui) {
+      receiveCompositionChangesOnUiDispatcher(compositionId, uiChanges)
+    }
+  }
+
+  override fun onCompositionFailed(compositionId: String, message: String) {
+    bindingScope.launch(dispatchers.ui) {
+      if (canceled) return@launch
+      endComposition(compositionId)
+      compositionDisplay()?.onFailed(compositionId, message)
+    }
+  }
+
+  override fun closeComposition(compositionId: String) {
+    bindingScope.launch(dispatchers.ui) {
+      endComposition(compositionId)
+    }
+  }
+
+  private fun receiveCompositionChangesOnUiDispatcher(
+    compositionId: String,
+    changes: List<UiChange>,
+  ) {
+    if (canceled) return
+    val view = viewOrNull
+    if (view == null) {
+      compositionChangesAwaitingView += compositionId to changes
+      return
+    }
+    val adapter = compositionAdapters.getOrPut(compositionId) {
+      createCompositionAdapter(view, compositionId)
+    }
+    adapter.adapter.sendChanges(changes)
+  }
+
+  private fun <W : Any> createCompositionAdapter(
+    view: TreehouseView<W>,
+    compositionId: String,
+  ): CompositionHost<W> {
+    val display = view as? CompositionDisplay<W>
+      ?: error("TreehouseView does not display mounted compositions")
+    val children = display.children(compositionId)
+    return CompositionHost(
+      adapter = HostProtocolAdapter(
+        guestVersion = codeSession.guestProtocolVersion,
+        container = children,
+        protocol = codeSession.hostProtocol,
+        widgetSystem = view.widgetSystem,
+        eventSink = UiEventSink { event ->
+          eventBridge.sendCompositionEvent(compositionId, event)
+        },
+        leakDetector = leakDetector,
+      ),
+      children = children,
+    )
+  }
+
+  @Suppress("UNCHECKED_CAST")
+  private fun compositionDisplay(): CompositionDisplay<Any>? {
+    return viewOrNull as? CompositionDisplay<Any>
   }
 
   private fun receiveChangesOnUiDispatcher(changes: List<UiChange>) {
@@ -482,6 +567,23 @@ private class ViewContentCodeBinding<A : AppService>(
     updateChangeCount()
 
     hostAdapter.sendChanges(changes)
+  }
+
+  private fun onCompositionEventException(compositionId: String, exception: Exception) {
+    dispatchers.checkUi()
+    if (canceled) return
+    endComposition(compositionId)
+    compositionDisplay()?.onFailed(compositionId, exception.stackTraceToString())
+  }
+
+  /**
+   * The guest has stopped this composition. Drop changes that arrived before the view
+   * existed so [initView] does not build a host adapter for it. A later mount of the
+   * same id is a new composition and is applied normally.
+   */
+  private fun endComposition(compositionId: String) {
+    compositionChangesAwaitingView.removeAll { (queuedId, _) -> queuedId == compositionId }
+    compositionAdapters.remove(compositionId)?.adapter?.close()
   }
 
   private fun <W : Any> createHostProtocolAdapter(view: TreehouseView<W>): HostProtocolAdapter<W> {
@@ -615,7 +717,16 @@ private class ViewContentCodeBinding<A : AppService>(
 
   /** This function is necessary to infer the type parameter [W]. */
   private fun <W : Any> TreehouseView<W>.requestFocus(focusRequester: FocusRequester) {
-    val widget = children.findFocusRequesterRecursive(focusRequester) ?: return
+    var widget = children.findFocusRequesterRecursive(focusRequester)
+    val display = this as? CompositionDisplay<*>
+    if (widget == null && display != null) {
+      for (host in compositionAdapters.values) {
+        @Suppress("UNCHECKED_CAST")
+        widget = (host.children as Widget.Children<W>).findFocusRequesterRecursive(focusRequester)
+        if (widget != null) break
+      }
+    }
+    if (widget == null) return
     requestFocus(widget)
   }
 
@@ -632,6 +743,9 @@ private class ViewContentCodeBinding<A : AppService>(
 
     hostAdapterOrNull?.close()
     hostAdapterOrNull = null
+    compositionAdapters.values.forEach { it.adapter.close() }
+    compositionAdapters.clear()
+    compositionChangesAwaitingView.clear()
     viewOrNull?.let { view ->
       if (exception != null) view.showCrashed(exception, codeHostOrNull!!)
       view.saveCallback = null
@@ -680,13 +794,15 @@ private fun <W : Any> TreehouseView<W>.showCrashed(
 private class EventBridge(
   // Both properties are only accessed on the UI dispatcher and null after cancel().
   var ziplineDispatcher: CoroutineDispatcher?,
+  private val uiDispatcher: CoroutineDispatcher,
   var bindingScope: CoroutineScope?,
   private val directEventsEnabled: Boolean = false,
   /** Resolves the session's [app.cash.zipline.JsEngine] on the zipline dispatcher. */
   private val engineProvider: () -> app.cash.zipline.JsEngine?,
+  private val onCompositionEventException: (String, Exception) -> Unit,
 ) : UiEventSink {
   // Only accessed on the Zipline dispatcher and null after cancel().
-  var delegate: EventSink? = null
+  var delegate: ZiplineTreehouseUi? = null
 
   /**
    * Whether the guest installed the direct-event sink. Resolved once on the zipline dispatcher
@@ -721,8 +837,39 @@ private class EventBridge(
 
       // Perform initial serialization of event arguments into JSON model after the thread hop.
       val event = uiEvent.toProtocol()
-
       delegate?.sendEvent(event)
     }
   }
+
+  /**
+   * Event for one mounted composition. A guest failure aborts that composition
+   * and leaves the shared session running. [abortComposition] only cancels the
+   * guest; the host failure text is this [ZiplineException].
+   */
+  fun sendCompositionEvent(compositionId: String, uiEvent: UiEvent) {
+    val dispatcher = this.ziplineDispatcher ?: return
+    val bindingScope = this.bindingScope ?: return
+    bindingScope.launch(dispatcher) {
+      try {
+        delegate?.sendCompositionEvent(compositionId, uiEvent.toProtocol())
+      } catch (e: CancellationException) {
+        throw e
+      } catch (e: ZiplineException) {
+        try {
+          delegate?.abortComposition(compositionId)
+        } catch (abort: CancellationException) {
+          throw abort
+        } catch (_: Exception) {
+          // The guest call already failed. Still report the original exception below.
+        }
+        withContext(uiDispatcher) { onCompositionEventException(compositionId, e) }
+      }
+    }
+  }
 }
+
+/** Children captured when the slot was opened, so focus does not call [CompositionDisplay.children] again. */
+private class CompositionHost<W : Any>(
+  val adapter: HostProtocolAdapter<W>,
+  val children: Widget.Children<W>,
+)
