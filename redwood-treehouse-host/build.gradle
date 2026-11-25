@@ -144,6 +144,8 @@ android {
 
   defaultConfig {
     testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+    // The JVM jar ships it from its resources; the AAR doesn't package jvmMain resources.
+    consumerProguardFiles 'src/jvmMain/resources/META-INF/proguard/redwood-treehouse-host.pro'
 
     externalNativeBuild {
       cmake {
