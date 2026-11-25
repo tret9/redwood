@@ -52,6 +52,12 @@ sealed interface app.cash.redwood.protocol/ChildrenChange : app.cash.redwood.pro
             final fun serialize(kotlinx.serialization.encoding/Encoder, app.cash.redwood.protocol/ChildrenChange.Add) // app.cash.redwood.protocol/ChildrenChange.Add.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;app.cash.redwood.protocol.ChildrenChange.Add){}[0]
         }
 
+        final object Bridge { // app.cash.redwood.protocol/ChildrenChange.Add.Bridge|null[0]
+            constructor <init>() // app.cash.redwood.protocol/ChildrenChange.Add.Bridge.<init>|<init>(){}[0]
+
+            final fun bridgeCreate(kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int): app.cash.redwood.protocol/ChildrenChange.Add // app.cash.redwood.protocol/ChildrenChange.Add.Bridge.bridgeCreate|bridgeCreate(kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int){}[0]
+        }
+
         final object Companion { // app.cash.redwood.protocol/ChildrenChange.Add.Companion|null[0]
             final fun invoke(app.cash.redwood.protocol/Id, app.cash.redwood.protocol/ChildrenTag, app.cash.redwood.protocol/Id, kotlin/Int): app.cash.redwood.protocol/ChildrenChange.Add // app.cash.redwood.protocol/ChildrenChange.Add.Companion.invoke|invoke(app.cash.redwood.protocol.Id;app.cash.redwood.protocol.ChildrenTag;app.cash.redwood.protocol.Id;kotlin.Int){}[0]
             final fun serializer(): kotlinx.serialization/KSerializer<app.cash.redwood.protocol/ChildrenChange.Add> // app.cash.redwood.protocol/ChildrenChange.Add.Companion.serializer|serializer(){}[0]
@@ -81,6 +87,12 @@ sealed interface app.cash.redwood.protocol/ChildrenChange : app.cash.redwood.pro
             final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // app.cash.redwood.protocol/ChildrenChange.Move.$serializer.childSerializers|childSerializers(){}[0]
             final fun deserialize(kotlinx.serialization.encoding/Decoder): app.cash.redwood.protocol/ChildrenChange.Move // app.cash.redwood.protocol/ChildrenChange.Move.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
             final fun serialize(kotlinx.serialization.encoding/Encoder, app.cash.redwood.protocol/ChildrenChange.Move) // app.cash.redwood.protocol/ChildrenChange.Move.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;app.cash.redwood.protocol.ChildrenChange.Move){}[0]
+        }
+
+        final object Bridge { // app.cash.redwood.protocol/ChildrenChange.Move.Bridge|null[0]
+            constructor <init>() // app.cash.redwood.protocol/ChildrenChange.Move.Bridge.<init>|<init>(){}[0]
+
+            final fun bridgeCreate(kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int): app.cash.redwood.protocol/ChildrenChange.Move // app.cash.redwood.protocol/ChildrenChange.Move.Bridge.bridgeCreate|bridgeCreate(kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int){}[0]
         }
 
         final object Companion { // app.cash.redwood.protocol/ChildrenChange.Move.Companion|null[0]
@@ -114,6 +126,12 @@ sealed interface app.cash.redwood.protocol/ChildrenChange : app.cash.redwood.pro
             final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // app.cash.redwood.protocol/ChildrenChange.Remove.$serializer.childSerializers|childSerializers(){}[0]
             final fun deserialize(kotlinx.serialization.encoding/Decoder): app.cash.redwood.protocol/ChildrenChange.Remove // app.cash.redwood.protocol/ChildrenChange.Remove.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
             final fun serialize(kotlinx.serialization.encoding/Encoder, app.cash.redwood.protocol/ChildrenChange.Remove) // app.cash.redwood.protocol/ChildrenChange.Remove.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;app.cash.redwood.protocol.ChildrenChange.Remove){}[0]
+        }
+
+        final object Bridge { // app.cash.redwood.protocol/ChildrenChange.Remove.Bridge|null[0]
+            constructor <init>() // app.cash.redwood.protocol/ChildrenChange.Remove.Bridge.<init>|<init>(){}[0]
+
+            final fun bridgeCreate(kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Int, kotlin/Boolean): app.cash.redwood.protocol/ChildrenChange.Remove // app.cash.redwood.protocol/ChildrenChange.Remove.Bridge.bridgeCreate|bridgeCreate(kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Int;kotlin.Boolean){}[0]
         }
 
         final object Companion { // app.cash.redwood.protocol/ChildrenChange.Remove.Companion|null[0]
@@ -299,6 +317,12 @@ final value class app.cash.redwood.protocol/ChildrenTag { // app.cash.redwood.pr
         final fun serialize(kotlinx.serialization.encoding/Encoder, app.cash.redwood.protocol/ChildrenTag) // app.cash.redwood.protocol/ChildrenTag.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;app.cash.redwood.protocol.ChildrenTag){}[0]
     }
 
+    final object Bridge { // app.cash.redwood.protocol/ChildrenTag.Bridge|null[0]
+        constructor <init>() // app.cash.redwood.protocol/ChildrenTag.Bridge.<init>|<init>(){}[0]
+
+        final fun bridgeCreate(kotlin/Int, kotlin/Int): app.cash.redwood.protocol/ChildrenTag // app.cash.redwood.protocol/ChildrenTag.Bridge.bridgeCreate|bridgeCreate(kotlin.Int;kotlin.Int){}[0]
+    }
+
     final object Companion { // app.cash.redwood.protocol/ChildrenTag.Companion|null[0]
         final val Root // app.cash.redwood.protocol/ChildrenTag.Companion.Root|{}Root[0]
             final fun <get-Root>(): app.cash.redwood.protocol/ChildrenTag // app.cash.redwood.protocol/ChildrenTag.Companion.Root.<get-Root>|<get-Root>(){}[0]
@@ -326,6 +350,12 @@ final value class app.cash.redwood.protocol/EventTag { // app.cash.redwood.proto
         final fun serialize(kotlinx.serialization.encoding/Encoder, app.cash.redwood.protocol/EventTag) // app.cash.redwood.protocol/EventTag.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;app.cash.redwood.protocol.EventTag){}[0]
     }
 
+    final object Bridge { // app.cash.redwood.protocol/EventTag.Bridge|null[0]
+        constructor <init>() // app.cash.redwood.protocol/EventTag.Bridge.<init>|<init>(){}[0]
+
+        final fun bridgeCreate(kotlin/Int, kotlin/Int): app.cash.redwood.protocol/EventTag // app.cash.redwood.protocol/EventTag.Bridge.bridgeCreate|bridgeCreate(kotlin.Int;kotlin.Int){}[0]
+    }
+
     final object Companion { // app.cash.redwood.protocol/EventTag.Companion|null[0]
         final fun serializer(): kotlinx.serialization/KSerializer<app.cash.redwood.protocol/EventTag> // app.cash.redwood.protocol/EventTag.Companion.serializer|serializer(){}[0]
     }
@@ -348,6 +378,12 @@ final value class app.cash.redwood.protocol/Id { // app.cash.redwood.protocol/Id
         final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // app.cash.redwood.protocol/Id.$serializer.childSerializers|childSerializers(){}[0]
         final fun deserialize(kotlinx.serialization.encoding/Decoder): app.cash.redwood.protocol/Id // app.cash.redwood.protocol/Id.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
         final fun serialize(kotlinx.serialization.encoding/Encoder, app.cash.redwood.protocol/Id) // app.cash.redwood.protocol/Id.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;app.cash.redwood.protocol.Id){}[0]
+    }
+
+    final object Bridge { // app.cash.redwood.protocol/Id.Bridge|null[0]
+        constructor <init>() // app.cash.redwood.protocol/Id.Bridge.<init>|<init>(){}[0]
+
+        final fun bridgeCreate(kotlin/Int, kotlin/Int): app.cash.redwood.protocol/Id // app.cash.redwood.protocol/Id.Bridge.bridgeCreate|bridgeCreate(kotlin.Int;kotlin.Int){}[0]
     }
 
     final object Companion { // app.cash.redwood.protocol/Id.Companion|null[0]
@@ -377,6 +413,12 @@ final value class app.cash.redwood.protocol/ModifierTag { // app.cash.redwood.pr
         final fun serialize(kotlinx.serialization.encoding/Encoder, app.cash.redwood.protocol/ModifierTag) // app.cash.redwood.protocol/ModifierTag.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;app.cash.redwood.protocol.ModifierTag){}[0]
     }
 
+    final object Bridge { // app.cash.redwood.protocol/ModifierTag.Bridge|null[0]
+        constructor <init>() // app.cash.redwood.protocol/ModifierTag.Bridge.<init>|<init>(){}[0]
+
+        final fun bridgeCreate(kotlin/Int, kotlin/Int): app.cash.redwood.protocol/ModifierTag // app.cash.redwood.protocol/ModifierTag.Bridge.bridgeCreate|bridgeCreate(kotlin.Int;kotlin.Int){}[0]
+    }
+
     final object Companion { // app.cash.redwood.protocol/ModifierTag.Companion|null[0]
         final fun serializer(): kotlinx.serialization/KSerializer<app.cash.redwood.protocol/ModifierTag> // app.cash.redwood.protocol/ModifierTag.Companion.serializer|serializer(){}[0]
     }
@@ -399,6 +441,12 @@ final value class app.cash.redwood.protocol/PropertyTag { // app.cash.redwood.pr
         final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // app.cash.redwood.protocol/PropertyTag.$serializer.childSerializers|childSerializers(){}[0]
         final fun deserialize(kotlinx.serialization.encoding/Decoder): app.cash.redwood.protocol/PropertyTag // app.cash.redwood.protocol/PropertyTag.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
         final fun serialize(kotlinx.serialization.encoding/Encoder, app.cash.redwood.protocol/PropertyTag) // app.cash.redwood.protocol/PropertyTag.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;app.cash.redwood.protocol.PropertyTag){}[0]
+    }
+
+    final object Bridge { // app.cash.redwood.protocol/PropertyTag.Bridge|null[0]
+        constructor <init>() // app.cash.redwood.protocol/PropertyTag.Bridge.<init>|<init>(){}[0]
+
+        final fun bridgeCreate(kotlin/Int, kotlin/Int): app.cash.redwood.protocol/PropertyTag // app.cash.redwood.protocol/PropertyTag.Bridge.bridgeCreate|bridgeCreate(kotlin.Int;kotlin.Int){}[0]
     }
 
     final object Companion { // app.cash.redwood.protocol/PropertyTag.Companion|null[0]
@@ -477,6 +525,12 @@ final value class app.cash.redwood.protocol/WidgetTag { // app.cash.redwood.prot
         final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // app.cash.redwood.protocol/WidgetTag.$serializer.childSerializers|childSerializers(){}[0]
         final fun deserialize(kotlinx.serialization.encoding/Decoder): app.cash.redwood.protocol/WidgetTag // app.cash.redwood.protocol/WidgetTag.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
         final fun serialize(kotlinx.serialization.encoding/Encoder, app.cash.redwood.protocol/WidgetTag) // app.cash.redwood.protocol/WidgetTag.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;app.cash.redwood.protocol.WidgetTag){}[0]
+    }
+
+    final object Bridge { // app.cash.redwood.protocol/WidgetTag.Bridge|null[0]
+        constructor <init>() // app.cash.redwood.protocol/WidgetTag.Bridge.<init>|<init>(){}[0]
+
+        final fun bridgeCreate(kotlin/Int, kotlin/Int): app.cash.redwood.protocol/WidgetTag // app.cash.redwood.protocol/WidgetTag.Bridge.bridgeCreate|bridgeCreate(kotlin.Int;kotlin.Int){}[0]
     }
 
     final object Companion { // app.cash.redwood.protocol/WidgetTag.Companion|null[0]

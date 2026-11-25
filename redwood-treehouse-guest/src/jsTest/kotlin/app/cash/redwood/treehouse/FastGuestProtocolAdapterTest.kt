@@ -24,6 +24,7 @@ import app.cash.redwood.protocol.guest.guestRedwoodVersion
 import app.cash.redwood.widget.Widget
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import com.example.redwood.testapp.TestEnum
 import com.example.redwood.testapp.compose.TestScope
 import com.example.redwood.testapp.compose.backgroundColor
 import com.example.redwood.testapp.protocol.guest.TestSchemaProtocolWidgetSystemFactory
@@ -116,6 +117,30 @@ class FastGuestProtocolAdapterTest {
     sink((textInput as app.cash.redwood.protocol.guest.ProtocolWidget).id.value, 3, js("['from host']"))
 
     assertEquals(listOf("from host"), received)
+  }
+
+  @Test fun fastAdapterRoutesAnEnumDirectEvent() {
+    val guest = FastGuestProtocolAdapter(
+      hostVersion = guestRedwoodVersion,
+      widgetSystemFactory = TestSchemaProtocolWidgetSystemFactory,
+      json = Json.Default,
+      mismatchHandler = ProtocolMismatchHandler.Throwing,
+    )
+    assertDirectEventSinkInstalled()
+
+    val received = mutableListOf<TestEnum>()
+    val widgetSystem = guest.widgetSystem as TestSchemaWidgetSystem<Unit>
+    val textInput = widgetSystem.TestSchema.TextInput()
+    textInput.onChangeEnum { value -> received += value }
+    guest.root.insert(0, textInput)
+
+    val sink: dynamic = js("globalThis['${DIRECT_EVENT_SINK_NAME}']")
+    // onChangeEnum is property tag 6. The host would send the ordinal and the guest's own factory
+    // would resolve the singleton; the cast in the generated sendDirectEvent receives that
+    // singleton, which is what this hands over directly.
+    sink((textInput as app.cash.redwood.protocol.guest.ProtocolWidget).id.value, 6, arrayOf(TestEnum.A))
+
+    assertEquals(listOf(TestEnum.A), received)
   }
 
   @Test fun bridgeAdapterInstallsAndRoutesDirectEvents() {

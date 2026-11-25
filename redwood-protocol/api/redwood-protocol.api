@@ -65,6 +65,12 @@ public final synthetic class app/cash/redwood/protocol/ChildrenChange$Add$$seria
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 }
 
+public final class app/cash/redwood/protocol/ChildrenChange$Add$Bridge {
+	public static final field INSTANCE Lapp/cash/redwood/protocol/ChildrenChange$Add$Bridge;
+	public fun <init> ()V
+	public final fun bridgeCreate (IIIII)Lapp/cash/redwood/protocol/ChildrenChange$Add;
+}
+
 public final class app/cash/redwood/protocol/ChildrenChange$Add$Companion {
 	public final fun invoke-11bgaWM (IIII)Lapp/cash/redwood/protocol/ChildrenChange$Add;
 	public final fun serializer ()Lkotlinx/serialization/KSerializer;
@@ -97,6 +103,12 @@ public final synthetic class app/cash/redwood/protocol/ChildrenChange$Move$$seri
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 }
 
+public final class app/cash/redwood/protocol/ChildrenChange$Move$Bridge {
+	public static final field INSTANCE Lapp/cash/redwood/protocol/ChildrenChange$Move$Bridge;
+	public fun <init> ()V
+	public final fun bridgeCreate (IIIIII)Lapp/cash/redwood/protocol/ChildrenChange$Move;
+}
+
 public final class app/cash/redwood/protocol/ChildrenChange$Move$Companion {
 	public final fun invoke-HpxY78w (IIIII)Lapp/cash/redwood/protocol/ChildrenChange$Move;
 	public final fun serializer ()Lkotlinx/serialization/KSerializer;
@@ -124,6 +136,12 @@ public final synthetic class app/cash/redwood/protocol/ChildrenChange$Remove$$se
 	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lapp/cash/redwood/protocol/ChildrenChange$Remove;)V
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+}
+
+public final class app/cash/redwood/protocol/ChildrenChange$Remove$Bridge {
+	public static final field INSTANCE Lapp/cash/redwood/protocol/ChildrenChange$Remove$Bridge;
+	public fun <init> ()V
+	public final fun bridgeCreate (IIIIIZ)Lapp/cash/redwood/protocol/ChildrenChange$Remove;
 }
 
 public final class app/cash/redwood/protocol/ChildrenChange$Remove$Companion {
@@ -154,6 +172,12 @@ public final synthetic class app/cash/redwood/protocol/ChildrenTag$$serializer :
 	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 	public final fun serialize-sM9PXMU (Lkotlinx/serialization/encoding/Encoder;I)V
+}
+
+public final class app/cash/redwood/protocol/ChildrenTag$Bridge {
+	public static final field INSTANCE Lapp/cash/redwood/protocol/ChildrenTag$Bridge;
+	public fun <init> ()V
+	public final fun bridgeCreate-Amh29aM (II)I
 }
 
 public final class app/cash/redwood/protocol/ChildrenTag$Companion {
@@ -242,6 +266,12 @@ public final synthetic class app/cash/redwood/protocol/EventTag$$serializer : ko
 	public final fun serialize-1HQoEpw (Lkotlinx/serialization/encoding/Encoder;I)V
 }
 
+public final class app/cash/redwood/protocol/EventTag$Bridge {
+	public static final field INSTANCE Lapp/cash/redwood/protocol/EventTag$Bridge;
+	public fun <init> ()V
+	public final fun bridgeCreate-h2l9aKk (II)I
+}
+
 public final class app/cash/redwood/protocol/EventTag$Companion {
 	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
@@ -269,6 +299,12 @@ public final synthetic class app/cash/redwood/protocol/Id$$serializer : kotlinx/
 	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 	public final fun serialize-PGojVM4 (Lkotlinx/serialization/encoding/Encoder;I)V
+}
+
+public final class app/cash/redwood/protocol/Id$Bridge {
+	public static final field INSTANCE Lapp/cash/redwood/protocol/Id$Bridge;
+	public fun <init> ()V
+	public final fun bridgeCreate-woUjX5U (II)I
 }
 
 public final class app/cash/redwood/protocol/Id$Companion {
@@ -337,6 +373,12 @@ public final synthetic class app/cash/redwood/protocol/ModifierTag$$serializer :
 	public final fun serialize-RV5jnrU (Lkotlinx/serialization/encoding/Encoder;I)V
 }
 
+public final class app/cash/redwood/protocol/ModifierTag$Bridge {
+	public static final field INSTANCE Lapp/cash/redwood/protocol/ModifierTag$Bridge;
+	public fun <init> ()V
+	public final fun bridgeCreate-JRHXw4E (II)I
+}
+
 public final class app/cash/redwood/protocol/ModifierTag$Companion {
 	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
@@ -392,6 +434,12 @@ public final synthetic class app/cash/redwood/protocol/PropertyTag$$serializer :
 	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 	public final fun serialize-DHbFMa4 (Lkotlinx/serialization/encoding/Encoder;I)V
+}
+
+public final class app/cash/redwood/protocol/PropertyTag$Bridge {
+	public static final field INSTANCE Lapp/cash/redwood/protocol/PropertyTag$Bridge;
+	public fun <init> ()V
+	public final fun bridgeCreate-T_tygcg (II)I
 }
 
 public final class app/cash/redwood/protocol/PropertyTag$Companion {
@@ -486,6 +534,12 @@ public final synthetic class app/cash/redwood/protocol/WidgetTag$$serializer : k
 	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 	public final fun serialize-GodUi58 (Lkotlinx/serialization/encoding/Encoder;I)V
+}
+
+public final class app/cash/redwood/protocol/WidgetTag$Bridge {
+	public static final field INSTANCE Lapp/cash/redwood/protocol/WidgetTag$Bridge;
+	public fun <init> ()V
+	public final fun bridgeCreate-DM0zpDs (II)I
 }
 
 public final class app/cash/redwood/protocol/WidgetTag$Companion {

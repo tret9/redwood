@@ -63,3 +63,34 @@ kotlin.sourceSets.jsMain {
   kotlin.srcDir("${buildDir}/generated/bridge/c")
 }
 tasks.named('compileKotlinJs').configure { dependsOn('compileKotlinJvm') }
+
+// The Kotlin/Native compilations need the bridge compiler plugin as well.
+//
+// `kotlinCompilerPluginClasspath` above covers the JVM compilation, which is the generator, but it does
+// not reach Kotlin/Native. The generated bridge text the native compilation builds calls
+// `bridgeCreate`, and that function exists only because the plugin's FIR extension declares it -- so a
+// native compilation without the plugin fails on the generated file with "Unresolved reference
+// 'Bridge'", naming a function the generator can see and the compiler cannot.
+def ziplineBridgeNativePlugin = configurations.create('ziplineBridgeNativePlugin') {
+  canBeResolved = true
+  canBeConsumed = false
+}
+dependencies.add(ziplineBridgeNativePlugin.name, libs.zipline.bridge.kotlin.plugin)
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile).configureEach {
+  inputs.files(ziplineBridgeNativePlugin).withPropertyName('ziplineBridgeNativePlugin')
+  compilerOptions.freeCompilerArgs.addAll(
+    provider {
+      ziplineBridgeNativePlugin.files.collect { jar -> "-Xplugin=${jar.absolutePath}" }
+    }
+  )
+  // A directory of its own: run without it and the native compilation regenerates the bridge text into
+  // the JVM compilation's output directory, so whichever ran last silently wins.
+  def nativeGenerated = layout.buildDirectory.dir("generated/bridge/native-native/$name")
+  outputs.dir(nativeGenerated)
+  compilerOptions.freeCompilerArgs.addAll(
+    provider {
+      ['-P', "plugin:app.cash.zipline.bridge.kotlin:nativeOutputDir=${nativeGenerated.get().asFile.absolutePath}"]
+    }
+  )
+}

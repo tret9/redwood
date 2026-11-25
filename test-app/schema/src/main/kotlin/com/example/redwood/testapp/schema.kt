@@ -94,6 +94,7 @@ data class TextInput(
   @Property(3) val onChange: ((String) -> Unit)? = null,
   @Property(4) val onChangeCustomType: ((Duration) -> Unit)? = null,
   @Property(5) val maxLength: Int? = null,
+  @Property(6) val onChangeEnum: ((TestEnum) -> Unit)? = null,
 )
 
 @Widget(9)

@@ -116,6 +116,7 @@ include ':redwood-ui-core-view'
 include ':redwood-ui-core-widget'
 
 include ':test-app:schema'
+include ':test-app:schema:types'
 include ':test-app:schema:compose'
 include ':test-app:schema:modifiers'
 include ':test-app:schema:protocol-guest'

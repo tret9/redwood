@@ -438,9 +438,10 @@ internal fun generateProtocolWidget(
           )
 
           // Direct host→guest event dispatch: args arrive as already-converted JS values whose
-          // prototypes are the real guest classes, so a plain `as T` unboxes each one. (Enums and
-          // inline value classes would need their own unboxing rules; no current schema uses them
-          // as event parameters.)
+          // prototypes are the real guest classes, so a plain `as T` unboxes each one. An
+          // `@WithHost2JSBridge` enum arrives as the guest's own singleton entry (resolved by
+          // ordinal), so `as T` works for it too. Inline value classes would need their own
+          // unboxing rules; no current schema uses them as event parameters.
           addFunction(
             FunSpec.builder("sendDirectEvent")
               .addModifiers(OVERRIDE)

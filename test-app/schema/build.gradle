@@ -4,6 +4,7 @@ apply plugin: 'io.github.tret9.redwood.schema'
 dependencies {
   api projects.redwoodUiBasicSchema
   api projects.redwoodUiCoreSchema
+  api projects.testApp.schema.types
 }
 
 redwoodSchema {

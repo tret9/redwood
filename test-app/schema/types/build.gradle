@@ -1,0 +1,18 @@
+import static app.cash.redwood.buildsupport.TargetGroup.Common
+
+redwoodBuild {
+  targets(Common)
+}
+
+apply plugin: 'org.jetbrains.kotlin.plugin.serialization'
+
+kotlin {
+  sourceSets {
+    commonMain {
+      dependencies {
+        api libs.zipline.bridge.annotations
+        implementation libs.kotlinx.serialization.core
+      }
+    }
+  }
+}

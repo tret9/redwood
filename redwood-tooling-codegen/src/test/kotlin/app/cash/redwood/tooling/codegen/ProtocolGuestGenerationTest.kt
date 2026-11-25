@@ -24,6 +24,8 @@ import assertk.assertions.contains
 import assertk.assertions.doesNotContain
 import org.junit.Test
 
+enum class Direction { UP, DOWN }
+
 class ProtocolGuestGenerationTest {
   @Schema(
     [
@@ -101,5 +103,26 @@ class ProtocolGuestGenerationTest {
     assertThat(fileSpec).contains(
       "throw AssertionError(\"JSON events are not supported in a direct-only guest build\")",
     )
+  }
+
+  @Schema(
+    [
+      EnumEventNode::class,
+    ],
+  )
+  interface EnumEventSchema
+
+  @Widget(1)
+  data class EnumEventNode(
+    @Property(1) val onChanged: ((direction: Direction) -> Unit)? = null,
+  )
+
+  @Test fun `direct event dispatch handles an enum event parameter`() {
+    val schema = parseTestSchema(EnumEventSchema::class).schema
+    val fileSpec = generateProtocolWidget(schema, schema, schema.widgets.single()).toString()
+
+    // An @WithHost2JSBridge enum arrives as the guest's own singleton, so the plain `as T` cast
+    // works for it exactly as it does for a String or Int.
+    assertThat(fileSpec).contains("onChanged?.invoke(args[0] as Direction)")
   }
 }
