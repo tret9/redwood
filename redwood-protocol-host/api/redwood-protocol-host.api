@@ -39,12 +39,36 @@ public abstract interface class app/cash/redwood/protocol/host/UiChangesSink {
 	public abstract fun sendChanges (Ljava/util/List;)V
 }
 
+public final class app/cash/redwood/protocol/host/UiChildrenChange$Bridge {
+	public static final field INSTANCE Lapp/cash/redwood/protocol/host/UiChildrenChange$Bridge;
+	public fun <init> ()V
+	public final fun bridgeCreate (ILapp/cash/redwood/protocol/ChildrenChange;)Lapp/cash/redwood/protocol/host/UiChildrenChange;
+}
+
+public final class app/cash/redwood/protocol/host/UiCreate$Bridge {
+	public static final field INSTANCE Lapp/cash/redwood/protocol/host/UiCreate$Bridge;
+	public fun <init> ()V
+	public final fun bridgeCreate-hEoP_fQ (ILapp/cash/redwood/protocol/Id;Lapp/cash/redwood/protocol/WidgetTag;)Lapp/cash/redwood/protocol/host/UiCreate;
+}
+
 public abstract interface class app/cash/redwood/protocol/host/UiEvent {
 	public abstract fun toProtocol ()Lapp/cash/redwood/protocol/Event;
 }
 
 public abstract interface class app/cash/redwood/protocol/host/UiEventSink {
 	public abstract fun sendEvent (Lapp/cash/redwood/protocol/host/UiEvent;)V
+}
+
+public final class app/cash/redwood/protocol/host/UiModifierChange$Bridge {
+	public static final field INSTANCE Lapp/cash/redwood/protocol/host/UiModifierChange$Bridge;
+	public fun <init> ()V
+	public final fun bridgeCreate-yJ5JI8A (ILapp/cash/redwood/protocol/Id;ZLapp/cash/redwood/Modifier;)Lapp/cash/redwood/protocol/host/UiModifierChange;
+}
+
+public final class app/cash/redwood/protocol/host/UiPropertyChange$Bridge {
+	public static final field INSTANCE Lapp/cash/redwood/protocol/host/UiPropertyChange$Bridge;
+	public fun <init> ()V
+	public final fun bridgeCreate-ZSG9XXM (ILapp/cash/redwood/protocol/Id;Lapp/cash/redwood/protocol/PropertyTag;Ljava/lang/Object;)Lapp/cash/redwood/protocol/host/UiPropertyChange;
 }
 
 public final class app/cash/redwood/protocol/host/VersionKt {

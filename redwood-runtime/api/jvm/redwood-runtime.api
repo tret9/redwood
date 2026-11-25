@@ -11,6 +11,13 @@ public final class app/cash/redwood/CombinedModifier : app/cash/redwood/Modifier
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class app/cash/redwood/CombinedModifier$Bridge {
+	public static final field $stable I
+	public static final field INSTANCE Lapp/cash/redwood/CombinedModifier$Bridge;
+	public fun <init> ()V
+	public final fun bridgeCreate (ILapp/cash/redwood/Modifier;Lapp/cash/redwood/Modifier;)Lapp/cash/redwood/CombinedModifier;
+}
+
 public abstract interface annotation class app/cash/redwood/LayoutScopeMarker : java/lang/annotation/Annotation {
 }
 
@@ -126,6 +133,13 @@ public final synthetic class app/cash/redwood/ui/Dp$$serializer : kotlinx/serial
 	public final fun serialize-slHoOYc (Lkotlinx/serialization/encoding/Encoder;D)V
 }
 
+public final class app/cash/redwood/ui/Dp$Bridge {
+	public static final field $stable I
+	public static final field INSTANCE Lapp/cash/redwood/ui/Dp$Bridge;
+	public fun <init> ()V
+	public final fun bridgeCreate-x94KD7U (ID)D
+}
+
 public final class app/cash/redwood/ui/Dp$Companion {
 	public final fun getUnspecified-hdgK9uQ ()D
 	public final fun serializer ()Lkotlinx/serialization/KSerializer;
@@ -171,6 +185,13 @@ public final synthetic class app/cash/redwood/ui/Margin$$serializer : kotlinx/se
 	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lapp/cash/redwood/ui/Margin;)V
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+}
+
+public final class app/cash/redwood/ui/Margin$Bridge {
+	public static final field $stable I
+	public static final field INSTANCE Lapp/cash/redwood/ui/Margin$Bridge;
+	public fun <init> ()V
+	public final fun bridgeCreate-K481orY (ILapp/cash/redwood/ui/Dp;Lapp/cash/redwood/ui/Dp;Lapp/cash/redwood/ui/Dp;Lapp/cash/redwood/ui/Dp;)Lapp/cash/redwood/ui/Margin;
 }
 
 public final class app/cash/redwood/ui/Margin$Companion {
@@ -254,6 +275,13 @@ public final synthetic class app/cash/redwood/ui/Size$$serializer : kotlinx/seri
 	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lapp/cash/redwood/ui/Size;)V
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+}
+
+public final class app/cash/redwood/ui/Size$Bridge {
+	public static final field $stable I
+	public static final field INSTANCE Lapp/cash/redwood/ui/Size$Bridge;
+	public fun <init> ()V
+	public final fun bridgeCreate-5BYd4wo (ILapp/cash/redwood/ui/Dp;Lapp/cash/redwood/ui/Dp;)Lapp/cash/redwood/ui/Size;
 }
 
 public final class app/cash/redwood/ui/Size$Companion {

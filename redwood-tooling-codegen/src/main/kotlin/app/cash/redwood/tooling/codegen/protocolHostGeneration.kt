@@ -471,7 +471,14 @@ internal fun generateProtocolNode(
                       // JSON-deserialized values are already the correct type.
                       // Both implement Number, so use a Number intermediary cast
                       // to avoid ClassCastException (e.g. Integer → Float).
-                      val numericMethod = when (typeName.toString()) {
+                      //
+                      // The classifier runs on the type *without* its nullability: JS has one number
+                      // type, so `0.5f` arrives as a Double and `1f` as an Integer whether or not the
+                      // property is nullable. Matching on the declared name, "kotlin.Float?", used to
+                      // fall through to the blind cast, and a nullable numeric property is common
+                      // enough to matter -- it aborted the design-system screen on `progress: Float?`
+                      // with "java.lang.Double cannot be cast to java.lang.Float".
+                      val numericMethod = when (typeName.copy(nullable = false).toString()) {
                         "kotlin.Int" -> "toInt"
                         "kotlin.Long" -> "toLong"
                         "kotlin.Float" -> "toFloat"
@@ -481,12 +488,24 @@ internal fun generateProtocolNode(
                         else -> null
                       }
                       if (numericMethod != null) {
-                        addStatement(
-                          "%L -> widget.%N((change.value as Number).%N())",
-                          trait.tag,
-                          trait.name,
-                          MemberName("kotlin", numericMethod),
-                        )
+                        val toNumeric = MemberName("kotlin", numericMethod)
+                        if (typeName.isNullable) {
+                          // A safe cast, because `null` is a legal value for this property and
+                          // `(null as Number)` would throw on the very first clear-to-null change.
+                          addStatement(
+                            "%L -> widget.%N((change.value as Number?)?.%N())",
+                            trait.tag,
+                            trait.name,
+                            toNumeric,
+                          )
+                        } else {
+                          addStatement(
+                            "%L -> widget.%N((change.value as Number).%N())",
+                            trait.tag,
+                            trait.name,
+                            toNumeric,
+                          )
+                        }
                       } else {
                         addStatement(
                           "%L -> widget.%N(change.value as %T)",

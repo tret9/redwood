@@ -104,40 +104,17 @@ final class app.cash.redwood.ui/Margin { // app.cash.redwood.ui/Margin|null[0]
         final fun serialize(kotlinx.serialization.encoding/Encoder, app.cash.redwood.ui/Margin) // app.cash.redwood.ui/Margin.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;app.cash.redwood.ui.Margin){}[0]
     }
 
+    final object Bridge { // app.cash.redwood.ui/Margin.Bridge|null[0]
+        constructor <init>() // app.cash.redwood.ui/Margin.Bridge.<init>|<init>(){}[0]
+
+        final fun bridgeCreate(kotlin/Int, app.cash.redwood.ui/Dp?, app.cash.redwood.ui/Dp?, app.cash.redwood.ui/Dp?, app.cash.redwood.ui/Dp?): app.cash.redwood.ui/Margin // app.cash.redwood.ui/Margin.Bridge.bridgeCreate|bridgeCreate(kotlin.Int;app.cash.redwood.ui.Dp?;app.cash.redwood.ui.Dp?;app.cash.redwood.ui.Dp?;app.cash.redwood.ui.Dp?){}[0]
+    }
+
     final object Companion { // app.cash.redwood.ui/Margin.Companion|null[0]
         final val Zero // app.cash.redwood.ui/Margin.Companion.Zero|{}Zero[0]
             final fun <get-Zero>(): app.cash.redwood.ui/Margin // app.cash.redwood.ui/Margin.Companion.Zero.<get-Zero>|<get-Zero>(){}[0]
 
         final fun serializer(): kotlinx.serialization/KSerializer<app.cash.redwood.ui/Margin> // app.cash.redwood.ui/Margin.Companion.serializer|serializer(){}[0]
-    }
-}
-
-final class app.cash.redwood.ui/Size { // app.cash.redwood.ui/Size|null[0]
-    constructor <init>(app.cash.redwood.ui/Dp, app.cash.redwood.ui/Dp) // app.cash.redwood.ui/Size.<init>|<init>(app.cash.redwood.ui.Dp;app.cash.redwood.ui.Dp){}[0]
-
-    final val height // app.cash.redwood.ui/Size.height|{}height[0]
-        final fun <get-height>(): app.cash.redwood.ui/Dp // app.cash.redwood.ui/Size.height.<get-height>|<get-height>(){}[0]
-    final val width // app.cash.redwood.ui/Size.width|{}width[0]
-        final fun <get-width>(): app.cash.redwood.ui/Dp // app.cash.redwood.ui/Size.width.<get-width>|<get-width>(){}[0]
-
-    final fun equals(kotlin/Any?): kotlin/Boolean // app.cash.redwood.ui/Size.equals|equals(kotlin.Any?){}[0]
-    final fun hashCode(): kotlin/Int // app.cash.redwood.ui/Size.hashCode|hashCode(){}[0]
-    final fun toString(): kotlin/String // app.cash.redwood.ui/Size.toString|toString(){}[0]
-
-    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<app.cash.redwood.ui/Size> { // app.cash.redwood.ui/Size.$serializer|null[0]
-        final val descriptor // app.cash.redwood.ui/Size.$serializer.descriptor|{}descriptor[0]
-            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // app.cash.redwood.ui/Size.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
-
-        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // app.cash.redwood.ui/Size.$serializer.childSerializers|childSerializers(){}[0]
-        final fun deserialize(kotlinx.serialization.encoding/Decoder): app.cash.redwood.ui/Size // app.cash.redwood.ui/Size.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
-        final fun serialize(kotlinx.serialization.encoding/Encoder, app.cash.redwood.ui/Size) // app.cash.redwood.ui/Size.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;app.cash.redwood.ui.Size){}[0]
-    }
-
-    final object Companion { // app.cash.redwood.ui/Size.Companion|null[0]
-        final val Zero // app.cash.redwood.ui/Size.Companion.Zero|{}Zero[0]
-            final fun <get-Zero>(): app.cash.redwood.ui/Size // app.cash.redwood.ui/Size.Companion.Zero.<get-Zero>|<get-Zero>(){}[0]
-
-        final fun serializer(): kotlinx.serialization/KSerializer<app.cash.redwood.ui/Size> // app.cash.redwood.ui/Size.Companion.serializer|serializer(){}[0]
     }
 }
 
@@ -193,6 +170,12 @@ final class app.cash.redwood/CombinedModifier : app.cash.redwood/Modifier { // a
     final fun hashCode(): kotlin/Int // app.cash.redwood/CombinedModifier.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // app.cash.redwood/CombinedModifier.toString|toString(){}[0]
 
+    final object Bridge { // app.cash.redwood/CombinedModifier.Bridge|null[0]
+        constructor <init>() // app.cash.redwood/CombinedModifier.Bridge.<init>|<init>(){}[0]
+
+        final fun bridgeCreate(kotlin/Int, app.cash.redwood/Modifier?, app.cash.redwood/Modifier?): app.cash.redwood/CombinedModifier // app.cash.redwood/CombinedModifier.Bridge.bridgeCreate|bridgeCreate(kotlin.Int;app.cash.redwood.Modifier?;app.cash.redwood.Modifier?){}[0]
+    }
+
     // Targets: [js]
     final object Companion // app.cash.redwood/CombinedModifier.Companion|null[0]
 }
@@ -229,6 +212,208 @@ final value class app.cash.redwood.ui/Density { // app.cash.redwood.ui/Density|n
     }
 }
 
+final value class app.cash.redwood.ui/Px { // app.cash.redwood.ui/Px|null[0]
+    constructor <init>(kotlin/Double) // app.cash.redwood.ui/Px.<init>|<init>(kotlin.Double){}[0]
+
+    final val value // app.cash.redwood.ui/Px.value|{}value[0]
+        final fun <get-value>(): kotlin/Double // app.cash.redwood.ui/Px.value.<get-value>|<get-value>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // app.cash.redwood.ui/Px.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // app.cash.redwood.ui/Px.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // app.cash.redwood.ui/Px.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<app.cash.redwood.ui/Px> { // app.cash.redwood.ui/Px.$serializer|null[0]
+        final val descriptor // app.cash.redwood.ui/Px.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // app.cash.redwood.ui/Px.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // app.cash.redwood.ui/Px.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): app.cash.redwood.ui/Px // app.cash.redwood.ui/Px.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, app.cash.redwood.ui/Px) // app.cash.redwood.ui/Px.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;app.cash.redwood.ui.Px){}[0]
+    }
+
+    final object Companion { // app.cash.redwood.ui/Px.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<app.cash.redwood.ui/Px> // app.cash.redwood.ui/Px.Companion.serializer|serializer(){}[0]
+    }
+}
+
+final val app.cash.redwood.ui/app_cash_redwood_ui_Density_$serializer$stableprop // app.cash.redwood.ui/app_cash_redwood_ui_Density_$serializer$stableprop|#static{}app_cash_redwood_ui_Density_$serializer$stableprop[0]
+final val app.cash.redwood.ui/app_cash_redwood_ui_Dp_$serializer$stableprop // app.cash.redwood.ui/app_cash_redwood_ui_Dp_$serializer$stableprop|#static{}app_cash_redwood_ui_Dp_$serializer$stableprop[0]
+final val app.cash.redwood.ui/app_cash_redwood_ui_Dp_Bridge$stableprop // app.cash.redwood.ui/app_cash_redwood_ui_Dp_Bridge$stableprop|#static{}app_cash_redwood_ui_Dp_Bridge$stableprop[0]
+final val app.cash.redwood.ui/app_cash_redwood_ui_Margin$stableprop // app.cash.redwood.ui/app_cash_redwood_ui_Margin$stableprop|#static{}app_cash_redwood_ui_Margin$stableprop[0]
+final val app.cash.redwood.ui/app_cash_redwood_ui_Margin_$serializer$stableprop // app.cash.redwood.ui/app_cash_redwood_ui_Margin_$serializer$stableprop|#static{}app_cash_redwood_ui_Margin_$serializer$stableprop[0]
+final val app.cash.redwood.ui/app_cash_redwood_ui_Margin_Bridge$stableprop // app.cash.redwood.ui/app_cash_redwood_ui_Margin_Bridge$stableprop|#static{}app_cash_redwood_ui_Margin_Bridge$stableprop[0]
+final val app.cash.redwood.ui/app_cash_redwood_ui_OnBackPressedCallback$stableprop // app.cash.redwood.ui/app_cash_redwood_ui_OnBackPressedCallback$stableprop|#static{}app_cash_redwood_ui_OnBackPressedCallback$stableprop[0]
+final val app.cash.redwood.ui/app_cash_redwood_ui_Px_$serializer$stableprop // app.cash.redwood.ui/app_cash_redwood_ui_Px_$serializer$stableprop|#static{}app_cash_redwood_ui_Px_$serializer$stableprop[0]
+final val app.cash.redwood.ui/app_cash_redwood_ui_Size$stableprop // app.cash.redwood.ui/app_cash_redwood_ui_Size$stableprop|#static{}app_cash_redwood_ui_Size$stableprop[0]
+final val app.cash.redwood.ui/app_cash_redwood_ui_Size_$serializer$stableprop // app.cash.redwood.ui/app_cash_redwood_ui_Size_$serializer$stableprop|#static{}app_cash_redwood_ui_Size_$serializer$stableprop[0]
+final val app.cash.redwood.ui/app_cash_redwood_ui_Size_Bridge$stableprop // app.cash.redwood.ui/app_cash_redwood_ui_Size_Bridge$stableprop|#static{}app_cash_redwood_ui_Size_Bridge$stableprop[0]
+final val app.cash.redwood.ui/app_cash_redwood_ui_UiConfiguration$stableprop // app.cash.redwood.ui/app_cash_redwood_ui_UiConfiguration$stableprop|#static{}app_cash_redwood_ui_UiConfiguration$stableprop[0]
+final val app.cash.redwood.ui/app_cash_redwood_ui_UiConfiguration_$serializer$stableprop // app.cash.redwood.ui/app_cash_redwood_ui_UiConfiguration_$serializer$stableprop|#static{}app_cash_redwood_ui_UiConfiguration_$serializer$stableprop[0]
+final val app.cash.redwood.ui/dp // app.cash.redwood.ui/dp|@kotlin.Double{}dp[0]
+    final inline fun (kotlin/Double).<get-dp>(): app.cash.redwood.ui/Dp // app.cash.redwood.ui/dp.<get-dp>|<get-dp>@kotlin.Double(){}[0]
+final val app.cash.redwood.ui/dp // app.cash.redwood.ui/dp|@kotlin.Float{}dp[0]
+    final inline fun (kotlin/Float).<get-dp>(): app.cash.redwood.ui/Dp // app.cash.redwood.ui/dp.<get-dp>|<get-dp>@kotlin.Float(){}[0]
+final val app.cash.redwood.ui/dp // app.cash.redwood.ui/dp|@kotlin.Int{}dp[0]
+    final inline fun (kotlin/Int).<get-dp>(): app.cash.redwood.ui/Dp // app.cash.redwood.ui/dp.<get-dp>|<get-dp>@kotlin.Int(){}[0]
+final val app.cash.redwood/app_cash_redwood_CombinedModifier$stableprop // app.cash.redwood/app_cash_redwood_CombinedModifier$stableprop|#static{}app_cash_redwood_CombinedModifier$stableprop[0]
+final val app.cash.redwood/app_cash_redwood_CombinedModifier_Bridge$stableprop // app.cash.redwood/app_cash_redwood_CombinedModifier_Bridge$stableprop|#static{}app_cash_redwood_CombinedModifier_Bridge$stableprop[0]
+
+final fun (app.cash.redwood.ui/Dp).app.cash.redwood.ui/toPlatformDp(): kotlin/Double // app.cash.redwood.ui/toPlatformDp|toPlatformDp@app.cash.redwood.ui.Dp(){}[0]
+final fun (app.cash.redwood.ui/Dp.Companion).app.cash.redwood.ui/fromPlatformDp(kotlin/Double): app.cash.redwood.ui/Dp // app.cash.redwood.ui/fromPlatformDp|fromPlatformDp@app.cash.redwood.ui.Dp.Companion(kotlin.Double){}[0]
+final fun app.cash.redwood.ui/Margin(app.cash.redwood.ui/Dp = ...): app.cash.redwood.ui/Margin // app.cash.redwood.ui/Margin|Margin(app.cash.redwood.ui.Dp){}[0]
+final fun app.cash.redwood.ui/Margin(app.cash.redwood.ui/Dp = ..., app.cash.redwood.ui/Dp = ...): app.cash.redwood.ui/Margin // app.cash.redwood.ui/Margin|Margin(app.cash.redwood.ui.Dp;app.cash.redwood.ui.Dp){}[0]
+final fun app.cash.redwood.ui/app_cash_redwood_ui_Density_$serializer$stableprop_getter(): kotlin/Int // app.cash.redwood.ui/app_cash_redwood_ui_Density_$serializer$stableprop_getter|app_cash_redwood_ui_Density_$serializer$stableprop_getter(){}[0]
+final fun app.cash.redwood.ui/app_cash_redwood_ui_Dp_$serializer$stableprop_getter(): kotlin/Int // app.cash.redwood.ui/app_cash_redwood_ui_Dp_$serializer$stableprop_getter|app_cash_redwood_ui_Dp_$serializer$stableprop_getter(){}[0]
+final fun app.cash.redwood.ui/app_cash_redwood_ui_Dp_Bridge$stableprop_getter(): kotlin/Int // app.cash.redwood.ui/app_cash_redwood_ui_Dp_Bridge$stableprop_getter|app_cash_redwood_ui_Dp_Bridge$stableprop_getter(){}[0]
+final fun app.cash.redwood.ui/app_cash_redwood_ui_Margin$stableprop_getter(): kotlin/Int // app.cash.redwood.ui/app_cash_redwood_ui_Margin$stableprop_getter|app_cash_redwood_ui_Margin$stableprop_getter(){}[0]
+final fun app.cash.redwood.ui/app_cash_redwood_ui_Margin_$serializer$stableprop_getter(): kotlin/Int // app.cash.redwood.ui/app_cash_redwood_ui_Margin_$serializer$stableprop_getter|app_cash_redwood_ui_Margin_$serializer$stableprop_getter(){}[0]
+final fun app.cash.redwood.ui/app_cash_redwood_ui_Margin_Bridge$stableprop_getter(): kotlin/Int // app.cash.redwood.ui/app_cash_redwood_ui_Margin_Bridge$stableprop_getter|app_cash_redwood_ui_Margin_Bridge$stableprop_getter(){}[0]
+final fun app.cash.redwood.ui/app_cash_redwood_ui_OnBackPressedCallback$stableprop_getter(): kotlin/Int // app.cash.redwood.ui/app_cash_redwood_ui_OnBackPressedCallback$stableprop_getter|app_cash_redwood_ui_OnBackPressedCallback$stableprop_getter(){}[0]
+final fun app.cash.redwood.ui/app_cash_redwood_ui_Px_$serializer$stableprop_getter(): kotlin/Int // app.cash.redwood.ui/app_cash_redwood_ui_Px_$serializer$stableprop_getter|app_cash_redwood_ui_Px_$serializer$stableprop_getter(){}[0]
+final fun app.cash.redwood.ui/app_cash_redwood_ui_Size$stableprop_getter(): kotlin/Int // app.cash.redwood.ui/app_cash_redwood_ui_Size$stableprop_getter|app_cash_redwood_ui_Size$stableprop_getter(){}[0]
+final fun app.cash.redwood.ui/app_cash_redwood_ui_Size_$serializer$stableprop_getter(): kotlin/Int // app.cash.redwood.ui/app_cash_redwood_ui_Size_$serializer$stableprop_getter|app_cash_redwood_ui_Size_$serializer$stableprop_getter(){}[0]
+final fun app.cash.redwood.ui/app_cash_redwood_ui_Size_Bridge$stableprop_getter(): kotlin/Int // app.cash.redwood.ui/app_cash_redwood_ui_Size_Bridge$stableprop_getter|app_cash_redwood_ui_Size_Bridge$stableprop_getter(){}[0]
+final fun app.cash.redwood.ui/app_cash_redwood_ui_UiConfiguration$stableprop_getter(): kotlin/Int // app.cash.redwood.ui/app_cash_redwood_ui_UiConfiguration$stableprop_getter|app_cash_redwood_ui_UiConfiguration$stableprop_getter(){}[0]
+final fun app.cash.redwood.ui/app_cash_redwood_ui_UiConfiguration_$serializer$stableprop_getter(): kotlin/Int // app.cash.redwood.ui/app_cash_redwood_ui_UiConfiguration_$serializer$stableprop_getter|app_cash_redwood_ui_UiConfiguration_$serializer$stableprop_getter(){}[0]
+final fun app.cash.redwood/app_cash_redwood_CombinedModifier$stableprop_getter(): kotlin/Int // app.cash.redwood/app_cash_redwood_CombinedModifier$stableprop_getter|app_cash_redwood_CombinedModifier$stableprop_getter(){}[0]
+final fun app.cash.redwood/app_cash_redwood_CombinedModifier_Bridge$stableprop_getter(): kotlin/Int // app.cash.redwood/app_cash_redwood_CombinedModifier_Bridge$stableprop_getter|app_cash_redwood_CombinedModifier_Bridge$stableprop_getter(){}[0]
+
+// Targets: [ios]
+final class app.cash.redwood.ui/Size : app.cash.zipline/Host2JsConvertible { // app.cash.redwood.ui/Size|null[0]
+    constructor <init>(app.cash.redwood.ui/Dp, app.cash.redwood.ui/Dp) // app.cash.redwood.ui/Size.<init>|<init>(app.cash.redwood.ui.Dp;app.cash.redwood.ui.Dp){}[0]
+
+    final val height // app.cash.redwood.ui/Size.height|{}height[0]
+        final fun <get-height>(): app.cash.redwood.ui/Dp // app.cash.redwood.ui/Size.height.<get-height>|<get-height>(){}[0]
+    final val width // app.cash.redwood.ui/Size.width|{}width[0]
+        final fun <get-width>(): app.cash.redwood.ui/Dp // app.cash.redwood.ui/Size.width.<get-width>|<get-width>(){}[0]
+
+    final fun convertToJs(kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>?): kotlin/Int // app.cash.redwood.ui/Size.convertToJs|convertToJs(kotlinx.cinterop.CPointer<out|kotlinx.cinterop.CPointed>?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // app.cash.redwood.ui/Size.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // app.cash.redwood.ui/Size.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // app.cash.redwood.ui/Size.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<app.cash.redwood.ui/Size> { // app.cash.redwood.ui/Size.$serializer|null[0]
+        final val descriptor // app.cash.redwood.ui/Size.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // app.cash.redwood.ui/Size.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // app.cash.redwood.ui/Size.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): app.cash.redwood.ui/Size // app.cash.redwood.ui/Size.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, app.cash.redwood.ui/Size) // app.cash.redwood.ui/Size.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;app.cash.redwood.ui.Size){}[0]
+    }
+
+    final object Bridge { // app.cash.redwood.ui/Size.Bridge|null[0]
+        constructor <init>() // app.cash.redwood.ui/Size.Bridge.<init>|<init>(){}[0]
+
+        final fun bridgeCreate(kotlin/Int, app.cash.redwood.ui/Dp?, app.cash.redwood.ui/Dp?): app.cash.redwood.ui/Size // app.cash.redwood.ui/Size.Bridge.bridgeCreate|bridgeCreate(kotlin.Int;app.cash.redwood.ui.Dp?;app.cash.redwood.ui.Dp?){}[0]
+    }
+
+    final object Companion { // app.cash.redwood.ui/Size.Companion|null[0]
+        final val Zero // app.cash.redwood.ui/Size.Companion.Zero|{}Zero[0]
+            final fun <get-Zero>(): app.cash.redwood.ui/Size // app.cash.redwood.ui/Size.Companion.Zero.<get-Zero>|<get-Zero>(){}[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<app.cash.redwood.ui/Size> // app.cash.redwood.ui/Size.Companion.serializer|serializer(){}[0]
+    }
+}
+
+// Targets: [ios]
+final value class app.cash.redwood.ui/Dp : app.cash.zipline/Host2JsConvertible, kotlin/Comparable<app.cash.redwood.ui/Dp> { // app.cash.redwood.ui/Dp|null[0]
+    constructor <init>(kotlin/Double) // app.cash.redwood.ui/Dp.<init>|<init>(kotlin.Double){}[0]
+
+    final val value // app.cash.redwood.ui/Dp.value|{}value[0]
+        final fun <get-value>(): kotlin/Double // app.cash.redwood.ui/Dp.value.<get-value>|<get-value>(){}[0]
+
+    final fun compareTo(app.cash.redwood.ui/Dp): kotlin/Int // app.cash.redwood.ui/Dp.compareTo|compareTo(app.cash.redwood.ui.Dp){}[0]
+    final fun convertToJs(kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>?): kotlin/Int // app.cash.redwood.ui/Dp.convertToJs|convertToJs(kotlinx.cinterop.CPointer<out|kotlinx.cinterop.CPointed>?){}[0]
+    final fun equals(kotlin/Any?): kotlin/Boolean // app.cash.redwood.ui/Dp.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // app.cash.redwood.ui/Dp.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // app.cash.redwood.ui/Dp.toString|toString(){}[0]
+    final inline fun div(app.cash.redwood.ui/Dp): kotlin/Double // app.cash.redwood.ui/Dp.div|div(app.cash.redwood.ui.Dp){}[0]
+    final inline fun div(kotlin/Double): app.cash.redwood.ui/Dp // app.cash.redwood.ui/Dp.div|div(kotlin.Double){}[0]
+    final inline fun div(kotlin/Float): app.cash.redwood.ui/Dp // app.cash.redwood.ui/Dp.div|div(kotlin.Float){}[0]
+    final inline fun div(kotlin/Int): app.cash.redwood.ui/Dp // app.cash.redwood.ui/Dp.div|div(kotlin.Int){}[0]
+    final inline fun minus(app.cash.redwood.ui/Dp): app.cash.redwood.ui/Dp // app.cash.redwood.ui/Dp.minus|minus(app.cash.redwood.ui.Dp){}[0]
+    final inline fun plus(app.cash.redwood.ui/Dp): app.cash.redwood.ui/Dp // app.cash.redwood.ui/Dp.plus|plus(app.cash.redwood.ui.Dp){}[0]
+    final inline fun times(kotlin/Double): app.cash.redwood.ui/Dp // app.cash.redwood.ui/Dp.times|times(kotlin.Double){}[0]
+    final inline fun times(kotlin/Float): app.cash.redwood.ui/Dp // app.cash.redwood.ui/Dp.times|times(kotlin.Float){}[0]
+    final inline fun times(kotlin/Int): app.cash.redwood.ui/Dp // app.cash.redwood.ui/Dp.times|times(kotlin.Int){}[0]
+    final inline fun unaryMinus(): app.cash.redwood.ui/Dp // app.cash.redwood.ui/Dp.unaryMinus|unaryMinus(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<app.cash.redwood.ui/Dp> { // app.cash.redwood.ui/Dp.$serializer|null[0]
+        final val descriptor // app.cash.redwood.ui/Dp.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // app.cash.redwood.ui/Dp.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // app.cash.redwood.ui/Dp.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): app.cash.redwood.ui/Dp // app.cash.redwood.ui/Dp.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, app.cash.redwood.ui/Dp) // app.cash.redwood.ui/Dp.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;app.cash.redwood.ui.Dp){}[0]
+    }
+
+    final object Bridge { // app.cash.redwood.ui/Dp.Bridge|null[0]
+        constructor <init>() // app.cash.redwood.ui/Dp.Bridge.<init>|<init>(){}[0]
+
+        final fun bridgeCreate(kotlin/Int, kotlin/Double): app.cash.redwood.ui/Dp // app.cash.redwood.ui/Dp.Bridge.bridgeCreate|bridgeCreate(kotlin.Int;kotlin.Double){}[0]
+    }
+
+    final object Companion { // app.cash.redwood.ui/Dp.Companion|null[0]
+        final val Unspecified // app.cash.redwood.ui/Dp.Companion.Unspecified|{}Unspecified[0]
+            final fun <get-Unspecified>(): app.cash.redwood.ui/Dp // app.cash.redwood.ui/Dp.Companion.Unspecified.<get-Unspecified>|<get-Unspecified>(){}[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<app.cash.redwood.ui/Dp> // app.cash.redwood.ui/Dp.Companion.serializer|serializer(){}[0]
+    }
+}
+
+// Targets: [ios]
+final val app.cash.redwood.ui/Default // app.cash.redwood.ui/Default|@app.cash.redwood.ui.Density.Companion{}Default[0]
+    final fun (app.cash.redwood.ui/Density.Companion).<get-Default>(): app.cash.redwood.ui/Density // app.cash.redwood.ui/Default.<get-Default>|<get-Default>@app.cash.redwood.ui.Density.Companion(){}[0]
+
+// Targets: [ios]
+final fun generated_bridges/app_cash_redwood_CombinedModifier_toKotlin(kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>?, kotlin/Int): kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>? // generated_bridges/app_cash_redwood_CombinedModifier_toKotlin|app_cash_redwood_CombinedModifier_toKotlin(kotlinx.cinterop.CPointer<out|kotlinx.cinterop.CPointed>?;kotlin.Int){}[0]
+
+// Targets: [ios]
+final fun generated_bridges/app_cash_redwood_Modifier_Companion_toKotlin(kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>?, kotlin/Int): kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>? // generated_bridges/app_cash_redwood_Modifier_Companion_toKotlin|app_cash_redwood_Modifier_Companion_toKotlin(kotlinx.cinterop.CPointer<out|kotlinx.cinterop.CPointed>?;kotlin.Int){}[0]
+
+// Targets: [ios]
+final fun generated_bridges/app_cash_redwood_ui_Dp_toKotlin(kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>?, kotlin/Int): kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>? // generated_bridges/app_cash_redwood_ui_Dp_toKotlin|app_cash_redwood_ui_Dp_toKotlin(kotlinx.cinterop.CPointer<out|kotlinx.cinterop.CPointed>?;kotlin.Int){}[0]
+
+// Targets: [ios]
+final fun generated_bridges/app_cash_redwood_ui_Margin_toKotlin(kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>?, kotlin/Int): kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>? // generated_bridges/app_cash_redwood_ui_Margin_toKotlin|app_cash_redwood_ui_Margin_toKotlin(kotlinx.cinterop.CPointer<out|kotlinx.cinterop.CPointed>?;kotlin.Int){}[0]
+
+// Targets: [js]
+final class app.cash.redwood.ui/Size { // app.cash.redwood.ui/Size|null[0]
+    constructor <init>(app.cash.redwood.ui/Dp, app.cash.redwood.ui/Dp) // app.cash.redwood.ui/Size.<init>|<init>(app.cash.redwood.ui.Dp;app.cash.redwood.ui.Dp){}[0]
+
+    final val height // app.cash.redwood.ui/Size.height|{}height[0]
+        final fun <get-height>(): app.cash.redwood.ui/Dp // app.cash.redwood.ui/Size.height.<get-height>|<get-height>(){}[0]
+    final val width // app.cash.redwood.ui/Size.width|{}width[0]
+        final fun <get-width>(): app.cash.redwood.ui/Dp // app.cash.redwood.ui/Size.width.<get-width>|<get-width>(){}[0]
+
+    final fun equals(kotlin/Any?): kotlin/Boolean // app.cash.redwood.ui/Size.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // app.cash.redwood.ui/Size.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // app.cash.redwood.ui/Size.toString|toString(){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<app.cash.redwood.ui/Size> { // app.cash.redwood.ui/Size.$serializer|null[0]
+        final val descriptor // app.cash.redwood.ui/Size.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // app.cash.redwood.ui/Size.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // app.cash.redwood.ui/Size.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): app.cash.redwood.ui/Size // app.cash.redwood.ui/Size.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, app.cash.redwood.ui/Size) // app.cash.redwood.ui/Size.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;app.cash.redwood.ui.Size){}[0]
+    }
+
+    final object Bridge { // app.cash.redwood.ui/Size.Bridge|null[0]
+        constructor <init>() // app.cash.redwood.ui/Size.Bridge.<init>|<init>(){}[0]
+
+        final fun bridgeCreate(kotlin/Int, app.cash.redwood.ui/Dp?, app.cash.redwood.ui/Dp?): app.cash.redwood.ui/Size // app.cash.redwood.ui/Size.Bridge.bridgeCreate|bridgeCreate(kotlin.Int;app.cash.redwood.ui.Dp?;app.cash.redwood.ui.Dp?){}[0]
+    }
+
+    final object Companion { // app.cash.redwood.ui/Size.Companion|null[0]
+        final val Zero // app.cash.redwood.ui/Size.Companion.Zero|{}Zero[0]
+            final fun <get-Zero>(): app.cash.redwood.ui/Size // app.cash.redwood.ui/Size.Companion.Zero.<get-Zero>|<get-Zero>(){}[0]
+
+        final fun serializer(): kotlinx.serialization/KSerializer<app.cash.redwood.ui/Size> // app.cash.redwood.ui/Size.Companion.serializer|serializer(){}[0]
+    }
+}
+
+// Targets: [js]
 final value class app.cash.redwood.ui/Dp : kotlin/Comparable<app.cash.redwood.ui/Dp> { // app.cash.redwood.ui/Dp|null[0]
     constructor <init>(kotlin/Double) // app.cash.redwood.ui/Dp.<init>|<init>(kotlin.Double){}[0]
 
@@ -259,6 +444,12 @@ final value class app.cash.redwood.ui/Dp : kotlin/Comparable<app.cash.redwood.ui
         final fun serialize(kotlinx.serialization.encoding/Encoder, app.cash.redwood.ui/Dp) // app.cash.redwood.ui/Dp.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;app.cash.redwood.ui.Dp){}[0]
     }
 
+    final object Bridge { // app.cash.redwood.ui/Dp.Bridge|null[0]
+        constructor <init>() // app.cash.redwood.ui/Dp.Bridge.<init>|<init>(){}[0]
+
+        final fun bridgeCreate(kotlin/Int, kotlin/Double): app.cash.redwood.ui/Dp // app.cash.redwood.ui/Dp.Bridge.bridgeCreate|bridgeCreate(kotlin.Int;kotlin.Double){}[0]
+    }
+
     final object Companion { // app.cash.redwood.ui/Dp.Companion|null[0]
         final val Unspecified // app.cash.redwood.ui/Dp.Companion.Unspecified|{}Unspecified[0]
             final fun <get-Unspecified>(): app.cash.redwood.ui/Dp // app.cash.redwood.ui/Dp.Companion.Unspecified.<get-Unspecified>|<get-Unspecified>(){}[0]
@@ -266,80 +457,6 @@ final value class app.cash.redwood.ui/Dp : kotlin/Comparable<app.cash.redwood.ui
         final fun serializer(): kotlinx.serialization/KSerializer<app.cash.redwood.ui/Dp> // app.cash.redwood.ui/Dp.Companion.serializer|serializer(){}[0]
     }
 }
-
-final value class app.cash.redwood.ui/Px { // app.cash.redwood.ui/Px|null[0]
-    constructor <init>(kotlin/Double) // app.cash.redwood.ui/Px.<init>|<init>(kotlin.Double){}[0]
-
-    final val value // app.cash.redwood.ui/Px.value|{}value[0]
-        final fun <get-value>(): kotlin/Double // app.cash.redwood.ui/Px.value.<get-value>|<get-value>(){}[0]
-
-    final fun equals(kotlin/Any?): kotlin/Boolean // app.cash.redwood.ui/Px.equals|equals(kotlin.Any?){}[0]
-    final fun hashCode(): kotlin/Int // app.cash.redwood.ui/Px.hashCode|hashCode(){}[0]
-    final fun toString(): kotlin/String // app.cash.redwood.ui/Px.toString|toString(){}[0]
-
-    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<app.cash.redwood.ui/Px> { // app.cash.redwood.ui/Px.$serializer|null[0]
-        final val descriptor // app.cash.redwood.ui/Px.$serializer.descriptor|{}descriptor[0]
-            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // app.cash.redwood.ui/Px.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
-
-        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // app.cash.redwood.ui/Px.$serializer.childSerializers|childSerializers(){}[0]
-        final fun deserialize(kotlinx.serialization.encoding/Decoder): app.cash.redwood.ui/Px // app.cash.redwood.ui/Px.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
-        final fun serialize(kotlinx.serialization.encoding/Encoder, app.cash.redwood.ui/Px) // app.cash.redwood.ui/Px.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;app.cash.redwood.ui.Px){}[0]
-    }
-
-    final object Companion { // app.cash.redwood.ui/Px.Companion|null[0]
-        final fun serializer(): kotlinx.serialization/KSerializer<app.cash.redwood.ui/Px> // app.cash.redwood.ui/Px.Companion.serializer|serializer(){}[0]
-    }
-}
-
-final val app.cash.redwood.ui/app_cash_redwood_ui_Density_$serializer$stableprop // app.cash.redwood.ui/app_cash_redwood_ui_Density_$serializer$stableprop|#static{}app_cash_redwood_ui_Density_$serializer$stableprop[0]
-final val app.cash.redwood.ui/app_cash_redwood_ui_Dp_$serializer$stableprop // app.cash.redwood.ui/app_cash_redwood_ui_Dp_$serializer$stableprop|#static{}app_cash_redwood_ui_Dp_$serializer$stableprop[0]
-final val app.cash.redwood.ui/app_cash_redwood_ui_Margin$stableprop // app.cash.redwood.ui/app_cash_redwood_ui_Margin$stableprop|#static{}app_cash_redwood_ui_Margin$stableprop[0]
-final val app.cash.redwood.ui/app_cash_redwood_ui_Margin_$serializer$stableprop // app.cash.redwood.ui/app_cash_redwood_ui_Margin_$serializer$stableprop|#static{}app_cash_redwood_ui_Margin_$serializer$stableprop[0]
-final val app.cash.redwood.ui/app_cash_redwood_ui_OnBackPressedCallback$stableprop // app.cash.redwood.ui/app_cash_redwood_ui_OnBackPressedCallback$stableprop|#static{}app_cash_redwood_ui_OnBackPressedCallback$stableprop[0]
-final val app.cash.redwood.ui/app_cash_redwood_ui_Px_$serializer$stableprop // app.cash.redwood.ui/app_cash_redwood_ui_Px_$serializer$stableprop|#static{}app_cash_redwood_ui_Px_$serializer$stableprop[0]
-final val app.cash.redwood.ui/app_cash_redwood_ui_Size$stableprop // app.cash.redwood.ui/app_cash_redwood_ui_Size$stableprop|#static{}app_cash_redwood_ui_Size$stableprop[0]
-final val app.cash.redwood.ui/app_cash_redwood_ui_Size_$serializer$stableprop // app.cash.redwood.ui/app_cash_redwood_ui_Size_$serializer$stableprop|#static{}app_cash_redwood_ui_Size_$serializer$stableprop[0]
-final val app.cash.redwood.ui/app_cash_redwood_ui_UiConfiguration$stableprop // app.cash.redwood.ui/app_cash_redwood_ui_UiConfiguration$stableprop|#static{}app_cash_redwood_ui_UiConfiguration$stableprop[0]
-final val app.cash.redwood.ui/app_cash_redwood_ui_UiConfiguration_$serializer$stableprop // app.cash.redwood.ui/app_cash_redwood_ui_UiConfiguration_$serializer$stableprop|#static{}app_cash_redwood_ui_UiConfiguration_$serializer$stableprop[0]
-final val app.cash.redwood.ui/dp // app.cash.redwood.ui/dp|@kotlin.Double{}dp[0]
-    final inline fun (kotlin/Double).<get-dp>(): app.cash.redwood.ui/Dp // app.cash.redwood.ui/dp.<get-dp>|<get-dp>@kotlin.Double(){}[0]
-final val app.cash.redwood.ui/dp // app.cash.redwood.ui/dp|@kotlin.Float{}dp[0]
-    final inline fun (kotlin/Float).<get-dp>(): app.cash.redwood.ui/Dp // app.cash.redwood.ui/dp.<get-dp>|<get-dp>@kotlin.Float(){}[0]
-final val app.cash.redwood.ui/dp // app.cash.redwood.ui/dp|@kotlin.Int{}dp[0]
-    final inline fun (kotlin/Int).<get-dp>(): app.cash.redwood.ui/Dp // app.cash.redwood.ui/dp.<get-dp>|<get-dp>@kotlin.Int(){}[0]
-final val app.cash.redwood/app_cash_redwood_CombinedModifier$stableprop // app.cash.redwood/app_cash_redwood_CombinedModifier$stableprop|#static{}app_cash_redwood_CombinedModifier$stableprop[0]
-
-final fun (app.cash.redwood.ui/Dp).app.cash.redwood.ui/toPlatformDp(): kotlin/Double // app.cash.redwood.ui/toPlatformDp|toPlatformDp@app.cash.redwood.ui.Dp(){}[0]
-final fun (app.cash.redwood.ui/Dp.Companion).app.cash.redwood.ui/fromPlatformDp(kotlin/Double): app.cash.redwood.ui/Dp // app.cash.redwood.ui/fromPlatformDp|fromPlatformDp@app.cash.redwood.ui.Dp.Companion(kotlin.Double){}[0]
-final fun app.cash.redwood.ui/Margin(app.cash.redwood.ui/Dp = ...): app.cash.redwood.ui/Margin // app.cash.redwood.ui/Margin|Margin(app.cash.redwood.ui.Dp){}[0]
-final fun app.cash.redwood.ui/Margin(app.cash.redwood.ui/Dp = ..., app.cash.redwood.ui/Dp = ...): app.cash.redwood.ui/Margin // app.cash.redwood.ui/Margin|Margin(app.cash.redwood.ui.Dp;app.cash.redwood.ui.Dp){}[0]
-final fun app.cash.redwood.ui/app_cash_redwood_ui_Density_$serializer$stableprop_getter(): kotlin/Int // app.cash.redwood.ui/app_cash_redwood_ui_Density_$serializer$stableprop_getter|app_cash_redwood_ui_Density_$serializer$stableprop_getter(){}[0]
-final fun app.cash.redwood.ui/app_cash_redwood_ui_Dp_$serializer$stableprop_getter(): kotlin/Int // app.cash.redwood.ui/app_cash_redwood_ui_Dp_$serializer$stableprop_getter|app_cash_redwood_ui_Dp_$serializer$stableprop_getter(){}[0]
-final fun app.cash.redwood.ui/app_cash_redwood_ui_Margin$stableprop_getter(): kotlin/Int // app.cash.redwood.ui/app_cash_redwood_ui_Margin$stableprop_getter|app_cash_redwood_ui_Margin$stableprop_getter(){}[0]
-final fun app.cash.redwood.ui/app_cash_redwood_ui_Margin_$serializer$stableprop_getter(): kotlin/Int // app.cash.redwood.ui/app_cash_redwood_ui_Margin_$serializer$stableprop_getter|app_cash_redwood_ui_Margin_$serializer$stableprop_getter(){}[0]
-final fun app.cash.redwood.ui/app_cash_redwood_ui_OnBackPressedCallback$stableprop_getter(): kotlin/Int // app.cash.redwood.ui/app_cash_redwood_ui_OnBackPressedCallback$stableprop_getter|app_cash_redwood_ui_OnBackPressedCallback$stableprop_getter(){}[0]
-final fun app.cash.redwood.ui/app_cash_redwood_ui_Px_$serializer$stableprop_getter(): kotlin/Int // app.cash.redwood.ui/app_cash_redwood_ui_Px_$serializer$stableprop_getter|app_cash_redwood_ui_Px_$serializer$stableprop_getter(){}[0]
-final fun app.cash.redwood.ui/app_cash_redwood_ui_Size$stableprop_getter(): kotlin/Int // app.cash.redwood.ui/app_cash_redwood_ui_Size$stableprop_getter|app_cash_redwood_ui_Size$stableprop_getter(){}[0]
-final fun app.cash.redwood.ui/app_cash_redwood_ui_Size_$serializer$stableprop_getter(): kotlin/Int // app.cash.redwood.ui/app_cash_redwood_ui_Size_$serializer$stableprop_getter|app_cash_redwood_ui_Size_$serializer$stableprop_getter(){}[0]
-final fun app.cash.redwood.ui/app_cash_redwood_ui_UiConfiguration$stableprop_getter(): kotlin/Int // app.cash.redwood.ui/app_cash_redwood_ui_UiConfiguration$stableprop_getter|app_cash_redwood_ui_UiConfiguration$stableprop_getter(){}[0]
-final fun app.cash.redwood.ui/app_cash_redwood_ui_UiConfiguration_$serializer$stableprop_getter(): kotlin/Int // app.cash.redwood.ui/app_cash_redwood_ui_UiConfiguration_$serializer$stableprop_getter|app_cash_redwood_ui_UiConfiguration_$serializer$stableprop_getter(){}[0]
-final fun app.cash.redwood/app_cash_redwood_CombinedModifier$stableprop_getter(): kotlin/Int // app.cash.redwood/app_cash_redwood_CombinedModifier$stableprop_getter|app_cash_redwood_CombinedModifier$stableprop_getter(){}[0]
-
-// Targets: [ios]
-final val app.cash.redwood.ui/Default // app.cash.redwood.ui/Default|@app.cash.redwood.ui.Density.Companion{}Default[0]
-    final fun (app.cash.redwood.ui/Density.Companion).<get-Default>(): app.cash.redwood.ui/Density // app.cash.redwood.ui/Default.<get-Default>|<get-Default>@app.cash.redwood.ui.Density.Companion(){}[0]
-
-// Targets: [ios]
-final fun generated_bridges/app_cash_redwood_CombinedModifier_toKotlin(kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>?, kotlin/Int): kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>? // generated_bridges/app_cash_redwood_CombinedModifier_toKotlin|app_cash_redwood_CombinedModifier_toKotlin(kotlinx.cinterop.CPointer<out|kotlinx.cinterop.CPointed>?;kotlin.Int){}[0]
-
-// Targets: [ios]
-final fun generated_bridges/app_cash_redwood_Modifier_Companion_toKotlin(kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>?, kotlin/Int): kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>? // generated_bridges/app_cash_redwood_Modifier_Companion_toKotlin|app_cash_redwood_Modifier_Companion_toKotlin(kotlinx.cinterop.CPointer<out|kotlinx.cinterop.CPointed>?;kotlin.Int){}[0]
-
-// Targets: [ios]
-final fun generated_bridges/app_cash_redwood_ui_Dp_toKotlin(kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>?, kotlin/Int): kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>? // generated_bridges/app_cash_redwood_ui_Dp_toKotlin|app_cash_redwood_ui_Dp_toKotlin(kotlinx.cinterop.CPointer<out|kotlinx.cinterop.CPointed>?;kotlin.Int){}[0]
-
-// Targets: [ios]
-final fun generated_bridges/app_cash_redwood_ui_Margin_toKotlin(kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>?, kotlin/Int): kotlinx.cinterop/CPointer<out kotlinx.cinterop/CPointed>? // generated_bridges/app_cash_redwood_ui_Margin_toKotlin|app_cash_redwood_ui_Margin_toKotlin(kotlinx.cinterop.CPointer<out|kotlinx.cinterop.CPointed>?;kotlin.Int){}[0]
 
 // Targets: [js]
 final fun app.cash.redwood/__bridgeWarmUpHost2Js(): kotlin/Boolean // app.cash.redwood/__bridgeWarmUpHost2Js|__bridgeWarmUpHost2Js(){}[0]
